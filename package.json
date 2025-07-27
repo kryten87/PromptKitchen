@@ -5,9 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "npm test --workspaces",
+    "build": "npm run build --workspaces",
     "lint": "npm run lint --workspaces",
-    "lint:fix": "npm run lint --fix --workspaces"
+    "lint:fix": "npm run lint --fix --workspaces",
+    "test": "npm run test --workspaces"
   },
   "keywords": [],
   "author": "",

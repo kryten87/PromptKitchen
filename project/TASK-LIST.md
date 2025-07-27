@@ -14,10 +14,10 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 - [x] 1.1.5. Set up ESLint and Prettier in the root with shared configurations.
 
 ### 1.2. Shared Package Setup
-- [ ] 1.2.1. Create the `packages/shared` directory.
-- [ ] 1.2.2. Initialize an npm project within `packages/shared`.
-- [ ] 1.2.3. Add TypeScript and a `tsconfig.json` that extends the root config.
-- [ ] 1.2.4. Define Data Transfer Objects (DTOs) for all entities as specified in `PRD.md` (User, Project, Prompt, etc.).
+- [x] 1.2.1. Create the `packages/shared` directory.
+- [x] 1.2.2. Initialize an npm project within `packages/shared`.
+- [x] 1.2.3. Add TypeScript and a `tsconfig.json` that extends the root config.
+- [x] 1.2.4. Define Data Transfer Objects (DTOs) for all entities as specified in `PRD.md` (User, Project, Prompt, etc.).
 
 ### 1.3. Backend Scaffolding
 - [ ] 1.3.1. Create the `packages/backend` directory.

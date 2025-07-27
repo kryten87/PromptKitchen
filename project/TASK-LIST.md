@@ -29,12 +29,12 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 - [x] 1.3.7. Add the `packages/shared` package as a dependency.
 
 ### 1.4. Frontend Scaffolding
-- [ ] 1.4.1. Create the `packages/frontend` directory.
-- [ ] 1.4.2. Scaffold a new React project using Vite with the TypeScript template.
-- [ ] 1.4.3. Install Tailwind CSS, React Router, and other initial dependencies.
-- [ ] 1.4.4. Configure Tailwind CSS.
-- [ ] 1.4.5. Add the `packages/shared` package as a dependency.
-- [ ] 1.4.6. Set up basic routing structure.
+- [x] 1.4.1. Create the `packages/frontend` directory.
+- [x] 1.4.2. Scaffold a new React project using Vite with the TypeScript template.
+- [x] 1.4.3. Install Tailwind CSS, React Router, and other initial dependencies.
+- [x] 1.4.4. Configure Tailwind CSS.
+- [x] 1.4.5. Add the `packages/shared` package as a dependency.
+- [x] 1.4.6. Set up basic routing structure.
 
 ---
 

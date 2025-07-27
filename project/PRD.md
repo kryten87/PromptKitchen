@@ -2,7 +2,7 @@
 
 **Version:** 1.0
 **Date:** July 27, 2025
-**Status:** Draft
+**Status:** Finalized
 
 ---
 
@@ -123,7 +123,7 @@ The application's data is structured around five core entities, with relationshi
 - A `Project` has zero or more `Prompts`.
 - A `Prompt` has zero or more `TestSuites` and a history of its previous versions.
 - A `TestSuite` has zero or more `TestCases` and a history of `TestSuiteRuns`.
-- A `TestSuiteRun` groups the `TestResults` from a single execution.
+- A `TestSuiteRun` groups the `TestResults` from a single execution and is linked to a specific `PromptHistory` version.
 
 | Entity | Attributes | Notes |
 | :--- | :--- | :--- |
@@ -133,7 +133,7 @@ The application's data is structured around five core entities, with relationshi
 | **PromptHistory** | `id`, `prompt_id`, `prompt_text`, `version_number`, `created_at` | A snapshot of a prompt at a point in time. Version is an incrementing integer. |
 | **TestSuite** | `id`, `prompt_id`, `name`, `created_at`, `updated_at` | A collection of test cases for a prompt. Test suites are independent of prompt versions. |
 | **TestCase** | `id`, `test_suite_id`, `inputs`, `expected_output`, `created_at`, `updated_at` | A single test. `inputs` is a JSON object mapping variable names to values. |
-| **TestSuiteRun** | `id`, `test_suite_id`, `run_at`, `status`, `pass_percentage` | Represents a single execution of a full test suite. `status` can be `PENDING`, `RUNNING`, `COMPLETED`, or `ERROR`. |
+| **TestSuiteRun** | `id`, `test_suite_id`, `prompt_history_id`, `run_at`, `status`, `pass_percentage` | Represents a single execution of a full test suite against a specific prompt version. `status` can be `PENDING`, `RUNNING`, `COMPLETED`, or `ERROR`. |
 | **TestResult** | `id`, `test_suite_run_id`, `test_case_id`, `actual_output`, `status` | Records the outcome of a single test case. `status` can be `PASS` or `FAIL`. |
 
 ### 4.4. Security

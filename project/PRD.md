@@ -116,6 +116,7 @@ Prompt Kitchen is a web-based application designed to streamline the development
 - **Data Transfer Objects (DTOs)**: DTOs will be used for all data exchange with the database to ensure a clear data contract.
 - **Dependency Injection**: Manual dependency injection will be used to promote modularity and testability. No DI frameworks.
 - **Code Style**: Logic will be encapsulated in classes where appropriate. Small, pure functions with descriptive names are preferred.
+- **Unit Testing**: Unit tests will be written concurrently with feature development. As each function or component is created or modified, corresponding unit tests must be created or updated to ensure correctness and prevent regressions.
 - **API Keys**: LLM API keys will be stored securely as environment variables on the server.
 - **Test Files**: All test files must follow the `*.spec.ts` or `*.spec.tsx` naming convention.
 

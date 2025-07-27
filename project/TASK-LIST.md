@@ -8,10 +8,10 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 
 ### 1.1. Monorepo Setup
 - [x] 1.1.1. Initialize an npm project in the root directory (`npm init -y`).
-- [ ] 1.1.2. Create a `packages` directory.
-- [ ] 1.1.3. Configure npm workspaces in the root `package.json`.
-- [ ] 1.1.4. Add a root-level `tsconfig.json` for shared settings.
-- [ ] 1.1.5. Set up ESLint and Prettier in the root with shared configurations.
+- [x] 1.1.2. Create a `packages` directory.
+- [x] 1.1.3. Configure npm workspaces in the root `package.json`.
+- [x] 1.1.4. Add a root-level `tsconfig.json` for shared settings.
+- [x] 1.1.5. Set up ESLint and Prettier in the root with shared configurations.
 
 ### 1.2. Shared Package Setup
 - [ ] 1.2.1. Create the `packages/shared` directory.

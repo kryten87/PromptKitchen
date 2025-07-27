@@ -44,10 +44,10 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 - [x] 2.1.1. Install `sqlite3` and `knex` (as a query builder/migration tool).
 - [x] 2.1.2. Create a database abstraction layer (`src/db/db.ts`) that initializes and exports the `knex` instance.
 - [x] 2.1.3. Configure the database connection (e.g., file path from an environment variable).
-- [ ] 2.1.4. Implement the database migration system.
-    - [ ] 2.1.4.1. Create a `migrations` directory.
-    - [ ] 2.1.4.2. Write a script to run migrations on application startup.
-    - [ ] 2.1.4.3. Ensure the application fails to start if a migration fails.
+- [x] 2.1.4. Implement the database migration system.
+    - [x] 2.1.4.1. Create a `migrations` directory.
+    - [x] 2.1.4.2. Write a script to run migrations on application startup.
+    - [x] 2.1.4.3. Ensure the application fails to start if a migration fails.
 - [ ] 2.1.5. Create initial migration files for all database tables (`users`, `projects`, `prompts`, `prompt_history`, `test_suites`, `test_cases`, `test_suite_runs`, `test_results`).
 
 ### 2.2. User Authentication (AUTH-01)

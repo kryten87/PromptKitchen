@@ -6,7 +6,7 @@ description: "Maintain a structured task ledger for effective task management"
 
 # Task Ledger Instructions
 
-Create and maintain a comprehensive task ledger at `TASK.md`. This file serves as your memory repository and task planning system, helping you track progress, record important information, and maintain context throughout the task lifecycle. The task ledger is for your reference and can be removed once the task is complete.
+Create and maintain a comprehensive task ledger at `projects/TASK-<task name>.md`. The task name will be given in the chat when this prompt is invoked. This file serves as your memory repository and task planning system, helping you track progress, record important information, and maintain context throughout the task lifecycle. The task ledger is for your reference and can be removed once the task is complete.
 
 ## Importance of Task Ledger Maintenance
 

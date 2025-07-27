@@ -1,2 +1,4 @@
 project/tasks/*.md
 node_modules
+packages/**/dist
+**/*.tsbuildinfo

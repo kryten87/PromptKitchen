@@ -1,5 +1,13 @@
 // packages/shared/src/dtos.ts
 
+export type JsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: JsonValue }
+  | JsonValue[];
+
 export interface User {
   id: string;
   email: string;
@@ -49,8 +57,8 @@ export type TestCaseRunMode = 'DEFAULT' | 'SKIP' | 'ONLY';
 export interface TestCase {
   id: string;
   testSuiteId: string;
-  inputs: Record<string, any>;
-  expectedOutput: string | Record<string, any>;
+  inputs: Record<string, JsonValue>;
+  expectedOutput: string | Record<string, JsonValue>;
   runMode: TestCaseRunMode;
   createdAt: Date;
   updatedAt: Date;
@@ -67,6 +75,6 @@ export interface TestResult {
   testSuiteRunId: string;
   testCaseId: string;
   status: 'PASS' | 'FAIL';
-  output: string | Record<string, any>;
+  output: string | Record<string, JsonValue>;
   createdAt: Date;
 }

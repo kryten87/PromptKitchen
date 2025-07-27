@@ -103,6 +103,7 @@ Prompt Kitchen is a web-based application designed to streamline the development
 | Routing (Frontend) | React Router |
 | Styling | Tailwind CSS |
 | Database | SQLite3 (initially) |
+| Package Manager | npm |
 | Testing | Jest |
 | Linting | ESLint |
 | HTTP Client | Native `fetch` API |

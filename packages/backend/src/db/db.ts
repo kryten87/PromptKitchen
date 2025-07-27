@@ -9,3 +9,5 @@ export const promptKitchenDb = knex({
   },
   useNullAsDefault: true,
 });
+
+export { promptKitchenDb as knex };

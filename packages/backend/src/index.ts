@@ -4,7 +4,7 @@ const server = Fastify({
   logger: true,
 });
 
-server.get('/', async (request, reply) => {
+server.get('/', async () => {
   return { hello: 'world' };
 });
 

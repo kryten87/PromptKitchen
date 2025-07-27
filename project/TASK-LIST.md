@@ -7,7 +7,7 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 ## Phase 1: Project Scaffolding & Setup
 
 ### 1.1. Monorepo Setup
-- [ ] 1.1.1. Initialize an npm project in the root directory (`npm init -y`).
+- [x] 1.1.1. Initialize an npm project in the root directory (`npm init -y`).
 - [ ] 1.1.2. Create a `packages` directory.
 - [ ] 1.1.3. Configure npm workspaces in the root `package.json`.
 - [ ] 1.1.4. Add a root-level `tsconfig.json` for shared settings.

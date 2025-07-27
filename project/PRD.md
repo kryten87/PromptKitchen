@@ -133,7 +133,7 @@ The application's data is structured around five core entities, with relationshi
 | **Prompt** | `id`, `project_id`, `name`, `prompt_text`, `created_at`, `updated_at` | The current, active version of a prompt. |
 | **PromptHistory** | `id`, `prompt_id`, `prompt_text`, `version_number`, `created_at` | A snapshot of a prompt at a point in time. Version is an incrementing integer. |
 | **TestSuite** | `id`, `prompt_id`, `name`, `created_at`, `updated_at` | A collection of test cases for a prompt. Test suites are independent of prompt versions. |
-| **TestCase** | `id`, `test_suite_id`, `inputs`, `expected_output`, `run_mode`, `created_at`, `updated_at` | A single test. `inputs` is a JSON object. `expected_output` stores a string or serialized JSON. `run_mode` can be `DEFAULT` or `SKIP`. |
+| **TestCase** | `id`, `test_suite_id`, `inputs`, `expected_output`, `output_type`, `run_mode`, `created_at`, `updated_at` | A single test. `inputs` is a JSON object. `expected_output` stores a string or serialized JSON. `output_type` can be `STRING` or `JSON`. `run_mode` can be `DEFAULT` or `SKIP`. |
 | **TestSuiteRun** | `id`, `test_suite_id`, `prompt_history_id`, `run_at`, `status`, `pass_percentage` | Represents a single execution of a full test suite against a specific prompt version. `status` can be `PENDING`, `RUNNING`, `COMPLETED`, or `ERROR`. |
 | **TestResult** | `id`, `test_suite_run_id`, `test_case_id`, `actual_output`, `status` | Records the outcome of a single test case. `actual_output` stores the string or JSON response from the LLM. `status` can be `PASS` or `FAIL`. |
 

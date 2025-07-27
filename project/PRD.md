@@ -36,9 +36,9 @@ Prompt Kitchen is a web-based application designed to streamline the development
 - **Project Management**: Users can create, edit, and delete projects to organize their work.
 - **Prompt Management**: Within a project, users can create, edit, and delete multiple prompts.
 - **Test Suite Management**: For each prompt, users can create multiple test suites. Each suite can contain multiple test cases.
-- **Test Case Management**: A test case consists of a set of input variables (key-value pairs) and a single expected output string.
-- **Prompt Execution**: Users can run a prompt against all test cases in a selected test suite.
-- **Results Evaluation**: The application will perform a simple, exact-match comparison between the LLM's output and the expected output to determine a pass/fail status.
+- **Test Case Management**: A test case consists of a set of input variables (key-value pairs) and an expected output, which can be either a string or a JSON object.
+- **Prompt Execution**: Users can run a prompt against all test cases in a selected test suite. The system will support running all tests or skipping specific ones.
+- **Results Evaluation**: The application will compare the LLM's output with the expected output. For strings, it will use an exact-match comparison. For JSON, it will perform a deep equality check.
 - **Results Display**: A clear view showing the pass/fail status for each test case in a run.
 - **Prompt Version History**: The system will automatically save a new version of a prompt whenever it is modified, allowing users to view and revert to previous versions.
 
@@ -74,11 +74,12 @@ Prompt Kitchen is a web-based application designed to streamline the development
 | PRMPT-02 | The prompt editor shall support `{{variable}}` syntax for templating. |
 | TEST-01 | For each prompt, the system shall allow users to create, view, update, and delete test suites. |
 | TEST-02 | Each test suite shall contain one or more test cases. |
-| TEST-03 | Each test case shall consist of key-value inputs and a single string for the expected output. |
+| TEST-03 | Each test case shall consist of key-value inputs and an expected output, which can be either a single string or a JSON object. |
+| TEST-04 | The system shall allow users to mark individual test cases to be skipped during a test suite execution. |
 | EXEC-01 | The system shall connect to the OpenAI API to execute prompts. |
 | EXEC-02 | The system shall replace variables in the prompt template with the values from a test case before sending it to the LLM. |
 | EXEC-03 | Test suite execution shall be an asynchronous process. The client will poll an endpoint to retrieve results. |
-| EVAL-01 | The system shall compare the LLM's output with the test case's expected output using an exact-match, case-sensitive comparison. |
+| EVAL-01 | The system shall compare the LLM's output with the test case's expected output. For string comparisons, it will use an exact-match, case-sensitive comparison. For JSON comparisons, it will perform a deep equality check, ignoring the order of keys in objects. |
 | PRMPT-03 | The system shall save a new version of a prompt to its history upon every modification. |
 | PRMPT-04 | The system shall allow a user to view previous versions of a prompt and restore a selected version. When restoring, the system will copy the selected historical prompt text to the current prompt, creating a new entry in the history. |
 | SYS-01 | The system shall handle API and database errors gracefully and provide meaningful feedback to the user. |
@@ -132,9 +133,9 @@ The application's data is structured around five core entities, with relationshi
 | **Prompt** | `id`, `project_id`, `name`, `prompt_text`, `created_at`, `updated_at` | The current, active version of a prompt. |
 | **PromptHistory** | `id`, `prompt_id`, `prompt_text`, `version_number`, `created_at` | A snapshot of a prompt at a point in time. Version is an incrementing integer. |
 | **TestSuite** | `id`, `prompt_id`, `name`, `created_at`, `updated_at` | A collection of test cases for a prompt. Test suites are independent of prompt versions. |
-| **TestCase** | `id`, `test_suite_id`, `inputs`, `expected_output`, `created_at`, `updated_at` | A single test. `inputs` is a JSON object mapping variable names to values. |
+| **TestCase** | `id`, `test_suite_id`, `inputs`, `expected_output`, `run_mode`, `created_at`, `updated_at` | A single test. `inputs` is a JSON object. `expected_output` stores a string or serialized JSON. `run_mode` can be `DEFAULT` or `SKIP`. |
 | **TestSuiteRun** | `id`, `test_suite_id`, `prompt_history_id`, `run_at`, `status`, `pass_percentage` | Represents a single execution of a full test suite against a specific prompt version. `status` can be `PENDING`, `RUNNING`, `COMPLETED`, or `ERROR`. |
-| **TestResult** | `id`, `test_suite_run_id`, `test_case_id`, `actual_output`, `status` | Records the outcome of a single test case. `status` can be `PASS` or `FAIL`. |
+| **TestResult** | `id`, `test_suite_run_id`, `test_case_id`, `actual_output`, `status` | Records the outcome of a single test case. `actual_output` stores the string or JSON response from the LLM. `status` can be `PASS` or `FAIL`. |
 
 ### 4.4. Security
 

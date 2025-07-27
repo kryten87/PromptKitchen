@@ -75,7 +75,7 @@ Prompt Kitchen is a web-based application designed to streamline the development
 | TEST-01 | For each prompt, the system shall allow users to create, view, update, and delete test suites. |
 | TEST-02 | Each test suite shall contain one or more test cases. |
 | TEST-03 | Each test case shall consist of key-value inputs and an expected output, which can be either a single string or a JSON object. |
-| TEST-04 | The system shall allow users to mark individual test cases to be skipped during a test suite execution. |
+| TEST-04 | The system shall allow users to set a run mode for each test case (`DEFAULT`, `SKIP`, `ONLY`). If any test cases are marked as `ONLY`, only those tests will be executed. Otherwise, all `DEFAULT` tests will be run, and `SKIP` tests will be excluded. |
 | EXEC-01 | The system shall connect to the OpenAI API to execute prompts. |
 | EXEC-02 | The system shall replace variables in the prompt template with the values from a test case before sending it to the LLM. |
 | EXEC-03 | Test suite execution shall be an asynchronous process. The client will poll an endpoint to retrieve results. |
@@ -133,7 +133,7 @@ The application's data is structured around five core entities, with relationshi
 | **Prompt** | `id`, `project_id`, `name`, `prompt_text`, `created_at`, `updated_at` | The current, active version of a prompt. |
 | **PromptHistory** | `id`, `prompt_id`, `prompt_text`, `version_number`, `created_at` | A snapshot of a prompt at a point in time. Version is an incrementing integer. |
 | **TestSuite** | `id`, `prompt_id`, `name`, `created_at`, `updated_at` | A collection of test cases for a prompt. Test suites are independent of prompt versions. |
-| **TestCase** | `id`, `test_suite_id`, `inputs`, `expected_output`, `output_type`, `run_mode`, `created_at`, `updated_at` | A single test. `inputs` is a JSON object. `expected_output` stores a string or serialized JSON. `output_type` can be `STRING` or `JSON`. `run_mode` can be `DEFAULT` or `SKIP`. |
+| **TestCase** | `id`, `test_suite_id`, `inputs`, `expected_output`, `output_type`, `run_mode`, `created_at`, `updated_at` | A single test. `inputs` is a JSON object. `expected_output` stores a string or serialized JSON. `output_type` can be `STRING` or `JSON`. `run_mode` can be `DEFAULT`, `SKIP`, or `ONLY`. If any test is marked `ONLY`, only those tests will run. |
 | **TestSuiteRun** | `id`, `test_suite_id`, `prompt_history_id`, `run_at`, `status`, `pass_percentage` | Represents a single execution of a full test suite against a specific prompt version. `status` can be `PENDING`, `RUNNING`, `COMPLETED`, or `ERROR`. |
 | **TestResult** | `id`, `test_suite_run_id`, `test_case_id`, `actual_output`, `status` | Records the outcome of a single test case. `actual_output` stores the string or JSON response from the LLM. `status` can be `PASS` or `FAIL`. |
 

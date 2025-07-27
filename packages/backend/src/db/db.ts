@@ -1,9 +1,11 @@
 import knex from 'knex';
 
+const dbFile = process.env.DB_FILE || './dev.sqlite3';
+
 export const promptKitchenDb = knex({
   client: 'sqlite3',
   connection: {
-    filename: './dev.sqlite3',
+    filename: dbFile,
   },
   useNullAsDefault: true,
 });

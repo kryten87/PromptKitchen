@@ -1,9 +1,9 @@
 import path from 'path';
-import { promptKitchenDb } from './db';
+import type { DatabaseConnector } from './db';
 
-export async function runMigrations(): Promise<void> {
+export async function runMigrations(db: DatabaseConnector): Promise<void> {
   try {
-    await promptKitchenDb.migrate.latest({
+    await db.knex.migrate.latest({
       directory: path.resolve(__dirname, '../../migrations'),
     });
   } catch (err) {

@@ -7,8 +7,8 @@ import Fastify from 'fastify';
 import { runMigrations } from './db/migrate';
 
 // Patch FastifyInstance type to include googleOAuth2
-import type { FastifyInstance } from 'fastify';
 import type { OAuth2Namespace } from '@fastify/oauth2';
+import type { FastifyInstance } from 'fastify';
 
 declare module 'fastify' {
   interface FastifyInstance {

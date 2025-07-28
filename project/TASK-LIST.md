@@ -59,7 +59,7 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 - ✅ 2.2.2. Create a `UserRepository` class to handle all database interactions for the `users` table.
 - ✅ 2.2.3. Create a `UserService` class to encapsulate authentication logic.
 - ✅ 2.2.4. Create an `Auth` controller/route handler.
-- [ ] 2.2.5. Implement a middleware/decorator to protect authenticated routes.
+- ✅ 2.2.5. Implement a middleware/decorator to protect authenticated routes.
 
 ### 2.3. Project Management (PROJ-01)
 - [ ] 2.3.1. Create a `ProjectRepository` class for `projects` table DB interactions.

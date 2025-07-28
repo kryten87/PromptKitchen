@@ -5,6 +5,7 @@ dotenv.config();
 import fastifyOauth2 from '@fastify/oauth2';
 import Fastify from 'fastify';
 import { registerAuthController } from './AuthController';
+import { prodDbConnector } from './db/db';
 import { runMigrations } from './db/migrate';
 import { UserRepository } from './UserRepository';
 import { UserService } from './UserService';
@@ -24,7 +25,7 @@ const server = Fastify({
 });
 
 // Dependency injection setup
-const userRepository = new UserRepository();
+const userRepository = new UserRepository(prodDbConnector);
 const userService = new UserService({
   userRepository,
   jwtSecret: process.env.JWT_SECRET || 'dev-secret',
@@ -66,14 +67,15 @@ server.get('/', async () => {
   return { hello: 'world' };
 });
 
-const start = async () => {
+async function start() {
+  await runMigrations(prodDbConnector); // Run DB migrations after connection
   try {
-    await runMigrations(); // Run DB migrations before starting server
-    await server.listen({ port: 3000 });
+    await server.listen({ port: Number(process.env.PORT) || 3001, host: '0.0.0.0' });
+    server.log.info('Server started');
   } catch (err) {
     server.log.error(err);
     process.exit(1);
   }
-};
+}
 
 start();

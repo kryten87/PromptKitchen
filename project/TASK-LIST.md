@@ -48,7 +48,7 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
     - [x] 2.1.4.1. Create a `migrations` directory.
     - [x] 2.1.4.2. Write a script to run migrations on application startup.
     - [x] 2.1.4.3. Ensure the application fails to start if a migration fails.
-- [ ] 2.1.5. Create initial migration files for all database tables (`users`, `projects`, `prompts`, `prompt_history`, `test_suites`, `test_cases`, `test_suite_runs`, `test_results`).
+- [x] 2.1.5. Create initial migration files for all database tables (`users`, `projects`, `prompts`, `prompt_history`, `test_suites`, `test_cases`, `test_suite_runs`, `test_results`).
 
 ### 2.2. User Authentication (AUTH-01)
 - [ ] 2.2.1. Implement Google OAuth.

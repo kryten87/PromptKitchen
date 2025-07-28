@@ -20,6 +20,7 @@
 
 
 ## Implementation Strategy
+- **Tasks**: _IMPORTANT!!!_ a task is not considered complete until all unit tests pass, the code is linted & fixed, and all packages build successfully. This is a critical part of the development process to ensure code quality and maintainability.
 - **Monorepo**: The codebase will be organized into a monorepo with three main packages: `frontend`, `backend`, and `shared`.
 - **Database Abstraction**: All database access will be performed through an abstraction layer to facilitate future migration to other SQL databases like PostgreSQL or MySQL. No ORM will be used.
 - **Database Migrations**: The backend API will be responsible for running database migrations. Migrations will execute automatically upon application startup. If any migration fails, the application must fail to start. The migration system should be idempotent, meaning it will do nothing if no migration scripts need to be run.
@@ -32,3 +33,4 @@
 - **Test Files**: All test files must follow the `*.spec.ts` or `*.spec.tsx` naming convention.
 
 Refer to `project/PRD.md` for further details and best practices.
+

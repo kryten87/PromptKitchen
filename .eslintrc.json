@@ -11,6 +11,7 @@
     "prettier"
   ],
   "rules": {
-    "prettier/prettier": "error"
+    "prettier/prettier": "error",
+    "@typescript-eslint/ban-ts-comment": ["error", { "ts-ignore": "error" }]
   }
 }

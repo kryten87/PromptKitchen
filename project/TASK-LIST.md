@@ -51,11 +51,11 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 - [x] 2.1.5. Create initial migration files for all database tables (`users`, `projects`, `prompts`, `prompt_history`, `test_suites`, `test_cases`, `test_suite_runs`, `test_results`).
 
 ### 2.2. User Authentication (AUTH-01)
-- [ ] 2.2.1. Implement Google OAuth.
-    - [ ] 2.2.1.1. Set up a Google Cloud project and obtain OAuth 2.0 credentials.
-    - [ ] 2.2.1.2. Install necessary libraries (e.g., `@fastify/oauth2`).
-    - [ ] 2.2.1.3. Create `/auth/google` and `/auth/google/callback` routes.
-    - [ ] 2.2.1.4. Implement the callback logic to handle user creation/login and session management (e.g., using `@fastify/session`).
+- [x] 2.2.1. Implement Google OAuth.
+    - [x] 2.2.1.1. Set up a Google Cloud project and obtain OAuth 2.0 credentials.
+    - [x] 2.2.1.2. Install necessary libraries (e.g., `@fastify/oauth2`).
+    - [x] 2.2.1.3. Create `/auth/google` and `/auth/google/callback` routes.
+    - [x] 2.2.1.4. Implement the callback logic to handle user creation/login and session management (e.g., using `@fastify/session`).
 - [ ] 2.2.2. Create a `UserRepository` class to handle all database interactions for the `users` table.
 - [ ] 2.2.3. Create a `UserService` class to encapsulate authentication logic.
 - [ ] 2.2.4. Create an `Auth` controller/route handler.

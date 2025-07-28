@@ -60,4 +60,27 @@ describe('AuthController', () => {
     expect(response.statusCode).toBe(200);
     expect(JSON.parse(response.body).success).toBe(true);
   });
+
+  it('returns 401 if JWT is missing or invalid in middleware', async () => {
+    const { createAuthMiddleware } = require('./authMiddleware');
+    const userServiceMock = { verifyJwt: jest.fn() };
+    const middleware = createAuthMiddleware(userServiceMock as any);
+    const reply = { status: jest.fn().mockReturnThis(), send: jest.fn() };
+    // No Authorization header
+    await middleware({ headers: {} } as any, reply as any);
+    expect(reply.status).toHaveBeenCalledWith(401);
+    // Invalid Authorization header
+    await middleware({ headers: { authorization: 'Invalid' } } as any, reply as any);
+    expect(reply.status).toHaveBeenCalledWith(401);
+  });
+
+  it('attaches user to request if JWT is valid in middleware', async () => {
+    const { createAuthMiddleware } = require('./authMiddleware');
+    const userServiceMock = { verifyJwt: jest.fn().mockReturnValue({ id: 'user-1' }) };
+    const middleware = createAuthMiddleware(userServiceMock as any);
+    const reply = { status: jest.fn().mockReturnThis(), send: jest.fn() };
+    const request: any = { headers: { authorization: 'Bearer validtoken' } };
+    await middleware(request, reply as any);
+    expect(request.user).toEqual({ id: 'user-1' });
+  });
 });

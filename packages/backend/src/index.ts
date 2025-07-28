@@ -5,7 +5,7 @@ dotenv.config();
 import fastifyOauth2 from '@fastify/oauth2';
 import Fastify from 'fastify';
 import { registerAuthController } from './AuthController';
-import { prodDbConnector } from './db/db';
+import { DatabaseConnector } from './db/db';
 import { runMigrations } from './db/migrate';
 import { UserRepository } from './UserRepository';
 import { UserService } from './UserService';
@@ -25,7 +25,9 @@ const server = Fastify({
 });
 
 // Dependency injection setup
-const userRepository = new UserRepository(prodDbConnector);
+const dbFile = process.env.DB_FILE || './dev.sqlite3';
+const dbConnector = new DatabaseConnector({ filename: dbFile });
+const userRepository = new UserRepository(dbConnector);
 const userService = new UserService({
   userRepository,
   jwtSecret: process.env.JWT_SECRET || 'dev-secret',
@@ -68,7 +70,7 @@ server.get('/', async () => {
 });
 
 async function start() {
-  await runMigrations(prodDbConnector); // Run DB migrations after connection
+  await runMigrations(dbConnector); // Run DB migrations after connection
   try {
     await server.listen({ port: Number(process.env.PORT) || 3001, host: '0.0.0.0' });
     server.log.info('Server started');

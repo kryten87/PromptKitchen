@@ -7,55 +7,55 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 ## Phase 1: Project Scaffolding & Setup
 
 ### 1.1. Monorepo Setup
-- [x] 1.1.1. Initialize an npm project in the root directory (`npm init -y`).
-- [x] 1.1.2. Create a `packages` directory.
-- [x] 1.1.3. Configure npm workspaces in the root `package.json`.
-- [x] 1.1.4. Add a root-level `tsconfig.json` for shared settings.
-- [x] 1.1.5. Set up ESLint and Prettier in the root with shared configurations.
+- ✅ 1.1.1. Initialize an npm project in the root directory (`npm init -y`).
+- ✅ 1.1.2. Create a `packages` directory.
+- ✅ 1.1.3. Configure npm workspaces in the root `package.json`.
+- ✅ 1.1.4. Add a root-level `tsconfig.json` for shared settings.
+- ✅ 1.1.5. Set up ESLint and Prettier in the root with shared configurations.
 
 ### 1.2. Shared Package Setup
-- [x] 1.2.1. Create the `packages/shared` directory.
-- [x] 1.2.2. Initialize an npm project within `packages/shared`.
-- [x] 1.2.3. Add TypeScript and a `tsconfig.json` that extends the root config.
-- [x] 1.2.4. Define Data Transfer Objects (DTOs) for all entities as specified in `PRD.md` (User, Project, Prompt, etc.).
+- ✅ 1.2.1. Create the `packages/shared` directory.
+- ✅ 1.2.2. Initialize an npm project within `packages/shared`.
+- ✅ 1.2.3. Add TypeScript and a `tsconfig.json` that extends the root config.
+- ✅ 1.2.4. Define Data Transfer Objects (DTOs) for all entities as specified in `PRD.md` (User, Project, Prompt, etc.).
 
 ### 1.3. Backend Scaffolding
-- [x] 1.3.1. Create the `packages/backend` directory.
-- [x] 1.3.2. Initialize an npm project.
-- [x] 1.3.3. Install Fastify, TypeScript, `ts-node`, and other initial dependencies.
-- [x] 1.3.4. Create a `tsconfig.json` extending the root config.
-- [x] 1.3.5. Set up a basic Fastify server in `src/index.ts`.
-- [x] 1.3.6. Add npm scripts for `dev` (using `ts-node-dev`) and `build` (using `tsc`).
-- [x] 1.3.7. Add the `packages/shared` package as a dependency.
+- ✅ 1.3.1. Create the `packages/backend` directory.
+- ✅ 1.3.2. Initialize an npm project.
+- ✅ 1.3.3. Install Fastify, TypeScript, `ts-node`, and other initial dependencies.
+- ✅ 1.3.4. Create a `tsconfig.json` extending the root config.
+- ✅ 1.3.5. Set up a basic Fastify server in `src/index.ts`.
+- ✅ 1.3.6. Add npm scripts for `dev` (using `ts-node-dev`) and `build` (using `tsc`).
+- ✅ 1.3.7. Add the `packages/shared` package as a dependency.
 
 ### 1.4. Frontend Scaffolding
-- [x] 1.4.1. Create the `packages/frontend` directory.
-- [x] 1.4.2. Scaffold a new React project using Vite with the TypeScript template.
-- [x] 1.4.3. Install Tailwind CSS, React Router, and other initial dependencies.
-- [x] 1.4.4. Configure Tailwind CSS.
-- [x] 1.4.5. Add the `packages/shared` package as a dependency.
-- [x] 1.4.6. Set up basic routing structure.
+- ✅ 1.4.1. Create the `packages/frontend` directory.
+- ✅ 1.4.2. Scaffold a new React project using Vite with the TypeScript template.
+- ✅ 1.4.3. Install Tailwind CSS, React Router, and other initial dependencies.
+- ✅ 1.4.4. Configure Tailwind CSS.
+- ✅ 1.4.5. Add the `packages/shared` package as a dependency.
+- ✅ 1.4.6. Set up basic routing structure.
 
 ---
 
 ## Phase 2: Backend Development
 
 ### 2.1. Database Setup
-- [x] 2.1.1. Install `sqlite3` and `knex` (as a query builder/migration tool).
-- [x] 2.1.2. Create a database abstraction layer (`src/db/db.ts`) that initializes and exports the `knex` instance.
-- [x] 2.1.3. Configure the database connection (e.g., file path from an environment variable).
-- [x] 2.1.4. Implement the database migration system.
-    - [x] 2.1.4.1. Create a `migrations` directory.
-    - [x] 2.1.4.2. Write a script to run migrations on application startup.
-    - [x] 2.1.4.3. Ensure the application fails to start if a migration fails.
-- [x] 2.1.5. Create initial migration files for all database tables (`users`, `projects`, `prompts`, `prompt_history`, `test_suites`, `test_cases`, `test_suite_runs`, `test_results`).
+- ✅ 2.1.1. Install `sqlite3` and `knex` (as a query builder/migration tool).
+- ✅ 2.1.2. Create a database abstraction layer (`src/db/db.ts`) that initializes and exports the `knex` instance.
+- ✅ 2.1.3. Configure the database connection (e.g., file path from an environment variable).
+- ✅ 2.1.4. Implement the database migration system.
+    - ✅ 2.1.4.1. Create a `migrations` directory.
+    - ✅ 2.1.4.2. Write a script to run migrations on application startup.
+    - ✅ 2.1.4.3. Ensure the application fails to start if a migration fails.
+- ✅ 2.1.5. Create initial migration files for all database tables (`users`, `projects`, `prompts`, `prompt_history`, `test_suites`, `test_cases`, `test_suite_runs`, `test_results`).
 
 ### 2.2. User Authentication (AUTH-01)
-- [ ] 2.2.1. Implement Google OAuth.
-    - [ ] 2.2.1.1. Set up a Google Cloud project and obtain OAuth 2.0 credentials.
-    - [ ] 2.2.1.2. Install necessary libraries (e.g., `@fastify/oauth2`).
-    - [ ] 2.2.1.3. Create `/auth/google` and `/auth/google/callback` routes.
-    - [ ] 2.2.1.4. Implement the callback logic to handle user creation/login and session management (e.g., using `@fastify/session`).
+- ✅ 2.2.1. Implement Google OAuth.
+    - ✅ 2.2.1.1. Set up a Google Cloud project and obtain OAuth 2.0 credentials.
+    - ✅ 2.2.1.2. Install necessary libraries (e.g., `@fastify/oauth2`).
+    - ✅ 2.2.1.3. Create `/auth/google` and `/auth/google/callback` routes.
+    - ✅ 2.2.1.4. Implement the callback logic to handle user creation/login and session management (e.g., using `@fastify/session`).
 - [ ] 2.2.2. Create a `UserRepository` class to handle all database interactions for the `users` table.
 - [ ] 2.2.3. Create a `UserService` class to encapsulate authentication logic.
 - [ ] 2.2.4. Create an `Auth` controller/route handler.

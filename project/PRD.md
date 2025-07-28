@@ -142,7 +142,7 @@ The application's data is structured around five core entities, with relationshi
 
 ### 4.4. Security
 
-- User authentication tokens will be stored in browser local storage.
+- User authentication tokens will be returned by the backend as a bearer token (JWT) and must be stored in browser local storage by the frontend. Cookies will NOT be used for authentication. All API requests from the frontend to the backend must use the Authorization: Bearer <token> header.
 - All sensitive credentials (like API keys) must be stored on the backend and never exposed to the client.
 
 ---

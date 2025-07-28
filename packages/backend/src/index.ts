@@ -4,7 +4,10 @@ dotenv.config();
 
 import fastifyOauth2 from '@fastify/oauth2';
 import Fastify from 'fastify';
+import { registerAuthController } from './AuthController';
 import { runMigrations } from './db/migrate';
+import { UserRepository } from './UserRepository';
+import { UserService } from './UserService';
 
 // Patch FastifyInstance type to include googleOAuth2
 import type { OAuth2Namespace } from '@fastify/oauth2';
@@ -19,6 +22,15 @@ declare module 'fastify' {
 const server = Fastify({
   logger: true,
 });
+
+// Dependency injection setup
+const userRepository = new UserRepository();
+const userService = new UserService({
+  userRepository,
+  jwtSecret: process.env.JWT_SECRET || 'dev-secret',
+});
+
+registerAuthController(server, { userService });
 
 // Register Google OAuth2
 server.register(fastifyOauth2, {

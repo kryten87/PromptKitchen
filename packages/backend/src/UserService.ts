@@ -55,4 +55,11 @@ export class UserService {
   verifyJwt(token: string): any {
     return jwt.verify(token, this.jwtSecret);
   }
+
+  /**
+   * Gets a user by id (returns User DTO or null)
+   */
+  async getUserById(id: string) {
+    return this.userRepository.findById(id);
+  }
 }

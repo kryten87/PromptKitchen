@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "npm run build --workspaces",
+    "check": "npm run lint:fix && npm run test && npm run build",
     "lint": "npm run lint --workspaces",
     "lint:fix": "npm run lint --fix --workspaces",
     "test": "npm run test --workspaces"

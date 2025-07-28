@@ -145,6 +145,14 @@ The application's data is structured around five core entities, with relationshi
 - User authentication tokens will be returned by the backend as a bearer token (JWT) and must be stored in browser local storage by the frontend. Cookies will NOT be used for authentication. All API requests from the frontend to the backend must use the Authorization: Bearer <token> header.
 - All sensitive credentials (like API keys) must be stored on the backend and never exposed to the client.
 
+### 4.5. Database Connector Pattern (Best Practice)
+
+- All database access must use a class-based connector pattern. The connector class should be instantiated with configuration (e.g., SQLite filename) and expose a `knex` instance for queries.
+- All repositories and services must accept a database connector instance via their constructor (manual dependency injection). No global singletons should be used except for the production connector.
+- All unit tests for database code must use an in-memory SQLite database (`filename: ':memory:'`) to ensure isolation and speed.
+- Migrations must be run immediately after establishing a database connection, and before any queries are executed.
+- This pattern must be followed for all future database-related code.
+
 ---
 
 ## 5. Future Considerations

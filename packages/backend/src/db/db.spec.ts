@@ -1,20 +1,21 @@
-import { promptKitchenDb } from './db';
+import { DatabaseConnector } from './db';
 
-describe('Database Connection', () => {
+describe('DatabaseConnector', () => {
+  let db: DatabaseConnector;
+
+  afterEach(async () => {
+    if (db) await db.destroy();
+  });
+
   it('should connect to the database and perform a simple query', async () => {
-    const result = await promptKitchenDb.raw('SELECT 1+1 as result');
+    db = new DatabaseConnector({ filename: ':memory:' });
+    const result = await db.knex.raw('SELECT 1+1 as result');
     expect(result).toBeDefined();
   });
 
-  it('should use the DB_FILE environment variable if set', async () => {
-    process.env.DB_FILE = './dev.sqlite3';
-    const { promptKitchenDb: testDb } = await import('./db');
-    const result = await testDb.raw('SELECT 2+2 as result');
+  it('should use the provided filename', async () => {
+    db = new DatabaseConnector({ filename: ':memory:' });
+    const result = await db.knex.raw('SELECT 2+2 as result');
     expect(result).toBeDefined();
-    await testDb.destroy();
-  });
-
-  afterAll(async () => {
-    await promptKitchenDb.destroy();
   });
 });

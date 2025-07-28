@@ -1,13 +1,21 @@
-import knex from 'knex';
+import knex, { Knex } from 'knex';
 
-const dbFile = process.env.DB_FILE || './dev.sqlite3';
+export interface DatabaseConnectorConfig {
+  filename: string;
+}
 
-export const promptKitchenDb = knex({
-  client: 'sqlite3',
-  connection: {
-    filename: dbFile,
-  },
-  useNullAsDefault: true,
-});
+export class DatabaseConnector {
+  public readonly knex: Knex;
 
-export { promptKitchenDb as knex };
+  constructor(config: DatabaseConnectorConfig) {
+    this.knex = knex({
+      client: 'sqlite3',
+      connection: { filename: config.filename },
+      useNullAsDefault: true,
+    });
+  }
+
+  async destroy() {
+    await this.knex.destroy();
+  }
+}

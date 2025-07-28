@@ -1,7 +1,13 @@
 import type { User } from '@prompt-kitchen/shared/src/dtos';
-import { promptKitchenDb } from './db/db';
+import type { Knex } from 'knex';
 
 export class UserRepository {
+  private knex: Knex;
+
+  constructor(db: { knex: Knex }) {
+    this.knex = db.knex;
+  }
+
   async createUser(user: Omit<User, 'createdAt' | 'updatedAt'>): Promise<User> {
     const now = new Date();
     const dbUser = {
@@ -9,23 +15,23 @@ export class UserRepository {
       created_at: now,
       updated_at: now,
     };
-    await promptKitchenDb('users').insert(dbUser);
+    await this.knex('users').insert(dbUser);
     return this.findById(user.id) as Promise<User>;
   }
 
   async findById(id: string): Promise<User | null> {
-    const row = await promptKitchenDb('users').where({ id }).first();
+    const row = await this.knex('users').where({ id }).first();
     return row ? this.toUser(row) : null;
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    const row = await promptKitchenDb('users').where({ email }).first();
+    const row = await this.knex('users').where({ email }).first();
     return row ? this.toUser(row) : null;
   }
 
   async updateUser(id: string, updates: Partial<Omit<User, 'id' | 'createdAt' | 'updatedAt'>>): Promise<User | null> {
     const now = new Date();
-    await promptKitchenDb('users').where({ id }).update({ ...updates, updated_at: now });
+    await this.knex('users').where({ id }).update({ ...updates, updated_at: now });
     return this.findById(id);
   }
 

@@ -1,9 +1,11 @@
 import type { User } from '@prompt-kitchen/shared/src/dtos';
+import { DatabaseConnector } from './db/db';
+import { runMigrations } from './db/migrate';
 import { UserRepository } from './UserRepository';
-import { promptKitchenDb } from './db/db';
 
 describe('UserRepository', () => {
-  const repo = new UserRepository();
+  let db: DatabaseConnector;
+  let repo: UserRepository;
   const testUser: Omit<User, 'createdAt' | 'updatedAt'> = {
     id: 'test-user-id',
     email: 'test@example.com',
@@ -11,9 +13,15 @@ describe('UserRepository', () => {
     avatarUrl: 'http://example.com/avatar.png',
   };
 
+  beforeAll(async () => {
+    db = new DatabaseConnector({ filename: ':memory:' });
+    await runMigrations(db);
+    repo = new UserRepository(db);
+  });
+
   afterAll(async () => {
-    await promptKitchenDb('users').where({ id: testUser.id }).del();
-    await promptKitchenDb.destroy();
+    await db.knex('users').where({ id: testUser.id }).del();
+    await db.destroy();
   });
 
   it('should create and find a user by id', async () => {

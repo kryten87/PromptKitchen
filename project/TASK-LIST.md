@@ -18,6 +18,7 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 - ✅ 1.2.2. Initialize an npm project within `packages/shared`.
 - ✅ 1.2.3. Add TypeScript and a `tsconfig.json` that extends the root config.
 - ✅ 1.2.4. Define Data Transfer Objects (DTOs) for all entities as specified in `PRD.md` (User, Project, Prompt, etc.).
+- [ ] 1.2.5. Add a validation library using `yup` for all DTOs, to be used by both backend and frontend.
 
 ### 1.3. Backend Scaffolding
 - ✅ 1.3.1. Create the `packages/backend` directory.

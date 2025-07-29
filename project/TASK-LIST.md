@@ -74,19 +74,19 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 - ✅ 2.3.4. Add unit tests for `ProjectService`.
 
 ### 2.4. Prompt Management (PRMPT-01, PRMPT-02, PRMPT-03, PRMPT-04)
-- [ ] 2.4.1. Create `PromptRepository` and `PromptHistoryRepository`.
-- [ ] 2.4.2. Create a `PromptService` to handle business logic.
-- [ ] 2.4.3. Implement logic in `PromptService` to automatically create a `PromptHistory` entry whenever a prompt is updated.
-- [ ] 2.4.4. Implement logic to restore a prompt from its history.
-- [ ] 2.4.5. Create RESTful API endpoints for prompts (CRUD).
-    - [ ] `GET /api/projects/:projectId/prompts`
-    - [ ] `POST /api/projects/:projectId/prompts`
-    - [ ] `PUT /api/prompts/:id`
-    - [ ] `DELETE /api/prompts/:id`
-- [ ] 2.4.6. Create API endpoints for prompt history.
-    - [ ] `GET /api/prompts/:id/history`
-    - [ ] `POST /api/prompts/:id/restore` (restores a specific history version)
-- [ ] 2.4.7. Add unit tests for `PromptService`.
+- ✅ 2.4.1. Create `PromptRepository` and `PromptHistoryRepository`.
+- ✅ 2.4.2. Create a `PromptService` to handle business logic.
+- ✅ 2.4.3. Implement logic in `PromptService` to automatically create a `PromptHistory` entry whenever a prompt is updated.
+- ✅ 2.4.4. Implement logic to restore a prompt from its history.
+- ✅ 2.4.5. Create RESTful API endpoints for prompts (CRUD).
+    - ✅ `GET /api/projects/:projectId/prompts`
+    - ✅ `POST /api/projects/:projectId/prompts`
+    - ✅ `PUT /api/prompts/:id`
+    - ✅ `DELETE /api/prompts/:id`
+- ✅ 2.4.6. Create API endpoints for prompt history.
+    - ✅ `GET /api/prompts/:id/history`
+    - ✅ `POST /api/prompts/:id/restore` (restores a specific history version)
+- ✅ 2.4.7. Add unit tests for `PromptService`.
 
 ### 2.5. Test Suite & Case Management (TEST-01, TEST-02, TEST-03, TEST-04)
 - [ ] 2.5.1. Create `TestSuiteRepository` and `TestCaseRepository`.

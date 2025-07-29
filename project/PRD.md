@@ -116,10 +116,13 @@ Prompt Kitchen is a web-based application designed to streamline the development
 - **Database Migrations**: The backend API will be responsible for running database migrations. Migrations will execute automatically upon application startup. If any migration fails, the application must fail to start. The migration system should be idempotent, meaning it will do nothing if no migration scripts need to be run.
 - **Data Transfer Objects (DTOs)**: DTOs will be used for all data exchange with the database to ensure a clear data contract.
 - **Dependency Injection**: Manual dependency injection will be used to promote modularity and testability. No DI frameworks.
+- **Static Factory Pattern**: For all new services that require dependency injection, add a static `factory` method to the service class to encapsulate instantiation of dependencies. Do not use separate factory files. Write unit tests for each factory method.
+- **Test Consolidation**: Always place unit tests for static factory methods in the main `*.spec.ts` file for the class, not in a separate file. This keeps related tests together and improves maintainability.
 - **Code Style**: Logic will be encapsulated in classes where appropriate. Small, pure functions with descriptive names are preferred.
 - **Unit Testing**: Unit tests will be written concurrently with feature development. As each function or component is created or modified, corresponding unit tests must be created or updated to ensure correctness and prevent regressions.
 - **API Keys**: LLM API keys will be stored securely as environment variables on the server.
 - **Test Files**: All test files must follow the `*.spec.ts` or `*.spec.tsx` naming convention.
+- **Top-level Imports**: Always use top-level import statements for all dependencies. Do not use inline or dynamic imports except where absolutely necessary (e.g., true dynamic loading). This applies to all service, repository, and controller code.
 
 ### 4.3. Data Models
 

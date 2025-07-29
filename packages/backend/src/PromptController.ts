@@ -1,0 +1,72 @@
+import { definePromptSchema } from '@prompt-kitchen/shared/src/validation';
+import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import * as yup from 'yup';
+import { PromptService } from './PromptService';
+
+export async function registerPromptRoutes(fastify: FastifyInstance, promptService: PromptService) {
+  // GET /api/projects/:projectId/prompts
+  fastify.get('/api/projects/:projectId/prompts', async (request: FastifyRequest, reply: FastifyReply) => {
+    const { projectId } = request.params as any;
+    const prompts = await promptService.getPromptsForProject(projectId);
+    return reply.send(prompts);
+  });
+
+  // POST /api/projects/:projectId/prompts
+  fastify.post('/api/projects/:projectId/prompts', async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const schema = definePromptSchema().omit(['id', 'version', 'createdAt', 'updatedAt']);
+      const data = await schema.validate(request.body, { abortEarly: false, stripUnknown: true });
+      const { projectId } = request.params as any;
+      const prompt = await promptService.createPrompt({ ...data, projectId });
+      return reply.status(201).send(prompt);
+    } catch (err) {
+      if (err instanceof yup.ValidationError) {
+        return reply.status(400).send({ error: 'Validation failed', details: err.errors });
+      }
+      throw err;
+    }
+  });
+
+  // PUT /api/prompts/:id
+  fastify.put('/api/prompts/:id', async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const { id } = request.params as any;
+      const schema = definePromptSchema().omit(['id', 'projectId', 'createdAt', 'updatedAt']);
+      const updates = await schema.validate(request.body, { abortEarly: false, stripUnknown: true });
+      const updated = await promptService.updatePrompt(id, updates);
+      if (!updated) return reply.status(404).send({ error: 'Not found' });
+      return reply.send(updated);
+    } catch (err) {
+      if (err instanceof yup.ValidationError) {
+        return reply.status(400).send({ error: 'Validation failed', details: err.errors });
+      }
+      throw err;
+    }
+  });
+
+  // DELETE /api/prompts/:id
+  fastify.delete('/api/prompts/:id', async (request: FastifyRequest, reply: FastifyReply) => {
+    const { id } = request.params as any;
+    await promptService.deletePrompt(id);
+    return reply.status(204).send();
+  });
+
+  // GET /api/prompts/:id/history
+  fastify.get('/api/prompts/:id/history', async (request: FastifyRequest, reply: FastifyReply) => {
+    const { id } = request.params as any;
+    const history = await promptService.getPromptHistory(id);
+    return reply.send(history);
+  });
+
+  // POST /api/prompts/:id/restore
+  fastify.post('/api/prompts/:id/restore', async (request: FastifyRequest, reply: FastifyReply) => {
+    const { id } = request.params as any;
+    const { version } = request.body as any;
+    if (typeof version !== 'number') {
+      return reply.status(400).send({ error: 'Missing or invalid version' });
+    }
+    const restored = await promptService.restorePromptFromHistory(id, version);
+    if (!restored) return reply.status(404).send({ error: 'Not found' });
+    return reply.send(restored);
+  });
+}

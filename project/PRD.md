@@ -107,6 +107,7 @@ Prompt Kitchen is a web-based application designed to streamline the development
 | Testing | Jest |
 | Linting | ESLint |
 | HTTP Client | Native `fetch` API |
+| Validation | Yup (shared package, used on both backend and frontend) |
 
 ### 4.2. Architecture & Design
 
@@ -140,12 +141,28 @@ The application's data is structured around five core entities, with relationshi
 | **TestSuiteRun** | `id`, `test_suite_id`, `prompt_history_id`, `run_at`, `status`, `pass_percentage` | Represents a single execution of a full test suite against a specific prompt version. `status` can be `PENDING`, `RUNNING`, `COMPLETED`, or `ERROR`. |
 | **TestResult** | `id`, `test_suite_run_id`, `test_case_id`, `actual_output`, `status` | Records the outcome of a single test case. `actual_output` stores the string or JSON response from the LLM. `status` can be `PASS` or `FAIL`. |
 
-### 4.4. Security
+### 4.4. Input Validation
+
+- All user inputs must be validated both on the backend and frontend using schemas defined with the `yup` library.
+- Validation schemas will live in the `shared` package and will be imported by both backend and frontend code.
+- Validation will be enforced for all API endpoints and UI forms.
+- All backend API endpoints must validate incoming request data (body, params, query) using the shared validation schemas before processing.
+- All frontend API requests must validate user input using the shared validation schemas before sending data to the backend.
+- Validation errors must be handled gracefully and surfaced to the user with clear messages.
+- All new backend and frontend features must demonstrate use of the shared validation schemas in their implementation and tests.
+
+### 4.5. Shared Validation Library
+
+- The shared package will export validation schemas for all DTOs/entities (User, Project, Prompt, etc.) using `yup`.
+- These schemas will be the single source of truth for input validation across the stack.
+- Validation logic will be kept in sync with DTO definitions.
+
+### 4.6. Security
 
 - User authentication tokens will be returned by the backend as a bearer token (JWT) and must be stored in browser local storage by the frontend. Cookies will NOT be used for authentication. All API requests from the frontend to the backend must use the Authorization: Bearer <token> header.
 - All sensitive credentials (like API keys) must be stored on the backend and never exposed to the client.
 
-### 4.5. Database Connector Pattern (Best Practice)
+### 4.7. Database Connector Pattern (Best Practice)
 
 - All database access must use a class-based connector pattern. The connector class should be instantiated with configuration (e.g., SQLite filename) and expose a `knex` instance for queries.
 - All repositories and services must accept a database connector instance via their constructor (manual dependency injection). No global singletons should be used except for the production connector.

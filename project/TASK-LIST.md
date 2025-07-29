@@ -62,8 +62,8 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 - ✅ 2.2.5. Implement a middleware/decorator to protect authenticated routes.
 
 ### 2.3. Project Management (PROJ-01)
-- [ ] 2.3.1. Create a `ProjectRepository` class for `projects` table DB interactions.
-- [ ] 2.3.2. Create a `ProjectService` class for business logic.
+- ✅ 2.3.1. Create a `ProjectRepository` class for `projects` table DB interactions.
+- ✅ 2.3.2. Create a `ProjectService` class for business logic.
 - [ ] 2.3.3. Create RESTful API endpoints for projects (CRUD operations).
     - [ ] `GET /api/projects`
     - [ ] `POST /api/projects`

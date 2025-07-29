@@ -51,4 +51,14 @@ describe('ProjectService', () => {
     const fetched = await service.getProjectById(created.id);
     expect(fetched).toBeNull();
   });
+
+  it('should not update a non-existent project', async () => {
+    const updated = await service.updateProject('nonexistent', { name: 'X' });
+    expect(updated).toBeNull();
+  });
+
+  it('should return null for non-existent project', async () => {
+    const fetched = await service.getProjectById('doesnotexist');
+    expect(fetched).toBeNull();
+  });
 });

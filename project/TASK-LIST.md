@@ -65,13 +65,13 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 ### 2.3. Project Management (PROJ-01)
 - ✅ 2.3.1. Create a `ProjectRepository` class for `projects` table DB interactions.
 - ✅ 2.3.2. Create a `ProjectService` class for business logic.
-- [ ] 2.3.3. Create RESTful API endpoints for projects (CRUD operations).
-    - [ ] `GET /api/projects`
-    - [ ] `POST /api/projects`
-    - [ ] `GET /api/projects/:id`
-    - [ ] `PUT /api/projects/:id`
-    - [ ] `DELETE /api/projects/:id`
-- [ ] 2.3.4. Add unit tests for `ProjectService`.
+- ✅ 2.3.3. Create RESTful API endpoints for projects (CRUD operations).
+    - ✅ `GET /api/projects`
+    - ✅ `POST /api/projects`
+    - ✅ `GET /api/projects/:id`
+    - ✅ `PUT /api/projects/:id`
+    - ✅ `DELETE /api/projects/:id`
+- ✅ 2.3.4. Add unit tests for `ProjectService`.
 
 ### 2.4. Prompt Management (PRMPT-01, PRMPT-02, PRMPT-03, PRMPT-04)
 - [ ] 2.4.1. Create `PromptRepository` and `PromptHistoryRepository`.

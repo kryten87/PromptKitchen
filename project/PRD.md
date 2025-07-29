@@ -146,7 +146,10 @@ The application's data is structured around five core entities, with relationshi
 - All user inputs must be validated both on the backend and frontend using schemas defined with the `yup` library.
 - Validation schemas will live in the `shared` package and will be imported by both backend and frontend code.
 - Validation will be enforced for all API endpoints and UI forms.
+- All backend API endpoints must validate incoming request data (body, params, query) using the shared validation schemas before processing.
+- All frontend API requests must validate user input using the shared validation schemas before sending data to the backend.
 - Validation errors must be handled gracefully and surfaced to the user with clear messages.
+- All new backend and frontend features must demonstrate use of the shared validation schemas in their implementation and tests.
 
 ### 4.5. Shared Validation Library
 

@@ -113,11 +113,11 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 - ✅ 2.6.6. Add unit tests for `ExecutionService` and `EvaluationService`.
 
 ### 2.7. OpenAI API Integration
-- [ ] 2.7.1. Implement the OpenAI API integration in the `LLMService`.
-    - [ ] 2.7.1.1. Add configuration for the OpenAI API key and endpoint (from environment variables).
-    - [ ] 2.7.1.2. Implement methods to send prompt requests to the OpenAI API and handle responses.
-    - [ ] 2.7.1.3. Add error handling and logging for API failures.
-    - [ ] 2.7.1.4. Add unit tests for the OpenAI integration logic.
+- ✅ 2.7.1. Implement the OpenAI API integration in the `LLMService`.
+    - ✅ 2.7.1.1. Add configuration for the OpenAI API key and endpoint (from environment variables).
+    - ✅ 2.7.1.2. Implement methods to send prompt requests to the OpenAI API and handle responses.
+    - ✅ 2.7.1.3. Add error handling and logging for API failures.
+    - ✅ 2.7.1.4. Add unit tests for the OpenAI integration logic.
 
 ---
 

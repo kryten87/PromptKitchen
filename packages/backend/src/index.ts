@@ -7,6 +7,7 @@ import Fastify from 'fastify';
 import { registerAuthController } from './AuthController';
 import { DatabaseConnector } from './db/db';
 import { runMigrations } from './db/migrate';
+import { registerTestSuiteRoutes } from './TestSuiteController';
 import { UserRepository } from './UserRepository';
 import { UserService } from './UserService';
 
@@ -34,6 +35,7 @@ const userService = new UserService({
 });
 
 registerAuthController(server, { userService });
+registerTestSuiteRoutes(server, dbConnector);
 
 // Register Google OAuth2
 server.register(fastifyOauth2, {

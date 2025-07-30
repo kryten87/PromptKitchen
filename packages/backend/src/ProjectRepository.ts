@@ -11,7 +11,9 @@ export class ProjectRepository {
 
   async getById(id: string): Promise<Project | null> {
     const row = await this.knex('projects').where({ id }).first();
-    if (!row) return null;
+    if (!row) {
+      return null;
+    }
     return {
       id: row.id,
       userId: row.user_id,
@@ -46,7 +48,9 @@ export class ProjectRepository {
       updated_at: now,
     });
     const result = await this.getById(id);
-    if (!result) throw new Error('Failed to create project');
+    if (!result) {
+      throw new Error('Failed to create project');
+    }
     return result;
   }
 

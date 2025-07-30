@@ -8,7 +8,9 @@ export async function registerProjectRoutes(fastify: FastifyInstance, projectSer
   fastify.get('/api/projects', async (request: FastifyRequest, reply: FastifyReply) => {
     // TODO: get userId from session/auth
     const userId = (request as any).user?.id;
-    if (!userId) return reply.status(401).send({ error: 'Unauthorized' });
+    if (!userId) {
+      return reply.status(401).send({ error: 'Unauthorized' });
+    }
     const projects = await projectService.getProjectsForUser(userId);
     return reply.send(projects);
   });
@@ -20,7 +22,9 @@ export async function registerProjectRoutes(fastify: FastifyInstance, projectSer
       const data = await schema.validate(request.body, { abortEarly: false, stripUnknown: true });
       // TODO: get userId from session/auth
       const userId = (request as any).user?.id;
-      if (!userId) return reply.status(401).send({ error: 'Unauthorized' });
+      if (!userId) {
+        return reply.status(401).send({ error: 'Unauthorized' });
+      }
       const project = await projectService.createProject({ ...data, userId });
       return reply.status(201).send(project);
     } catch (err) {
@@ -35,7 +39,9 @@ export async function registerProjectRoutes(fastify: FastifyInstance, projectSer
   fastify.get('/api/projects/:id', async (request: FastifyRequest, reply: FastifyReply) => {
     const { id } = request.params as any;
     const project = await projectService.getProjectById(id);
-    if (!project) return reply.status(404).send({ error: 'Not found' });
+    if (!project) {
+      return reply.status(404).send({ error: 'Not found' });
+    }
     return reply.send(project);
   });
 
@@ -46,7 +52,9 @@ export async function registerProjectRoutes(fastify: FastifyInstance, projectSer
       const schema = defineProjectSchema().omit(['id', 'userId', 'createdAt', 'updatedAt']);
       const updates = await schema.validate(request.body, { abortEarly: false, stripUnknown: true });
       const updated = await projectService.updateProject(id, updates);
-      if (!updated) return reply.status(404).send({ error: 'Not found' });
+      if (!updated) {
+        return reply.status(404).send({ error: 'Not found' });
+      }
       return reply.send(updated);
     } catch (err) {
       if (err instanceof yup.ValidationError) {

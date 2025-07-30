@@ -11,7 +11,9 @@ export class TestSuiteRepository {
 
   async getById(id: string): Promise<TestSuite | null> {
     const row = await this.knex('test_suites').where({ id }).first();
-    if (!row) return null;
+    if (!row) {
+      return null;
+    }
     return {
       id: row.id,
       promptId: row.prompt_id,
@@ -43,7 +45,9 @@ export class TestSuiteRepository {
       updated_at: now,
     });
     const result = await this.getById(id);
-    if (!result) throw new Error('Failed to create test suite');
+    if (!result) {
+      throw new Error('Failed to create test suite');
+    }
     return result;
   }
 

@@ -1,13 +1,8 @@
-import React from 'react';
-
-const AboutPage: React.FC = () => {
+export default function AboutPage() {
   return (
     <div>
-      <h1 className="text-3xl font-bold underline">
-        About Page
-      </h1>
+      <h1 className="text-3xl font-bold underline">About</h1>
+      <p>This is the about page.</p>
     </div>
   );
-};
-
-export default AboutPage;
+}

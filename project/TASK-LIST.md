@@ -124,9 +124,9 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 ## Phase 3: Frontend Development
 
 ### 3.1. Core UI & Layout
-- [ ] 3.1.1. Create a main application layout component (`AppLayout.tsx`) with a sidebar and main content area.
-- [ ] 3.1.2. Set up a shared `ApiClient` to interact with the backend API.
-- [ ] 3.1.3. Implement state management for user session (e.g., using React Context or a state management library).
+- ✅ 3.1.1. Create a main application layout component (`AppLayout.tsx`) with a sidebar and main content area.
+- ✅ 3.1.2. Set up a shared `ApiClient` to interact with the backend API.
+- ✅ 3.1.3. Implement state management for user session (e.g., using React Context or a state management library).
 
 ### 3.2. Authentication UI (UI-01)
 - [ ] 3.2.1. Create a `LoginPage.tsx`.

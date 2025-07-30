@@ -171,6 +171,7 @@ The application's data is structured around five core entities, with relationshi
 - All repositories and services must accept a database connector instance via their constructor (manual dependency injection). No global singletons should be used except for the production connector.
 - All unit tests for database code must use an in-memory SQLite database (`filename: ':memory:'`) to ensure isolation and speed.
 - Migrations must be run immediately after establishing a database connection, and before any queries are executed.
+- **All test files must use the application's migration system to set up the database schema, rather than custom-built `create table` statements. This ensures schema consistency and prevents drift between test and production environments.**
 - This pattern must be followed for all future database-related code.
 
 ---

@@ -1,6 +1,8 @@
 import { FastifyInstance } from 'fastify';
-import { TestSuiteService } from './TestSuiteService';
 import { DatabaseConnector } from './db/db';
+import { ExecutionService } from './ExecutionService';
+import { LLMService } from './LLMService';
+import { TestSuiteService } from './TestSuiteService';
 
 export async function registerTestSuiteRoutes(fastify: FastifyInstance, db: DatabaseConnector) {
   const service = TestSuiteService.factory(db);
@@ -57,5 +59,43 @@ export async function registerTestSuiteRoutes(fastify: FastifyInstance, db: Data
     const { id } = request.params as any;
     await service.deleteTestCase(id);
     reply.code(204).send();
+  });
+
+  // --- Test Suite Execution Endpoints ---
+  const llmService = new LLMService({ apiKey: process.env.OPENAI_API_KEY || 'sk-test' });
+  const executionService = new ExecutionService({
+    llmService,
+    testCaseRepo: service['testCaseRepo'],
+    db,
+  });
+
+  fastify.post('/api/test-suites/:id/run', async (request, reply) => {
+    const { id } = request.params as any;
+    // For now, fetch prompt text from test suite's prompt (simplified)
+    const suite = await service.getTestSuiteById(id);
+    if (!suite) {
+      return reply.status(404).send({ error: 'Test suite not found' });
+    }
+    // Fetch prompt text (assume promptId exists)
+    const promptRow = await db.knex('prompts').where({ id: suite.promptId }).first();
+    if (!promptRow) {
+      return reply.status(404).send({ error: 'Prompt not found' });
+    }
+    // Fetch latest prompt history for this prompt
+    const promptHistoryRow = await db.knex('prompt_history').where({ prompt_id: suite.promptId }).orderBy('version', 'desc').first();
+    if (!promptHistoryRow) {
+      return reply.status(404).send({ error: 'Prompt history not found' });
+    }
+    const runId = await executionService.startTestSuiteRun(id, promptRow.prompt_text, promptHistoryRow.id);
+    reply.send({ runId });
+  });
+
+  fastify.get('/api/test-suite-runs/:runId', async (request, reply) => {
+    const { runId } = request.params as any;
+    const run = await executionService.getTestSuiteRun(runId);
+    if (!run) {
+      return reply.status(404).send({ error: 'Run not found' });
+    }
+    reply.send(run);
   });
 }

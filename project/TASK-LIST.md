@@ -96,21 +96,28 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 - ✅ 2.5.5. Add unit tests for `TestSuiteService`.
 
 ### 2.6. Prompt Execution & Evaluation (EXEC-01, EXEC-02, EXEC-03, EVAL-01)
-- [ ] 2.6.1. Create an `LLMService` to abstract the connection to the OpenAI API.
-- [ ] 2.6.2. Implement a job queue for asynchronous test suite execution (e.g., using `p-queue` or a more robust solution like BullMQ if scaling is a concern).
-- [ ] 2.6.3. Create an `ExecutionService` that:
-    - [ ] 2.6.3.1. Takes a `testSuiteId` and creates a new `TestSuiteRun`.
-    - [ ] 2.6.3.2. Fetches the test cases, filtering by `run_mode`.
-    - [ ] 2.6.3.3. For each test case, interpolates variables into the prompt text.
-    - [ ] 2.6.3.4. Calls the `LLMService` to get the result.
-    - [ ] 2.6.3.5. Calls an `EvaluationService` to compare the result with the expected output.
-    - [ ] 2.6.3.6. Stores the result in the `test_results` table.
-    - [ ] 2.6.3.7. Updates the `TestSuiteRun` status (`completed`, `failed`).
-- [ ] 2.6.4. Create an `EvaluationService` with methods for exact string match and deep JSON equality.
-- [ ] 2.6.5. Create API endpoints for execution:
-    - [ ] `POST /api/test-suites/:id/run` (starts a new run, returns a `runId`).
-    - [ ] `GET /api/test-suite-runs/:runId` (polls for run status and results).
-- [ ] 2.6.6. Add unit tests for `ExecutionService` and `EvaluationService`.
+- ✅ 2.6.1. Create an `LLMService` to abstract the connection to the OpenAI API.
+- ✅ 2.6.2. Implement a job queue for asynchronous test suite execution (e.g., using `p-queue` or a more robust solution like BullMQ if scaling is a concern).
+- ✅ 2.6.3. Create an `ExecutionService` that:
+    - ✅ 2.6.3.1. Takes a `testSuiteId` and creates a new `TestSuiteRun`.
+    - ✅ 2.6.3.2. Fetches the test cases, filtering by `run_mode`.
+    - ✅ 2.6.3.3. For each test case, interpolates variables into the prompt text.
+    - ✅ 2.6.3.4. Calls the `LLMService` to get the result.
+    - ✅ 2.6.3.5. Calls an `EvaluationService` to compare the result with the expected output.
+    - ✅ 2.6.3.6. Stores the result in the `test_results` table.
+    - ✅ 2.6.3.7. Updates the `TestSuiteRun` status (`completed`, `failed`).
+- ✅ 2.6.4. Create an `EvaluationService` with methods for exact string match and deep JSON equality.
+- ✅ 2.6.5. Create API endpoints for execution:
+    - ✅ `POST /api/test-suites/:id/run` (starts a new run, returns a `runId`).
+    - ✅ `GET /api/test-suite-runs/:runId` (polls for run status and results).
+- ✅ 2.6.6. Add unit tests for `ExecutionService` and `EvaluationService`.
+
+### 2.7. OpenAI API Integration
+- [ ] 2.7.1. Implement the OpenAI API integration in the `LLMService`.
+    - [ ] 2.7.1.1. Add configuration for the OpenAI API key and endpoint (from environment variables).
+    - [ ] 2.7.1.2. Implement methods to send prompt requests to the OpenAI API and handle responses.
+    - [ ] 2.7.1.3. Add error handling and logging for API failures.
+    - [ ] 2.7.1.4. Add unit tests for the OpenAI integration logic.
 
 ---
 

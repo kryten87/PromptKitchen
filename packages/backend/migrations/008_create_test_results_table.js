@@ -5,6 +5,7 @@ exports.up = function(knex) {
     table.string('test_case_id').notNullable().references('id').inTable('test_cases').onDelete('CASCADE');
     table.text('actual_output').notNullable();
     table.string('status').notNullable();
+    table.timestamp('created_at').notNullable().defaultTo(knex.fn.now());
   });
 };
 

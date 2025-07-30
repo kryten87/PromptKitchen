@@ -89,11 +89,11 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 - ✅ 2.4.7. Add unit tests for `PromptService`.
 
 ### 2.5. Test Suite & Case Management (TEST-01, TEST-02, TEST-03, TEST-04)
-- [ ] 2.5.1. Create `TestSuiteRepository` and `TestCaseRepository`.
-- [ ] 2.5.2. Create a `TestSuiteService` for business logic.
-- [ ] 2.5.3. Create RESTful API endpoints for test suites (CRUD).
-- [ ] 2.5.4. Create RESTful API endpoints for test cases (CRUD within a suite).
-- [ ] 2.5.5. Add unit tests for `TestSuiteService`.
+- ✅ 2.5.1. Create `TestSuiteRepository` and `TestCaseRepository`.
+- ✅ 2.5.2. Create a `TestSuiteService` for business logic.
+- ✅ 2.5.3. Create RESTful API endpoints for test suites (CRUD).
+- ✅ 2.5.4. Create RESTful API endpoints for test cases (CRUD within a suite).
+- ✅ 2.5.5. Add unit tests for `TestSuiteService`.
 
 ### 2.6. Prompt Execution & Evaluation (EXEC-01, EXEC-02, EXEC-03, EVAL-01)
 - [ ] 2.6.1. Create an `LLMService` to abstract the connection to the OpenAI API.

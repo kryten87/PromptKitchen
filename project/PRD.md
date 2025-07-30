@@ -118,7 +118,7 @@ Prompt Kitchen is a web-based application designed to streamline the development
 - **Dependency Injection**: Manual dependency injection will be used to promote modularity and testability. No DI frameworks.
 - **Static Factory Pattern**: For all new services that require dependency injection, add a static `factory` method to the service class to encapsulate instantiation of dependencies. Do not use separate factory files. Write unit tests for each factory method.
 - **Test Consolidation**: Always place unit tests for static factory methods in the main `*.spec.ts` file for the class, not in a separate file. This keeps related tests together and improves maintainability.
-- **Code Style**: Logic will be encapsulated in classes where appropriate. Small, pure functions with descriptive names are preferred.
+- **Code Style**: Logic will be encapsulated in classes where appropriate. Small, pure functions with descriptive names are preferred. **Single-line `if` statements are not allowed; always use a code block for `if` statements.**
 - **Unit Testing**: Unit tests will be written concurrently with feature development. As each function or component is created or modified, corresponding unit tests must be created or updated to ensure correctness and prevent regressions.
 - **API Keys**: LLM API keys will be stored securely as environment variables on the server.
 - **Test Files**: All test files must follow the `*.spec.ts` or `*.spec.tsx` naming convention.

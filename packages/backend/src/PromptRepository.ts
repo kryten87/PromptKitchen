@@ -11,7 +11,9 @@ export class PromptRepository {
 
   async getById(id: string): Promise<Prompt | null> {
     const row = await this.knex('prompts').where({ id }).first();
-    if (!row) return null;
+    if (!row) {
+      return null;
+    }
     return {
       id: row.id,
       projectId: row.project_id,
@@ -49,7 +51,9 @@ export class PromptRepository {
       updated_at: now,
     });
     const result = await this.getById(id);
-    if (!result) throw new Error('Failed to create prompt');
+    if (!result) {
+      throw new Error('Failed to create prompt');
+    }
     return result;
   }
 

@@ -11,7 +11,9 @@ export class TestCaseRepository {
 
   async getById(id: string): Promise<TestCase | null> {
     const row = await this.knex('test_cases').where({ id }).first();
-    if (!row) return null;
+    if (!row) {
+      return null;
+    }
     return {
       id: row.id,
       testSuiteId: row.test_suite_id,
@@ -50,7 +52,9 @@ export class TestCaseRepository {
       updated_at: now,
     });
     const result = await this.getById(id);
-    if (!result) throw new Error('Failed to create test case');
+    if (!result) {
+      throw new Error('Failed to create test case');
+    }
     return result;
   }
 

@@ -1,13 +1,8 @@
-import React from 'react';
-
-const HomePage: React.FC = () => {
+export default function HomePage() {
   return (
     <div>
-      <h1 className="text-3xl font-bold underline">
-        Home Page
-      </h1>
+      <h1 className="text-3xl font-bold underline">Home</h1>
+      <p>Welcome to Prompt Kitchen!</p>
     </div>
   );
-};
-
-export default HomePage;
+}

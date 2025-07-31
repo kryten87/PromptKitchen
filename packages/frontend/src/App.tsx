@@ -4,8 +4,8 @@ import { AboutPage } from './pages/AboutPage';
 import { AuthCallback } from './pages/AuthCallback';
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
-import { SessionProvider } from './SessionContext';
 import { ProtectedRoute } from './ProtectedRoute';
+import { SessionProvider } from './SessionContext';
 
 function App() {
   return (

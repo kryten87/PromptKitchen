@@ -1,7 +1,8 @@
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { AppLayout } from './AppLayout';
-import AboutPage from './pages/AboutPage';
-import HomePage from './pages/HomePage';
+import { AboutPage } from './pages/AboutPage';
+import { HomePage } from './pages/HomePage';
+import { LoginPage } from './pages/LoginPage';
 import { SessionProvider } from './SessionContext';
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/login" element={<LoginPage />} />
           </Routes>
         </AppLayout>
       </Router>

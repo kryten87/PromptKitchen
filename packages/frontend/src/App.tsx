@@ -5,6 +5,7 @@ import { AuthCallback } from './pages/AuthCallback';
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
 import { SessionProvider } from './SessionContext';
+import { ProtectedRoute } from './ProtectedRoute';
 
 function App() {
   return (
@@ -14,8 +15,16 @@ function App() {
           sidebar={<div className="p-4 font-bold">Prompt Kitchen</div>}
         >
           <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/about" element={<AboutPage />} />
+            <Route path="/" element={
+              <ProtectedRoute>
+                <HomePage />
+              </ProtectedRoute>
+            } />
+            <Route path="/about" element={
+              <ProtectedRoute>
+                <AboutPage />
+              </ProtectedRoute>
+            } />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
           </Routes>

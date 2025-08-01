@@ -1,7 +1,7 @@
 import type { User } from '@prompt-kitchen/shared/src/dtos';
 import jwt from 'jsonwebtoken';
-import { UserRepository } from './UserRepository';
-import { UserService } from './UserService';
+import { UserRepository } from '../repositories/UserRepository';
+import { UserService } from '../services/UserService';
 
 describe('UserService', () => {
   let userRepository: jest.Mocked<UserRepository>;
@@ -21,7 +21,7 @@ describe('UserService', () => {
       findByEmail: jest.fn(),
       createUser: jest.fn(),
       // ...other methods if needed
-    } as any;
+    } as unknown as jest.Mocked<UserRepository>;
     userService = new UserService({ userRepository, jwtSecret });
   });
 
@@ -60,18 +60,18 @@ describe('UserService', () => {
   describe('generateJwt', () => {
     it('generates a valid JWT', () => {
       const token = userService.generateJwt(user);
-      const decoded = jwt.verify(token, jwtSecret);
-      expect((decoded as any).email).toBe(user.email);
-      expect((decoded as any).id).toBe(user.id);
+      const decoded = jwt.verify(token, jwtSecret) as jwt.JwtPayload;
+      expect(decoded.email).toBe(user.email);
+      expect(decoded.id).toBe(user.id);
     });
   });
 
   describe('verifyJwt', () => {
     it('verifies a valid JWT', () => {
       const token = userService.generateJwt(user);
-      const decoded = userService.verifyJwt(token);
-      expect((decoded as any).email).toBe(user.email);
-      expect((decoded as any).id).toBe(user.id);
+      const decoded = userService.verifyJwt(token) as jwt.JwtPayload;
+      expect(decoded.email).toBe(user.email);
+      expect(decoded.id).toBe(user.id);
     });
 
     it('throws for invalid JWT', () => {

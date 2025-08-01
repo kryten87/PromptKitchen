@@ -1,6 +1,14 @@
 import { TestSuite } from '@prompt-kitchen/shared/src/dtos';
 import { Knex } from 'knex';
-import { DatabaseConnector } from './db/db';
+import { DatabaseConnector } from '../db/db';
+
+interface TestSuiteRow {
+  id: string;
+  prompt_id: string;
+  name: string;
+  created_at: string | Date;
+  updated_at: string | Date;
+}
 
 export class TestSuiteRepository {
   private readonly knex: Knex;
@@ -25,7 +33,7 @@ export class TestSuiteRepository {
 
   async getAllByPromptId(promptId: string): Promise<TestSuite[]> {
     const rows = await this.knex('test_suites').where({ prompt_id: promptId });
-    return rows.map((row: any) => ({
+    return rows.map((row: TestSuiteRow) => ({
       id: row.id,
       promptId: row.prompt_id,
       name: row.name,
@@ -52,10 +60,10 @@ export class TestSuiteRepository {
   }
 
   async update(id: string, updates: Partial<Omit<TestSuite, 'id' | 'promptId' | 'createdAt'>>): Promise<TestSuite | null> {
-    const dbUpdates: any = { ...updates, updated_at: new Date() };
-    if (dbUpdates.promptId) {
-      dbUpdates.prompt_id = dbUpdates.promptId;
-      delete dbUpdates.promptId;
+    const dbUpdates: Partial<TestSuiteRow> = { ...updates, updated_at: new Date() };
+    const updatesTyped = updates as Partial<TestSuite> & { promptId?: string };
+    if (updatesTyped.promptId) {
+      dbUpdates.prompt_id = updatesTyped.promptId;
     }
     await this.knex('test_suites').where({ id }).update(dbUpdates);
     return this.getById(id);

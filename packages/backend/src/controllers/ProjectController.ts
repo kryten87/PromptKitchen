@@ -1,13 +1,17 @@
 import { defineProjectSchema } from '@prompt-kitchen/shared/src/validation';
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import * as yup from 'yup';
-import { ProjectService } from './ProjectService';
+import { ProjectService } from '../services/ProjectService';
+import type { JwtPayload } from '../services/UserService';
+
+interface ProjectIdParams {
+  id: string;
+}
 
 export async function registerProjectRoutes(fastify: FastifyInstance, projectService: ProjectService) {
   // GET /api/projects
   fastify.get('/api/projects', async (request: FastifyRequest, reply: FastifyReply) => {
-    // TODO: get userId from session/auth
-    const userId = (request as any).user?.id;
+    const userId = (request as { user?: JwtPayload }).user?.id;
     if (!userId) {
       return reply.status(401).send({ error: 'Unauthorized' });
     }
@@ -20,8 +24,7 @@ export async function registerProjectRoutes(fastify: FastifyInstance, projectSer
     try {
       const schema = defineProjectSchema().omit(['id', 'createdAt', 'updatedAt']);
       const data = await schema.validate(request.body, { abortEarly: false, stripUnknown: true });
-      // TODO: get userId from session/auth
-      const userId = (request as any).user?.id;
+      const userId = (request as { user?: JwtPayload }).user?.id;
       if (!userId) {
         return reply.status(401).send({ error: 'Unauthorized' });
       }
@@ -36,8 +39,8 @@ export async function registerProjectRoutes(fastify: FastifyInstance, projectSer
   });
 
   // GET /api/projects/:id
-  fastify.get('/api/projects/:id', async (request: FastifyRequest, reply: FastifyReply) => {
-    const { id } = request.params as any;
+  fastify.get('/api/projects/:id', async (request: FastifyRequest<{ Params: ProjectIdParams }>, reply: FastifyReply) => {
+    const { id } = request.params;
     const project = await projectService.getProjectById(id);
     if (!project) {
       return reply.status(404).send({ error: 'Not found' });
@@ -46,9 +49,9 @@ export async function registerProjectRoutes(fastify: FastifyInstance, projectSer
   });
 
   // PUT /api/projects/:id
-  fastify.put('/api/projects/:id', async (request: FastifyRequest, reply: FastifyReply) => {
+  fastify.put('/api/projects/:id', async (request: FastifyRequest<{ Params: ProjectIdParams }>, reply: FastifyReply) => {
     try {
-      const { id } = request.params as any;
+      const { id } = request.params;
       const schema = defineProjectSchema().omit(['id', 'userId', 'createdAt', 'updatedAt']);
       const updates = await schema.validate(request.body, { abortEarly: false, stripUnknown: true });
       const updated = await projectService.updateProject(id, updates);
@@ -65,8 +68,8 @@ export async function registerProjectRoutes(fastify: FastifyInstance, projectSer
   });
 
   // DELETE /api/projects/:id
-  fastify.delete('/api/projects/:id', async (request: FastifyRequest, reply: FastifyReply) => {
-    const { id } = request.params as any;
+  fastify.delete('/api/projects/:id', async (request: FastifyRequest<{ Params: ProjectIdParams }>, reply: FastifyReply) => {
+    const { id } = request.params;
     await projectService.deleteProject(id);
     return reply.status(204).send();
   });

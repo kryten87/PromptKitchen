@@ -1,6 +1,15 @@
 import type { User } from '@prompt-kitchen/shared/src/dtos';
 import type { Knex } from 'knex';
 
+interface UserRow {
+  id: string;
+  email: string;
+  name: string;
+  avatar_url?: string;
+  created_at: string | Date;
+  updated_at: string | Date;
+}
+
 export class UserRepository {
   private knex: Knex;
 
@@ -22,7 +31,7 @@ export class UserRepository {
   }
 
   async findById(id: string): Promise<User | null> {
-    const row = await this.knex('users').where({ id }).first();
+    const row = await this.knex<UserRow>('users').where({ id }).first();
     return row ? this.toUser(row) : null;
   }
 
@@ -30,7 +39,7 @@ export class UserRepository {
     if (!email) {
       throw new Error('findByEmail called with undefined or null email');
     }
-    const row = await this.knex('users').where({ email }).first();
+    const row = await this.knex<UserRow>('users').where({ email }).first();
     return row ? this.toUser(row) : null;
   }
 
@@ -40,7 +49,7 @@ export class UserRepository {
     return this.findById(id);
   }
 
-  private toUser(row: any): User {
+  private toUser(row: UserRow): User {
     return {
       id: row.id,
       email: row.email,

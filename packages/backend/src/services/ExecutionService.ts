@@ -1,10 +1,10 @@
 // ExecutionService.ts
 import { TestResult, TestSuiteRun } from '@prompt-kitchen/shared/src/dtos';
-import { DatabaseConnector } from './db/db';
+import { DatabaseConnector } from '../db/db';
+import { TestCaseRepository } from '../repositories/TestCaseRepository';
+import { TestSuiteRunRepository } from '../repositories/TestSuiteRunRepository';
 import { EvaluationService } from './EvaluationService';
 import { LLMService } from './LLMService';
-import { TestCaseRepository } from './TestCaseRepository';
-import { TestSuiteRunRepository } from './TestSuiteRunRepository';
 
 export class ExecutionService {
   private readonly llmService: LLMService;

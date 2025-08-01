@@ -1,22 +1,26 @@
 import { definePromptSchema } from '@prompt-kitchen/shared/src/validation';
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import * as yup from 'yup';
-import { PromptService } from './PromptService';
+import { PromptService } from '../services/PromptService';
+
+interface ProjectIdParams { projectId: string; }
+interface PromptIdParams { id: string; }
+interface RestoreBody { version: number; }
 
 export async function registerPromptRoutes(fastify: FastifyInstance, promptService: PromptService) {
   // GET /api/projects/:projectId/prompts
-  fastify.get('/api/projects/:projectId/prompts', async (request: FastifyRequest, reply: FastifyReply) => {
-    const { projectId } = request.params as any;
+  fastify.get('/api/projects/:projectId/prompts', async (request: FastifyRequest<{ Params: ProjectIdParams }>, reply: FastifyReply) => {
+    const { projectId } = request.params;
     const prompts = await promptService.getPromptsForProject(projectId);
     return reply.send(prompts);
   });
 
   // POST /api/projects/:projectId/prompts
-  fastify.post('/api/projects/:projectId/prompts', async (request: FastifyRequest, reply: FastifyReply) => {
+  fastify.post('/api/projects/:projectId/prompts', async (request: FastifyRequest<{ Params: ProjectIdParams }>, reply: FastifyReply) => {
     try {
       const schema = definePromptSchema().omit(['id', 'version', 'createdAt', 'updatedAt']);
       const data = await schema.validate(request.body, { abortEarly: false, stripUnknown: true });
-      const { projectId } = request.params as any;
+      const { projectId } = request.params;
       const prompt = await promptService.createPrompt({ ...data, projectId });
       return reply.status(201).send(prompt);
     } catch (err) {
@@ -28,9 +32,9 @@ export async function registerPromptRoutes(fastify: FastifyInstance, promptServi
   });
 
   // PUT /api/prompts/:id
-  fastify.put('/api/prompts/:id', async (request: FastifyRequest, reply: FastifyReply) => {
+  fastify.put('/api/prompts/:id', async (request: FastifyRequest<{ Params: PromptIdParams }>, reply: FastifyReply) => {
     try {
-      const { id } = request.params as any;
+      const { id } = request.params;
       const schema = definePromptSchema().omit(['id', 'projectId', 'createdAt', 'updatedAt']);
       const updates = await schema.validate(request.body, { abortEarly: false, stripUnknown: true });
       const updated = await promptService.updatePrompt(id, updates);
@@ -45,23 +49,23 @@ export async function registerPromptRoutes(fastify: FastifyInstance, promptServi
   });
 
   // DELETE /api/prompts/:id
-  fastify.delete('/api/prompts/:id', async (request: FastifyRequest, reply: FastifyReply) => {
-    const { id } = request.params as any;
+  fastify.delete('/api/prompts/:id', async (request: FastifyRequest<{ Params: PromptIdParams }>, reply: FastifyReply) => {
+    const { id } = request.params;
     await promptService.deletePrompt(id);
     return reply.status(204).send();
   });
 
   // GET /api/prompts/:id/history
-  fastify.get('/api/prompts/:id/history', async (request: FastifyRequest, reply: FastifyReply) => {
-    const { id } = request.params as any;
+  fastify.get('/api/prompts/:id/history', async (request: FastifyRequest<{ Params: PromptIdParams }>, reply: FastifyReply) => {
+    const { id } = request.params;
     const history = await promptService.getPromptHistory(id);
     return reply.send(history);
   });
 
   // POST /api/prompts/:id/restore
-  fastify.post('/api/prompts/:id/restore', async (request: FastifyRequest, reply: FastifyReply) => {
-    const { id } = request.params as any;
-    const { version } = request.body as any;
+  fastify.post('/api/prompts/:id/restore', async (request: FastifyRequest<{ Params: PromptIdParams; Body: RestoreBody }>, reply: FastifyReply) => {
+    const { id } = request.params;
+    const { version } = request.body;
     if (typeof version !== 'number') {
       return reply.status(400).send({ error: 'Missing or invalid version' });
     }

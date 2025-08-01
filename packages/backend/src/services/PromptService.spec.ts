@@ -1,9 +1,11 @@
 import { Prompt, PromptHistory } from '@prompt-kitchen/shared/src/dtos';
-import { PromptService } from './PromptService';
+import type { DatabaseConnector } from '../db/db';
+import type { PromptHistoryRepository, PromptRepository } from '../repositories/PromptRepository';
+import { PromptService } from '../services/PromptService';
 
 describe('PromptService (simple mocks)', () => {
-  let promptRepository: jest.Mocked<any>;
-  let promptHistoryRepository: jest.Mocked<any>;
+  let promptRepository: jest.Mocked<PromptRepository>;
+  let promptHistoryRepository: jest.Mocked<PromptHistoryRepository>;
   let promptService: PromptService;
 
   beforeEach(() => {
@@ -13,11 +15,11 @@ describe('PromptService (simple mocks)', () => {
       create: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
-    };
+    } as unknown as jest.Mocked<PromptRepository>;
     promptHistoryRepository = {
       getAllByPromptId: jest.fn(),
       create: jest.fn(),
-    };
+    } as unknown as jest.Mocked<PromptHistoryRepository>;
     promptService = new PromptService(promptRepository, promptHistoryRepository);
   });
 
@@ -94,10 +96,10 @@ describe('PromptService (simple mocks)', () => {
 
 describe('PromptService.factory', () => {
   it('should create a PromptService with repositories', () => {
-    const db = { knex: {} } as any;
-    const service = PromptService.factory(db);
+    const db = { knex: {} } as unknown;
+    const service = PromptService.factory(db as unknown as DatabaseConnector);
     expect(service).toBeInstanceOf(PromptService);
-    expect((service as any).promptRepository).toBeDefined();
-    expect((service as any).promptHistoryRepository).toBeDefined();
+    expect((service as unknown as { promptRepository: unknown }).promptRepository).toBeDefined();
+    expect((service as unknown as { promptHistoryRepository: unknown }).promptHistoryRepository).toBeDefined();
   });
 });

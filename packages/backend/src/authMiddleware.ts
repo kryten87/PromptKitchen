@@ -1,6 +1,6 @@
 // packages/backend/src/authMiddleware.ts
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import type { UserService } from './UserService';
+import type { UserService } from './services/UserService';
 
 export function createAuthMiddleware(userService: UserService) {
   return async function authMiddleware(request: FastifyRequest, reply: FastifyReply) {

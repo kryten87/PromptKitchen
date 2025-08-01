@@ -1,10 +1,19 @@
 import type { User } from '@prompt-kitchen/shared/src/dtos';
 import jwt from 'jsonwebtoken';
-import { UserRepository } from './UserRepository';
+import { UserRepository } from '../repositories/UserRepository';
 
 export interface UserServiceDeps {
   userRepository: UserRepository;
   jwtSecret: string;
+}
+
+export interface JwtPayload {
+  id: string;
+  email: string;
+  name: string;
+  avatarUrl?: string;
+  iat?: number;
+  exp?: number;
 }
 
 export class UserService {
@@ -55,8 +64,8 @@ export class UserService {
   /**
    * Verifies a JWT and returns the decoded payload.
    */
-  verifyJwt(token: string): any {
-    return jwt.verify(token, this.jwtSecret);
+  verifyJwt(token: string): JwtPayload {
+    return jwt.verify(token, this.jwtSecret) as JwtPayload;
   }
 
   /**

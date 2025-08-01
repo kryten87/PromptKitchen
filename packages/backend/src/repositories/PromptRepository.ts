@@ -1,6 +1,24 @@
 import { Prompt, PromptHistory } from '@prompt-kitchen/shared/src/dtos';
 import { Knex } from 'knex';
-import { DatabaseConnector } from './db/db';
+import { DatabaseConnector } from '../db/db';
+
+interface PromptRow {
+  id: string;
+  project_id: string;
+  name: string;
+  prompt: string;
+  version: number;
+  created_at: string | Date;
+  updated_at: string | Date;
+}
+
+interface PromptHistoryRow {
+  id: string;
+  prompt_id: string;
+  prompt: string;
+  version: number;
+  created_at: string | Date;
+}
 
 export class PromptRepository {
   private readonly knex: Knex;
@@ -10,7 +28,7 @@ export class PromptRepository {
   }
 
   async getById(id: string): Promise<Prompt | null> {
-    const row = await this.knex('prompts').where({ id }).first();
+    const row = await this.knex<PromptRow>('prompts').where({ id }).first();
     if (!row) {
       return null;
     }
@@ -26,8 +44,8 @@ export class PromptRepository {
   }
 
   async getAllByProjectId(projectId: string): Promise<Prompt[]> {
-    const rows = await this.knex('prompts').where({ project_id: projectId });
-    return rows.map((row: any) => ({
+    const rows = await this.knex<PromptRow>('prompts').where({ project_id: projectId });
+    return rows.map((row: PromptRow) => ({
       id: row.id,
       projectId: row.project_id,
       name: row.name,
@@ -76,8 +94,8 @@ export class PromptHistoryRepository {
   }
 
   async getAllByPromptId(promptId: string): Promise<PromptHistory[]> {
-    const rows = await this.knex('prompt_history').where({ prompt_id: promptId }).orderBy('version', 'desc');
-    return rows.map((row: any) => ({
+    const rows = await this.knex<PromptHistoryRow>('prompt_history').where({ prompt_id: promptId }).orderBy('version', 'desc');
+    return rows.map((row: PromptHistoryRow) => ({
       id: row.id,
       promptId: row.prompt_id,
       prompt: row.prompt,
@@ -96,7 +114,7 @@ export class PromptHistoryRepository {
       version: history.version,
       created_at: now,
     });
-    const rows = await this.knex('prompt_history').where({ id });
+    const rows = await this.knex<PromptHistoryRow>('prompt_history').where({ id });
     const row = rows[0];
     return {
       id: row.id,

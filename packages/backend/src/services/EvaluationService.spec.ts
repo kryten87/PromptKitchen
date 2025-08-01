@@ -1,4 +1,4 @@
-import { EvaluationService } from './EvaluationService';
+import { EvaluationService } from '../services/EvaluationService';
 
 describe('EvaluationService', () => {
   it('exactStringMatch returns true for exact match', () => {

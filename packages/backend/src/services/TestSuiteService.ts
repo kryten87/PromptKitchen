@@ -1,6 +1,7 @@
 import { TestCase, TestSuite } from '@prompt-kitchen/shared/src/dtos';
-import { TestCaseRepository } from './TestCaseRepository';
-import { TestSuiteRepository } from './TestSuiteRepository';
+import type { DatabaseConnector } from '../db/db';
+import { TestCaseRepository } from '../repositories/TestCaseRepository';
+import { TestSuiteRepository } from '../repositories/TestSuiteRepository';
 
 export class TestSuiteService {
   private readonly testSuiteRepo: TestSuiteRepository;
@@ -11,7 +12,7 @@ export class TestSuiteService {
     this.testCaseRepo = testCaseRepo;
   }
 
-  static factory(db: any): TestSuiteService {
+  static factory(db: DatabaseConnector): TestSuiteService {
     return new TestSuiteService(
       new TestSuiteRepository(db),
       new TestCaseRepository(db)

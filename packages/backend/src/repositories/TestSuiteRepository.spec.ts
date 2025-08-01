@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import { DatabaseConnector } from './db/db';
-import { TestCaseRepository } from './TestCaseRepository';
-import { TestSuiteRepository } from './TestSuiteRepository';
+import { DatabaseConnector } from '../db/db';
+import { TestCaseRepository } from '../repositories/TestCaseRepository';
+import { TestSuiteRepository } from '../repositories/TestSuiteRepository';
 
 let db: DatabaseConnector;
 let suiteRepo: TestSuiteRepository;
@@ -12,7 +12,7 @@ const TEST_DB_PATH = path.join(__dirname, '../../dev.test.suite.sqlite3');
 
 async function runMigrations(db: DatabaseConnector) {
   await db.knex.migrate.latest({
-    directory: path.join(__dirname, '../migrations'),
+    directory: path.join(__dirname, '../../migrations'),
   });
 }
 

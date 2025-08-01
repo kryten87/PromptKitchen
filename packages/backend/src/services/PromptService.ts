@@ -1,6 +1,6 @@
 import { Prompt, PromptHistory } from '@prompt-kitchen/shared/src/dtos';
-import { PromptHistoryRepository, PromptRepository } from './PromptRepository';
-import { DatabaseConnector } from './db/db';
+import { DatabaseConnector } from '../db/db';
+import { PromptHistoryRepository, PromptRepository } from '../repositories/PromptRepository';
 
 export class PromptService {
   private readonly promptRepository: PromptRepository;
@@ -40,10 +40,8 @@ export class PromptService {
     if (!current) return null;
     // Increment version if prompt text is updated
     let newVersion = current.version;
-    let updatedPrompt = current.prompt;
     if (updates.prompt && updates.prompt !== current.prompt) {
       newVersion = current.version + 1;
-      updatedPrompt = updates.prompt;
       updates.version = newVersion;
     }
     const updated = await this.promptRepository.update(id, updates);

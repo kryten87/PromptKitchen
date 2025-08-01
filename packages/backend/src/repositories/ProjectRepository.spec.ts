@@ -1,5 +1,5 @@
-import { DatabaseConnector } from './db/db';
-import { ProjectRepository } from './ProjectRepository';
+import { DatabaseConnector } from '../db/db';
+import { ProjectRepository } from '../repositories/ProjectRepository';
 
 describe('ProjectRepository', () => {
   let db: DatabaseConnector;

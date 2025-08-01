@@ -1,7 +1,8 @@
 import { TestCase, TestSuite } from '@prompt-kitchen/shared/src/dtos';
-import { TestCaseRepository } from './TestCaseRepository';
-import { TestSuiteRepository } from './TestSuiteRepository';
-import { TestSuiteService } from './TestSuiteService';
+import type { DatabaseConnector } from '../db/db';
+import { TestCaseRepository } from '../repositories/TestCaseRepository';
+import { TestSuiteRepository } from '../repositories/TestSuiteRepository';
+import { TestSuiteService } from '../services/TestSuiteService';
 
 describe('TestSuiteService', () => {
   let testSuiteRepo: jest.Mocked<TestSuiteRepository>;
@@ -32,19 +33,19 @@ describe('TestSuiteService', () => {
       create: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
-    } as any;
+    } as unknown as jest.Mocked<TestSuiteRepository>;
     testCaseRepo = {
       getById: jest.fn(),
       getAllByTestSuiteId: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
-    } as any;
+    } as unknown as jest.Mocked<TestCaseRepository>;
     service = new TestSuiteService(testSuiteRepo, testCaseRepo);
   });
 
   it('factory method creates a service instance', () => {
-    const db = {} as any;
+    const db = {} as unknown as DatabaseConnector;
     const svc = TestSuiteService.factory(db);
     expect(svc).toBeInstanceOf(TestSuiteService);
   });

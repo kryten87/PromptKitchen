@@ -1,5 +1,5 @@
 import { Project } from '@prompt-kitchen/shared/src/dtos';
-import { ProjectRepository } from './ProjectRepository';
+import { ProjectRepository } from '../repositories/ProjectRepository';
 
 export class ProjectService {
   private readonly projectRepository: ProjectRepository;

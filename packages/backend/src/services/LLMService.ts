@@ -18,7 +18,7 @@ export interface LLMRequest {
 
 export interface LLMResponse {
   output: string;
-  raw?: any;
+  raw?: unknown;
 }
 
 export class LLMService {
@@ -43,29 +43,30 @@ export class LLMService {
       temperature: request.temperature ?? 0.7,
       max_tokens: request.maxTokens ?? 512
     };
-    try {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-      });
-      if (!res.ok) {
-        const error = await res.text();
-        // Log error for debugging
-        console.error('OpenAI API error:', res.status, error);
-        throw new Error(`OpenAI API error: ${res.status} ${error}`);
-      }
-      const data = await res.json();
-      // Type assertion because fetch returns unknown
-      const output = (data as any).choices?.[0]?.message?.content ?? '';
-      return { output, raw: data };
-    } catch (err) {
-      // Log error for debugging
-      console.error('LLMService.completePrompt error:', err);
-      throw err;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${this.apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      const error = await res.text();
+      throw new Error(`OpenAI API error: ${res.status} ${error}`);
     }
+    const data: unknown = await res.json();
+    // Type assertion because fetch returns unknown
+    const output =
+      typeof data === 'object' &&
+      data !== null &&
+      'choices' in data &&
+      Array.isArray((data as { choices?: unknown }).choices) &&
+      (data as { choices: Array<{ message?: { content?: string } }> }).choices.length > 0 &&
+      (data as { choices: Array<{ message?: { content?: string } }> }).choices[0].message &&
+      typeof (data as { choices: Array<{ message: { content?: string } }> }).choices[0].message.content === 'string'
+        ? (data as { choices: Array<{ message: { content: string } }> }).choices[0].message.content
+        : '';
+    return { output, raw: data };
   }
 }

@@ -1,6 +1,6 @@
 import path from 'path';
-import { TestSuiteRunRepository } from './TestSuiteRunRepository';
-import { DatabaseConnector } from './db/db';
+import { DatabaseConnector } from '../db/db';
+import { TestSuiteRunRepository } from '../repositories/TestSuiteRunRepository';
 
 // Use a real DatabaseConnector with an in-memory SQLite DB for testing
 const db = new DatabaseConnector({ filename: ':memory:' });
@@ -10,7 +10,7 @@ describe('TestSuiteRunRepository', () => {
 
   beforeAll(async () => {
     // Run all migrations instead of manually creating tables
-    const migrationsDir = path.resolve(__dirname, '../migrations');
+    const migrationsDir = path.resolve(__dirname, '../../migrations');
     await db.knex.migrate.latest({ directory: migrationsDir });
   });
 

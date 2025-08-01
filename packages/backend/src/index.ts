@@ -74,8 +74,9 @@ server.get('/', async () => {
 async function start() {
   await runMigrations(dbConnector); // Run DB migrations after connection
   try {
-    await server.listen({ port: Number(process.env.PORT) || 3001, host: '0.0.0.0' });
-    server.log.info('Server started');
+    const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+    await server.listen({ port, host: '0.0.0.0' });
+    server.log.info(`Server started on port ${port}`);
   } catch (err) {
     server.log.error(err);
     process.exit(1);

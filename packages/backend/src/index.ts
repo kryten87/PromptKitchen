@@ -67,15 +67,26 @@ server.register(fastifyOauth2, {
 server.get('/auth/google/callback', async function (request, reply) {
   server.log.error({ request }, 'incoming request to auth/google/callback');
   const token = await this.googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(request) as any;
+  console.log('........... got token', token);
+  if (token) {
+    const res = token.token;
+    const base64Url = res.id_token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = Buffer.from(base64, 'base64').toString('utf8');
+    const decoded = JSON.parse(jsonPayload);
+    console.log('..........decoded token', decoded);
+  }
   let userInfo;
   // Always try userinfo endpoint first, fallback to id_token if needed
   try {
-    server.log.error({ token }, 'calling userinfo endpoint');
-    const userInfoRes = await fetch('https://openidconnect.googleapis.com/v1/userinfo', {
+    const userInfoRes = await fetch('https://openidconnect.googleapis.com/v2/userinfo', {
       headers: { Authorization: `Bearer ${token.access_token}` },
     });
+    console.log('.............got user info response', userInfoRes);
+
     userInfo = await userInfoRes.json();
-    server.log.error({ userInfo }, 'Response from google userinfo endpoint');
+    console.log('.............got user info', userInfo);
+
     if (!userInfo.email) {
       // If userinfo endpoint fails or doesn't return email, try id_token
       if (token.id_token) {
@@ -91,11 +102,14 @@ server.get('/auth/google/callback', async function (request, reply) {
     }
   } catch (err) {
     // If fetch fails, fallback to id_token
+    console.log('..........caught error');
+    console.log('..........checking token', token);
     if (token.id_token) {
       const base64Url = token.id_token.split('.')[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
       const jsonPayload = Buffer.from(base64, 'base64').toString('utf8');
       userInfo = JSON.parse(jsonPayload);
+      console.log('..........decoded token', userInfo);
     } else {
       userInfo = {};
     }

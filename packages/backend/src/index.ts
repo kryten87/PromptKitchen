@@ -54,17 +54,22 @@ server.register(fastifyOauth2, {
 
 // Google OAuth callback route
 server.get('/auth/google/callback', async function (request, reply) {
-  // The OAuth2Token type is not specific to Google, so we need to cast to any to access access_token
   const token = await this.googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(request) as any;
-  // Fetch user info from Google
   const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
     headers: { Authorization: `Bearer ${token.access_token}` },
   });
   const userInfo = await userInfoRes.json();
-  // TODO: Create or update user in DB here
-  // TODO: Issue a JWT for the user and return it to the frontend (not implemented in this step)
-  // For now, just redirect to frontend with a placeholder
-  reply.redirect('/');
+  // Create or update user in DB
+  const user = await userService.findOrCreateGoogleUser({
+    id: userInfo.id,
+    email: userInfo.email,
+    name: userInfo.name,
+    avatarUrl: userInfo.picture,
+  });
+  // Issue a JWT for the user
+  const jwt = userService.generateJwt(user);
+  // Redirect to frontend callback with token
+  reply.redirect(`/auth/callback?token=${jwt}`);
 });
 
 server.get('/', async () => {

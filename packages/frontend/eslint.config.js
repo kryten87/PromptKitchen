@@ -4,9 +4,3 @@ export default {
     'node_modules/',
   ],
 };
-
-module.exports = {
-  rules: {
-    curly: ["error", "all"],
-  },
-};

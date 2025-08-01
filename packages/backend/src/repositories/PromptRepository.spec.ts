@@ -1,6 +1,7 @@
 import { Prompt } from '@prompt-kitchen/shared/src/dtos';
 import { DatabaseConnector } from '../db/db';
 import { PromptRepository } from '../repositories/PromptRepository';
+import { runMigrations } from '../db/migrate';
 
 describe('PromptRepository', () => {
   let db: DatabaseConnector;
@@ -9,25 +10,8 @@ describe('PromptRepository', () => {
 
   beforeAll(async () => {
     db = new DatabaseConnector({ filename: ':memory:' });
+    await runMigrations(db);
     promptRepository = new PromptRepository(db);
-    // Create projects table and prompts table for testing
-    await db.knex.schema.createTable('projects', table => {
-      table.string('id').primary();
-      table.string('user_id').notNullable();
-      table.string('name').notNullable();
-      table.string('description');
-      table.timestamp('created_at').notNullable();
-      table.timestamp('updated_at').notNullable();
-    });
-    await db.knex.schema.createTable('prompts', table => {
-      table.string('id').primary();
-      table.string('project_id').notNullable();
-      table.string('name').notNullable();
-      table.text('prompt').notNullable();
-      table.integer('version').notNullable();
-      table.timestamp('created_at').notNullable();
-      table.timestamp('updated_at').notNullable();
-    });
     projectId = 'proj1';
     await db.knex('projects').insert({
       id: projectId,

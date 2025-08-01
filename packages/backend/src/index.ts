@@ -97,7 +97,10 @@ server.get('/auth/google/callback', async function (request, reply) {
   });
   server.log.info({ userInfo, user }, 'Google OAuth callback user info');
   const jwt = userService.generateJwt(user);
-  reply.redirect(`/auth/callback?token=${jwt}`);
+  // Redirect to frontend callback with token
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+  server.log.info({ frontendUrl, jwt }, 'Redirecting to frontend OAuth callback');
+  reply.redirect(`${frontendUrl}/oauth/callback?token=${jwt}`);
 });
 
 server.get('/', async () => {

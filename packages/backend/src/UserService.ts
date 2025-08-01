@@ -21,6 +21,9 @@ export class UserService {
    * @param profile Google profile info
    */
   async findOrCreateGoogleUser(profile: { id: string; email: string; name: string; avatarUrl?: string }): Promise<User> {
+    if (!profile.email) {
+      throw new Error('findOrCreateGoogleUser: profile.email is missing');
+    }
     let user = await this.userRepository.findByEmail(profile.email);
     if (!user) {
       user = await this.userRepository.createUser({

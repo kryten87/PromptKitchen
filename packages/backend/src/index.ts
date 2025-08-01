@@ -40,7 +40,18 @@ registerTestSuiteRoutes(server, dbConnector);
 // Register Google OAuth2
 server.register(fastifyOauth2, {
   name: 'googleOAuth2',
-  scope: ['profile', 'email'],
+  scope: [
+    'openid',
+    'email',
+    'profile',
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile',
+  ],
+  callbackUriParams: {
+    access_type: 'offline',
+    prompt: 'consent',
+    include_granted_scopes: 'true',
+  },
   credentials: {
     client: {
       id: process.env.GOOGLE_CLIENT_ID!,
@@ -54,21 +65,55 @@ server.register(fastifyOauth2, {
 
 // Google OAuth callback route
 server.get('/auth/google/callback', async function (request, reply) {
+  server.log.error({ request }, 'incoming request to auth/google/callback');
   const token = await this.googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(request) as any;
-  const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-    headers: { Authorization: `Bearer ${token.access_token}` },
-  });
-  const userInfo = await userInfoRes.json();
+  let userInfo;
+  // Always try userinfo endpoint first, fallback to id_token if needed
+  try {
+    server.log.error({ token }, 'calling userinfo endpoint');
+    const userInfoRes = await fetch('https://openidconnect.googleapis.com/v1/userinfo', {
+      headers: { Authorization: `Bearer ${token.access_token}` },
+    });
+    userInfo = await userInfoRes.json();
+    server.log.error({ userInfo }, 'Response from google userinfo endpoint');
+    if (!userInfo.email) {
+      // If userinfo endpoint fails or doesn't return email, try id_token
+      if (token.id_token) {
+        const base64Url = token.id_token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = Buffer.from(base64, 'base64').toString('utf8');
+        const decoded = JSON.parse(jsonPayload);
+        // Only use decoded if it has an email
+        if (decoded.email) {
+          userInfo = decoded;
+        }
+      }
+    }
+  } catch (err) {
+    // If fetch fails, fallback to id_token
+    if (token.id_token) {
+      const base64Url = token.id_token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = Buffer.from(base64, 'base64').toString('utf8');
+      userInfo = JSON.parse(jsonPayload);
+    } else {
+      userInfo = {};
+    }
+  }
+  server.log.error({ userInfo }, 'Google OAuth userInfo response');
+  if (!userInfo.email) {
+    server.log.error({ token }, 'Google OAuth token (no email in userInfo)');
+    return reply.status(500).send({ error: 'Google OAuth failed: email not found in user info', userInfo });
+  }
   // Create or update user in DB
   const user = await userService.findOrCreateGoogleUser({
-    id: userInfo.id,
+    id: userInfo.sub || userInfo.id,
     email: userInfo.email,
     name: userInfo.name,
     avatarUrl: userInfo.picture,
   });
-  // Issue a JWT for the user
+  server.log.info({ userInfo, user }, 'Google OAuth callback user info');
   const jwt = userService.generateJwt(user);
-  // Redirect to frontend callback with token
   reply.redirect(`/auth/callback?token=${jwt}`);
 });
 

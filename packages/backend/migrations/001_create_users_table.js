@@ -3,7 +3,7 @@ exports.up = function(knex) {
     table.string('id').primary();
     table.string('email').notNullable().unique();
     table.string('name').notNullable();
-    table.string('avatarUrl');
+    table.string('avatar_url');
     table.string('oauth_provider');
     table.timestamp('created_at').notNullable().defaultTo(knex.fn.now());
     table.timestamp('updated_at').notNullable().defaultTo(knex.fn.now());

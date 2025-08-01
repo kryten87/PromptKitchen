@@ -12,9 +12,11 @@ export class UserRepository {
     const now = new Date();
     const dbUser = {
       ...user,
+      avatar_url: user.avatarUrl, // map camelCase to snake_case
       created_at: now,
       updated_at: now,
     };
+    delete dbUser.avatarUrl;
     await this.knex('users').insert(dbUser);
     return this.findById(user.id) as Promise<User>;
   }
@@ -25,6 +27,9 @@ export class UserRepository {
   }
 
   async findByEmail(email: string): Promise<User | null> {
+    if (!email) {
+      throw new Error('findByEmail called with undefined or null email');
+    }
     const row = await this.knex('users').where({ email }).first();
     return row ? this.toUser(row) : null;
   }
@@ -40,7 +45,7 @@ export class UserRepository {
       id: row.id,
       email: row.email,
       name: row.name,
-      avatarUrl: row.avatarUrl || row.avatar_url,
+      avatarUrl: row.avatar_url,
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at),
     };

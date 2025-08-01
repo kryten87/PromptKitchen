@@ -65,59 +65,28 @@ server.register(fastifyOauth2, {
 
 // Google OAuth callback route
 server.get('/auth/google/callback', async function (request, reply) {
-  server.log.error({ request }, 'incoming request to auth/google/callback');
-  const token = await this.googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(request) as any;
-  console.log('........... got token', token);
-  if (token) {
-    const res = token.token;
-    const base64Url = res.id_token.split('.')[1];
+  server.log.info({ request }, 'incoming request to auth/google/callback');
+  const oauth2Token = await this.googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(request);
+  const idToken = oauth2Token.token.id_token;
+  if (!idToken) {
+    server.log.error({ oauth2Token }, 'Google OAuth failed: no id_token received');
+    return reply.status(500).send({ error: 'Google OAuth failed: no id_token received' });
+  }
+  // Decode user info from id_token
+  let userInfo;
+  try {
+    const base64Url = idToken.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     const jsonPayload = Buffer.from(base64, 'base64').toString('utf8');
-    const decoded = JSON.parse(jsonPayload);
-    console.log('..........decoded token', decoded);
-  }
-  let userInfo;
-  // Always try userinfo endpoint first, fallback to id_token if needed
-  try {
-    const userInfoRes = await fetch('https://openidconnect.googleapis.com/v2/userinfo', {
-      headers: { Authorization: `Bearer ${token.access_token}` },
-    });
-    console.log('.............got user info response', userInfoRes);
-
-    userInfo = await userInfoRes.json();
-    console.log('.............got user info', userInfo);
-
-    if (!userInfo.email) {
-      // If userinfo endpoint fails or doesn't return email, try id_token
-      if (token.id_token) {
-        const base64Url = token.id_token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = Buffer.from(base64, 'base64').toString('utf8');
-        const decoded = JSON.parse(jsonPayload);
-        // Only use decoded if it has an email
-        if (decoded.email) {
-          userInfo = decoded;
-        }
-      }
-    }
+    userInfo = JSON.parse(jsonPayload);
+    server.log.info({ userInfo }, 'Decoded user info from id_token');
   } catch (err) {
-    // If fetch fails, fallback to id_token
-    console.log('..........caught error');
-    console.log('..........checking token', token);
-    if (token.id_token) {
-      const base64Url = token.id_token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = Buffer.from(base64, 'base64').toString('utf8');
-      userInfo = JSON.parse(jsonPayload);
-      console.log('..........decoded token', userInfo);
-    } else {
-      userInfo = {};
-    }
+    server.log.error({ err, idToken }, 'Failed to decode id_token');
+    return reply.status(500).send({ error: 'Google OAuth failed: could not decode id_token' });
   }
-  server.log.error({ userInfo }, 'Google OAuth userInfo response');
   if (!userInfo.email) {
-    server.log.error({ token }, 'Google OAuth token (no email in userInfo)');
-    return reply.status(500).send({ error: 'Google OAuth failed: email not found in user info', userInfo });
+    server.log.error({ userInfo }, 'Google OAuth failed: email not found in id_token');
+    return reply.status(500).send({ error: 'Google OAuth failed: email not found in id_token', userInfo });
   }
   // Create or update user in DB
   const user = await userService.findOrCreateGoogleUser({

@@ -40,7 +40,18 @@ registerTestSuiteRoutes(server, dbConnector);
 // Register Google OAuth2
 server.register(fastifyOauth2, {
   name: 'googleOAuth2',
-  scope: ['profile', 'email'],
+  scope: [
+    'openid',
+    'email',
+    'profile',
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile',
+  ],
+  callbackUriParams: {
+    access_type: 'offline',
+    prompt: 'consent',
+    include_granted_scopes: 'true',
+  },
   credentials: {
     client: {
       id: process.env.GOOGLE_CLIENT_ID!,
@@ -54,17 +65,42 @@ server.register(fastifyOauth2, {
 
 // Google OAuth callback route
 server.get('/auth/google/callback', async function (request, reply) {
-  // The OAuth2Token type is not specific to Google, so we need to cast to any to access access_token
-  const token = await this.googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(request) as any;
-  // Fetch user info from Google
-  const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-    headers: { Authorization: `Bearer ${token.access_token}` },
+  server.log.info({ request }, 'incoming request to auth/google/callback');
+  const oauth2Token = await this.googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(request);
+  const idToken = oauth2Token.token.id_token;
+  if (!idToken) {
+    server.log.error({ oauth2Token }, 'Google OAuth failed: no id_token received');
+    return reply.status(500).send({ error: 'Google OAuth failed: no id_token received' });
+  }
+  // Decode user info from id_token
+  let userInfo;
+  try {
+    const base64Url = idToken.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = Buffer.from(base64, 'base64').toString('utf8');
+    userInfo = JSON.parse(jsonPayload);
+    server.log.info({ userInfo }, 'Decoded user info from id_token');
+  } catch (err) {
+    server.log.error({ err, idToken }, 'Failed to decode id_token');
+    return reply.status(500).send({ error: 'Google OAuth failed: could not decode id_token' });
+  }
+  if (!userInfo.email) {
+    server.log.error({ userInfo }, 'Google OAuth failed: email not found in id_token');
+    return reply.status(500).send({ error: 'Google OAuth failed: email not found in id_token', userInfo });
+  }
+  // Create or update user in DB
+  const user = await userService.findOrCreateGoogleUser({
+    id: userInfo.sub || userInfo.id,
+    email: userInfo.email,
+    name: userInfo.name,
+    avatarUrl: userInfo.picture,
   });
-  const userInfo = await userInfoRes.json();
-  // TODO: Create or update user in DB here
-  // TODO: Issue a JWT for the user and return it to the frontend (not implemented in this step)
-  // For now, just redirect to frontend with a placeholder
-  reply.redirect('/');
+  server.log.info({ userInfo, user }, 'Google OAuth callback user info');
+  const jwt = userService.generateJwt(user);
+  // Redirect to frontend callback with token
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+  server.log.info({ frontendUrl, jwt }, 'Redirecting to frontend OAuth callback');
+  reply.redirect(`${frontendUrl}/oauth/callback?token=${jwt}`);
 });
 
 server.get('/', async () => {
@@ -74,8 +110,9 @@ server.get('/', async () => {
 async function start() {
   await runMigrations(dbConnector); // Run DB migrations after connection
   try {
-    await server.listen({ port: Number(process.env.PORT) || 3001, host: '0.0.0.0' });
-    server.log.info('Server started');
+    const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+    await server.listen({ port, host: '0.0.0.0' });
+    server.log.info(`Server started on port ${port}`);
   } catch (err) {
     server.log.error(err);
     process.exit(1);

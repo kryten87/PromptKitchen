@@ -26,7 +26,7 @@ function App() {
               </ProtectedRoute>
             } />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="/oauth/callback" element={<AuthCallback />} />
           </Routes>
         </AppLayout>
       </Router>

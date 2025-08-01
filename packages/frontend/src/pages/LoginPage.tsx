@@ -4,7 +4,18 @@
  * Provides a button for Google OAuth login (button logic added in next step).
  */
 
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 export function LoginPage() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem('sessionToken');
+    if (token) {
+      navigate('/', { replace: true });
+    }
+  }, [navigate]);
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
       <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-md flex flex-col items-center">

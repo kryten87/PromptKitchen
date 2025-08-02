@@ -23,3 +23,5 @@ using alerts for "are you sure?" prompts
 - failing to use `npm run check` to test
 - too much stopping & asking me if I'd like to continue
 
+# Other thoughts
+- need a way to match results similar to jest matchers

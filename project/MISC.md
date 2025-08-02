@@ -15,3 +15,11 @@ logging system -- frontend & backend
 ensure that access control is working -- person A can only see projects for person A
 
 use LLM to refine fix-problem and use-task-ledger prompts
+
+
+
+# Issues I'm seeing with the prompts
+- failing to check things off
+- failing to use `npm run check` to test
+- too much stopping & asking me if I'd like to continue
+

@@ -1,6 +1,7 @@
 {
   "name": "@prompt-kitchen/backend",
   "version": "1.0.0",
+  "type": "module",
   "main": "dist/index.js",
   "scripts": {
     "dev": "ts-node-dev src/index.ts",

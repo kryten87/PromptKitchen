@@ -6,6 +6,7 @@ import { DashboardPage } from './pages/DashboardPage';
 import { LoginPage } from './pages/LoginPage';
 import { ProtectedRoute } from './ProtectedRoute';
 import { SessionProvider } from './providers/SessionProvider';
+import { ProjectPage } from './pages/ProjectPage';
 
 function App() {
   return (
@@ -28,6 +29,11 @@ function App() {
             <Route path="/about" element={
               <ProtectedRoute>
                 <AboutPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/projects/:projectId" element={
+              <ProtectedRoute>
+                <ProjectPage />
               </ProtectedRoute>
             } />
             <Route path="/login" element={<LoginPage />} />

@@ -2,7 +2,7 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { AppLayout } from './AppLayout';
 import { AboutPage } from './pages/AboutPage';
 import { AuthCallback } from './pages/AuthCallback';
-import { HomePage } from './pages/HomePage';
+import { DashboardPage } from './pages/DashboardPage';
 import { LoginPage } from './pages/LoginPage';
 import { ProtectedRoute } from './ProtectedRoute';
 import { SessionProvider } from './SessionContext';
@@ -17,7 +17,12 @@ function App() {
           <Routes>
             <Route path="/" element={
               <ProtectedRoute>
-                <HomePage />
+                <DashboardPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <DashboardPage />
               </ProtectedRoute>
             } />
             <Route path="/about" element={

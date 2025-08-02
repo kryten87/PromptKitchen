@@ -1,6 +1,6 @@
 import { DatabaseConnector } from '../db/db';
-import { ProjectRepository } from '../repositories/ProjectRepository';
 import { runMigrations } from '../db/migrate';
+import { ProjectRepository } from '../repositories/ProjectRepository';
 
 describe('ProjectRepository', () => {
   let db: DatabaseConnector;

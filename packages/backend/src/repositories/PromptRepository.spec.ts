@@ -1,7 +1,7 @@
 import { Prompt } from '@prompt-kitchen/shared/src/dtos';
 import { DatabaseConnector } from '../db/db';
-import { PromptRepository } from '../repositories/PromptRepository';
 import { runMigrations } from '../db/migrate';
+import { PromptRepository } from '../repositories/PromptRepository';
 
 describe('PromptRepository', () => {
   let db: DatabaseConnector;

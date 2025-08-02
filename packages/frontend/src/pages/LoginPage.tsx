@@ -8,18 +8,11 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export function LoginPage() {
-  // Only run redirect logic in browser and when inside a Router
-  let navigate: ReturnType<typeof useNavigate> | undefined;
-  try {
-    // useNavigate will throw if not in a Router context
-    navigate = useNavigate();
-  } catch {
-    navigate = undefined;
-  }
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Only run in browser and if navigate is available (i.e., inside a Router)
-    if (typeof window === 'undefined' || !navigate) {
+    // Only run in browser
+    if (typeof window === 'undefined') {
       return;
     }
     const token = localStorage.getItem('sessionToken');

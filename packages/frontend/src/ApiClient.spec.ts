@@ -17,7 +17,7 @@ describe('ApiClient', () => {
       ok: true,
       status: 200,
       json: async () => ({ foo: 'bar' })
-    } as any)) as typeof fetch;
+    } as unknown as Response)) as typeof fetch;
   });
 
   it('sends requests with correct headers and returns data', async () => {
@@ -39,7 +39,7 @@ describe('ApiClient', () => {
       ok: false,
       status: 500,
       json: async () => ({})
-    } as any);
+    } as unknown as Response);
     await expect(ApiClient.request('/fail')).rejects.toThrow('API error: 500');
   });
 });

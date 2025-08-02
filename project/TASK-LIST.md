@@ -147,14 +147,14 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
     - ✅ 3.4.2.1. A text area for the prompt text.
     - ✅ 3.4.2.2. A "Save" button.
     - ✅ 3.4.2.3. A "View History" button.
-- [ ] 3.4.3. Integrate PromptEditor into ProjectPage for prompt management.
-    - [ ] 3.4.3.1. Add a "Create New Prompt" button to ProjectPage.
-    - [ ] 3.4.3.2. Add "Edit" and "Delete" buttons to each prompt in the list.
-    - [ ] 3.4.3.3. Implement state management to show/hide PromptEditor and track selected prompt.
-    - [ ] 3.4.3.4. Handle prompt creation (POST to `/api/projects/:projectId/prompts`).
-    - [ ] 3.4.3.5. Handle prompt updates via PromptEditor integration.
-    - [ ] 3.4.3.6. Handle prompt deletion with confirmation dialog.
-    - [ ] 3.4.3.7. Refresh prompt list after create/update/delete operations.
+- ✅ 3.4.3. Integrate PromptEditor into ProjectPage for prompt management.
+    - ✅ 3.4.3.1. Add a "Create New Prompt" button to ProjectPage.
+    - ✅ 3.4.3.2. Add "Edit" and "Delete" buttons to each prompt in the list.
+    - ✅ 3.4.3.3. Implement state management to show/hide PromptEditor and track selected prompt.
+    - ✅ 3.4.3.4. Handle prompt creation (POST to `/api/projects/:projectId/prompts`).
+    - ✅ 3.4.3.5. Handle prompt updates via PromptEditor integration.
+    - ✅ 3.4.3.6. Handle prompt deletion with confirmation dialog.
+    - ✅ 3.4.3.7. Refresh prompt list after create/update/delete operations.
 - [ ] 3.4.4. Implement a `PromptHistoryModal.tsx` to display previous versions and a "Restore" button.
 
 ### 3.5. Test Suite View (UI-03, UI-04)

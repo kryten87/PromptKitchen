@@ -5,7 +5,7 @@ import { AuthCallback } from './pages/AuthCallback';
 import { DashboardPage } from './pages/DashboardPage';
 import { LoginPage } from './pages/LoginPage';
 import { ProtectedRoute } from './ProtectedRoute';
-import { SessionProvider } from './SessionContext';
+import { SessionProvider } from './providers/SessionProvider';
 
 function App() {
   return (

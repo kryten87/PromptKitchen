@@ -4,9 +4,9 @@ import { AboutPage } from './pages/AboutPage';
 import { AuthCallback } from './pages/AuthCallback';
 import { DashboardPage } from './pages/DashboardPage';
 import { LoginPage } from './pages/LoginPage';
+import { ProjectPage } from './pages/ProjectPage';
 import { ProtectedRoute } from './ProtectedRoute';
 import { SessionProvider } from './providers/SessionProvider';
-import { ProjectPage } from './pages/ProjectPage';
 
 function App() {
   return (

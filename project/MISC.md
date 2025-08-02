@@ -16,7 +16,7 @@ ensure that access control is working -- person A can only see projects for pers
 
 use LLM to refine fix-problem and use-task-ledger prompts
 
-
+using alerts for "are you sure?" prompts
 
 # Issues I'm seeing with the prompts
 - failing to check things off

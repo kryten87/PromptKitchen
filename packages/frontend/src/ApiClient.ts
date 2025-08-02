@@ -1,17 +1,24 @@
 // Simple API client for backend communication
 // Handles auth token injection and error handling
 
-export class ApiClient {
-  static baseUrl = '/api'; // Use a static fallback for build/test, Vite will replace in dev
+import type { SessionContextValue } from './contexts/SessionContext';
 
-  static async request<T>(path: string, options: RequestInit = {}): Promise<T> {
-    const token = localStorage.getItem('sessionToken');
+export class ApiClient {
+  private baseUrl = '/api';
+  private session: SessionContextValue | null;
+
+  constructor(session?: SessionContextValue | null) {
+    this.session = session || null;
+  }
+
+  async request<T>(path: string, options: RequestInit = {}): Promise<T> {
+    const token = this.session?.user?.token || localStorage.getItem('sessionToken');
     const headers = {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     };
-    const res = await fetch(`${ApiClient.baseUrl}${path}`, {
+    const res = await fetch(`${this.baseUrl}${path}`, {
       ...options,
       headers,
     });

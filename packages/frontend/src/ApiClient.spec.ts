@@ -21,8 +21,9 @@ describe('ApiClient', () => {
   });
 
   it('sends requests with correct headers and returns data', async () => {
+    const apiClient = new ApiClient();
     localStorage.setItem('sessionToken', 'abc123');
-    const data = await ApiClient.request('/test', { method: 'GET' });
+    const data = await apiClient.request('/test', { method: 'GET' });
     expect(data).toEqual({ foo: 'bar' });
     expect(globalThis.fetch).toHaveBeenCalledWith(
       expect.stringContaining('/test'),
@@ -35,11 +36,12 @@ describe('ApiClient', () => {
   });
 
   it('throws on non-ok response', async () => {
+    const apiClient = new ApiClient();
     (globalThis.fetch as jest.Mock).mockResolvedValueOnce({
       ok: false,
       status: 500,
       json: async () => ({})
     } as unknown as Response);
-    await expect(ApiClient.request('/fail')).rejects.toThrow('API error: 500');
+    await expect(apiClient.request('/fail')).rejects.toThrow('API error: 500');
   });
 });

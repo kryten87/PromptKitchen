@@ -33,7 +33,7 @@
 - **Test Files**: All test files must follow the `*.spec.ts` or `*.spec.tsx` naming convention.
 
 ## Task Completion Checklist
-- After you finish a task from the task list, you **must**:
+- After you finish a task from the task list (eg. when you finish section 1.2.3), you **must**:
   1. Run `npm run check` in the root to ensure all unit tests pass, code is linted & fixed, and all packages build successfully.
   2. Only after `npm run check` passes, mark the task as complete in the task list with a ✅ character.
   3. Never announce a task is finished until these steps are complete.

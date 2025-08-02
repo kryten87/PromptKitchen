@@ -1,6 +1,6 @@
 import { render, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { SessionProvider } from '../SessionContext';
+import { SessionProvider } from '../contexts/SessionContext';
 import { AuthCallback } from './AuthCallback';
 
 // Use jest.mock to mock useNavigate and expose a mock function for assertions

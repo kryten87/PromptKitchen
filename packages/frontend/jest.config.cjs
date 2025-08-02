@@ -4,4 +4,5 @@ module.exports = {
     '^.+\\.(ts|tsx|js|jsx)$': 'babel-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  setupFilesAfterEnv: ['./jest.setup.js'],
 };

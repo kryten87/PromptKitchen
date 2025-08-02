@@ -4,7 +4,7 @@
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { SessionProvider } from './SessionContext';
+import { SessionProvider } from './contexts/SessionContext';
 import { useSession } from './hooks/useSession';
 
 function TestComponent() {

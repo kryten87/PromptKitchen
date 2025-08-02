@@ -5,10 +5,13 @@ dotenv.config();
 import fastifyOauth2 from '@fastify/oauth2';
 import Fastify from 'fastify';
 import { registerAuthController } from './controllers/AuthController';
+import { registerProjectRoutes } from './controllers/ProjectController';
 import { registerTestSuiteRoutes } from './controllers/TestSuiteController';
 import { DatabaseConnector } from './db/db';
 import { runMigrations } from './db/migrate';
+import { ProjectRepository } from './repositories/ProjectRepository';
 import { UserRepository } from './repositories/UserRepository';
+import { ProjectService } from './services/ProjectService';
 import { UserService } from './services/UserService';
 
 // Patch FastifyInstance type to include googleOAuth2
@@ -29,13 +32,16 @@ const server = Fastify({
 const dbFile = process.env.DB_FILE || './dev.sqlite3';
 const dbConnector = new DatabaseConnector({ filename: dbFile });
 const userRepository = new UserRepository(dbConnector);
+const projectRepository = new ProjectRepository(dbConnector);
 const userService = new UserService({
   userRepository,
   jwtSecret: process.env.JWT_SECRET || 'dev-secret',
 });
+const projectService = new ProjectService(projectRepository);
 
 registerAuthController(server, { userService });
 registerTestSuiteRoutes(server, dbConnector);
+registerProjectRoutes(server, projectService, userService);
 
 // Register Google OAuth2
 server.register(fastifyOauth2, {

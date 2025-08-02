@@ -2,10 +2,11 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { AppLayout } from './AppLayout';
 import { AboutPage } from './pages/AboutPage';
 import { AuthCallback } from './pages/AuthCallback';
-import { HomePage } from './pages/HomePage';
+import { DashboardPage } from './pages/DashboardPage';
 import { LoginPage } from './pages/LoginPage';
 import { ProtectedRoute } from './ProtectedRoute';
-import { SessionProvider } from './SessionContext';
+import { SessionProvider } from './providers/SessionProvider';
+import { ProjectPage } from './pages/ProjectPage';
 
 function App() {
   return (
@@ -17,12 +18,22 @@ function App() {
           <Routes>
             <Route path="/" element={
               <ProtectedRoute>
-                <HomePage />
+                <DashboardPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <DashboardPage />
               </ProtectedRoute>
             } />
             <Route path="/about" element={
               <ProtectedRoute>
                 <AboutPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/projects/:projectId" element={
+              <ProtectedRoute>
+                <ProjectPage />
               </ProtectedRoute>
             } />
             <Route path="/login" element={<LoginPage />} />

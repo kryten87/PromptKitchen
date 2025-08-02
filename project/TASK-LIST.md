@@ -137,7 +137,7 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 
 ### 3.3. Project Dashboard (UI-01, UI-02)
 - ✅ 3.3.1. Create a `DashboardPage.tsx` to display a list of user's projects.
-- [ ] 3.3.2. Implement a component to create a new project (e.g., a modal dialog).
+- ✅ 3.3.2. Implement a component to create a new project (e.g., a modal dialog). Modal, integration, and tests complete; all checks pass.
 - [ ] 3.3.3. Implement functionality to edit and delete projects.
 - [ ] 3.3.4. Clicking a project should navigate to the project-specific view.
 

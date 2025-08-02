@@ -7,12 +7,14 @@ import Fastify from 'fastify';
 import { registerAuthController } from './controllers/AuthController';
 import { registerProjectRoutes } from './controllers/ProjectController';
 import { registerTestSuiteRoutes } from './controllers/TestSuiteController';
+import { registerPromptRoutes } from './controllers/PromptController';
 import { DatabaseConnector } from './db/db';
 import { runMigrations } from './db/migrate';
 import { ProjectRepository } from './repositories/ProjectRepository';
 import { UserRepository } from './repositories/UserRepository';
 import { ProjectService } from './services/ProjectService';
 import { UserService } from './services/UserService';
+import { PromptService } from './services/PromptService';
 
 // Patch FastifyInstance type to include googleOAuth2
 import type { OAuth2Namespace } from '@fastify/oauth2';
@@ -38,10 +40,12 @@ const userService = new UserService({
   jwtSecret: process.env.JWT_SECRET || 'dev-secret',
 });
 const projectService = new ProjectService(projectRepository);
+const promptService = PromptService.factory(dbConnector);
 
 registerAuthController(server, { userService });
 registerTestSuiteRoutes(server, dbConnector);
 registerProjectRoutes(server, projectService, userService);
+registerPromptRoutes(server, promptService);
 
 // Register Google OAuth2
 server.register(fastifyOauth2, {

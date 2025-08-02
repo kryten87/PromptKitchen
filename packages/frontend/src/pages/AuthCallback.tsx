@@ -2,7 +2,7 @@
 // Handles the OAuth redirect from backend, stores session token, updates auth state, and redirects.
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSession } from '../SessionContext';
+import { useSession } from '../hooks/useSession';
 
 export function AuthCallback() {
   const navigate = useNavigate();

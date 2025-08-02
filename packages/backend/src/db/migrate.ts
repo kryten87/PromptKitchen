@@ -8,7 +8,7 @@ export async function runMigrations(db: DatabaseConnector): Promise<void> {
     });
   } catch (err) {
     console.error('Migration failed:', err);
-    process.exit(1);
+    throw err;
   }
 }
 

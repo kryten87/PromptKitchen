@@ -17,7 +17,7 @@ describe('AuthCallback', () => {
   beforeEach(() => {
     localStorage.clear();
     jest.resetAllMocks();
-    (window as any).fetch = undefined;
+    globalThis.fetch = jest.fn();
     mockNavigate.mockClear();
   });
 
@@ -38,10 +38,10 @@ describe('AuthCallback', () => {
 
   it('fetches user info and sets session if token is present', async () => {
     // Set up fetch mock before rendering
-    (window as any).fetch = jest.fn().mockResolvedValue({
+    (globalThis.fetch as jest.Mock).mockResolvedValue({
       ok: true,
       json: async () => ({ id: '1', email: 'a@b.com', name: 'Test User', avatarUrl: '' }),
-    });
+    } as Response);
     // Debug: check window.location.search
     Object.defineProperty(window, 'location', {
       value: {

@@ -1,22 +1,8 @@
-// @refresh reset
+// packages/frontend/src/providers/SessionProvider.tsx
 import type { ReactNode } from 'react';
-import { createContext, useEffect, useState } from 'react';
-
-export interface UserSession {
-  id: string;
-  email: string;
-  name: string;
-  avatarUrl?: string;
-  token: string;
-}
-
-interface SessionContextValue {
-  user: UserSession | null;
-  setUser: (user: UserSession | null) => void;
-  isLoading: boolean;
-}
-
-export const SessionContext = createContext<SessionContextValue | undefined>(undefined);
+import { useEffect, useState } from 'react';
+import { SessionContext } from '../contexts/SessionContext';
+import type { UserSession } from '../types';
 
 export function SessionProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserSession | null>(null);

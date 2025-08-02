@@ -2,7 +2,7 @@
 // A wrapper for react-router-dom Route that redirects to /login if not authenticated
 import type { ReactElement } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useSession } from './SessionContext';
+import { useSession } from './hooks/useSession';
 
 interface ProtectedRouteProps {
   children: ReactElement;

@@ -4,12 +4,12 @@ dotenv.config();
 
 import fastifyOauth2 from '@fastify/oauth2';
 import Fastify from 'fastify';
-import { registerAuthController } from './AuthController';
+import { registerAuthController } from './controllers/AuthController';
+import { registerTestSuiteRoutes } from './controllers/TestSuiteController';
 import { DatabaseConnector } from './db/db';
 import { runMigrations } from './db/migrate';
-import { registerTestSuiteRoutes } from './TestSuiteController';
-import { UserRepository } from './UserRepository';
-import { UserService } from './UserService';
+import { UserRepository } from './repositories/UserRepository';
+import { UserService } from './services/UserService';
 
 // Patch FastifyInstance type to include googleOAuth2
 import type { OAuth2Namespace } from '@fastify/oauth2';

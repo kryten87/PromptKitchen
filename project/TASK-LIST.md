@@ -142,7 +142,7 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 - ✅ 3.3.4. Clicking a project should navigate to the project-specific view. ✅
 
 ### 3.4. Prompt Editor View (UI-02, UI-03, UI-05)
-- [ ] 3.4.1. Create a `ProjectPage.tsx` that shows a list of prompts for the selected project.
+- ✅ 3.4.1. Create a `ProjectPage.tsx` that shows a list of prompts for the selected project.
 - [ ] 3.4.2. Create a `PromptEditor.tsx` component.
     - [ ] 3.4.2.1. A text area for the prompt text.
     - [ ] 3.4.2.2. A "Save" button.

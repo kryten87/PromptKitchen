@@ -133,10 +133,10 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 - ✅ 3.2.2. Add a "Login with Google" button that redirects to the backend OAuth endpoint.
 - ✅ 3.2.3. Implement a callback page or logic to handle the redirect from the backend, storing the session token.
 - ✅ 3.2.4. Create protected routes that redirect to the login page if the user is not authenticated.
-- [ ] 3.2.5. **Manual step:** Test the Google OAuth login flow in the browser (this must be performed by a human tester, not by Copilot).
+- ✅ 3.2.5. **Manual step:** Test the Google OAuth login flow in the browser (this must be performed by a human tester, not by Copilot).
 
 ### 3.3. Project Dashboard (UI-01, UI-02)
-- [ ] 3.3.1. Create a `DashboardPage.tsx` to display a list of user's projects.
+- ✅ 3.3.1. Create a `DashboardPage.tsx` to display a list of user's projects.
 - [ ] 3.3.2. Implement a component to create a new project (e.g., a modal dialog).
 - [ ] 3.3.3. Implement functionality to edit and delete projects.
 - [ ] 3.3.4. Clicking a project should navigate to the project-specific view.

@@ -1,6 +1,6 @@
 import type { Project } from '@prompt-kitchen/shared/src/dtos';
 import { useState } from 'react';
-import { ApiClient } from '../ApiClient';
+import { useApiClient } from '../hooks/useApiClient';
 
 interface CreateProjectModalProps {
   isOpen: boolean;
@@ -13,6 +13,7 @@ export function CreateProjectModal({ isOpen, onClose, onProjectCreated }: Create
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const apiClient = useApiClient();
 
   if (!isOpen) {
     return null;
@@ -23,7 +24,7 @@ export function CreateProjectModal({ isOpen, onClose, onProjectCreated }: Create
     setLoading(true);
     setError(null);
     try {
-      const project = await ApiClient.request<Project>('/projects', {
+      const project = await apiClient.request<Project>('/projects', {
         method: 'POST',
         body: JSON.stringify({ name, description }),
         headers: { 'Content-Type': 'application/json' },

@@ -1,15 +1,18 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { ApiClient } from '../ApiClient';
+import * as useApiClientModule from '../hooks/useApiClient';
+import { createMockApiClient } from '../mocks/ApiClient';
 import { CreateProjectModal } from './CreateProjectModal';
-
-jest.mock('../ApiClient');
 
 const mockOnClose = jest.fn();
 const mockOnProjectCreated = jest.fn();
 
 describe('CreateProjectModal', () => {
+  let mockApiClient: ReturnType<typeof createMockApiClient>;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    mockApiClient = createMockApiClient();
+    jest.spyOn(useApiClientModule, 'useApiClient').mockReturnValue(mockApiClient);
   });
 
   it('renders when open', () => {
@@ -35,7 +38,7 @@ describe('CreateProjectModal', () => {
   });
 
   it('submits form and calls onProjectCreated', async () => {
-    (ApiClient.request as jest.Mock).mockResolvedValue({ id: '1', name: 'Test', description: 'Desc' });
+    mockApiClient.request = jest.fn().mockResolvedValue({ id: '1', name: 'Test', description: 'Desc' });
     render(
       <CreateProjectModal isOpen={true} onClose={mockOnClose} onProjectCreated={mockOnProjectCreated} />
     );
@@ -47,7 +50,7 @@ describe('CreateProjectModal', () => {
   });
 
   it('shows error on API failure', async () => {
-    (ApiClient.request as jest.Mock).mockRejectedValue(new Error('fail'));
+    mockApiClient.request = jest.fn().mockRejectedValue(new Error('fail'));
     render(
       <CreateProjectModal isOpen={true} onClose={mockOnClose} onProjectCreated={mockOnProjectCreated} />
     );

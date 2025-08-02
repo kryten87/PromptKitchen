@@ -12,3 +12,6 @@ shared eslint config -- warnings
 
 logging system -- frontend & backend
 
+ensure that access control is working -- person A can only see projects for person A
+
+use LLM to refine fix-problem and use-task-ledger prompts

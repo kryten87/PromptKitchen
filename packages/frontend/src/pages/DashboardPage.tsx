@@ -2,11 +2,13 @@ import type { Project } from '@prompt-kitchen/shared/src/dtos';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ApiClient } from '../ApiClient';
+import { CreateProjectModal } from '../components/CreateProjectModal';
 
 export function DashboardPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -28,10 +30,19 @@ export function DashboardPage() {
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Dashboard</h1>
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <button
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          onClick={() => setShowModal(true)}
+        >
           New Project
         </button>
       </div>
+
+      <CreateProjectModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        onProjectCreated={(project: Project) => setProjects([project, ...projects])}
+      />
 
       {loading && <p>Loading projects...</p>}
       {error && <p className="text-red-500">{error}</p>}

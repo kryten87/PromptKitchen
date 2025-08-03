@@ -16,6 +16,12 @@ describe('ApiClient', () => {
     globalThis.fetch = jest.fn(async () => ({
       ok: true,
       status: 200,
+      headers: {
+        get: jest.fn((name: string) => {
+          if (name === 'content-type') return 'application/json';
+          return null;
+        })
+      },
       json: async () => ({ foo: 'bar' })
     } as unknown as Response)) as typeof fetch;
   });
@@ -40,6 +46,12 @@ describe('ApiClient', () => {
     (globalThis.fetch as jest.Mock).mockResolvedValueOnce({
       ok: false,
       status: 500,
+      headers: {
+        get: jest.fn((name: string) => {
+          if (name === 'content-type') return 'application/json';
+          return null;
+        })
+      },
       json: async () => ({})
     } as unknown as Response);
     await expect(apiClient.request('/fail')).rejects.toThrow('API error: 500');

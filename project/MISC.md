@@ -1,6 +1,4 @@
 # Code Issues/Questions
-- check for
-  - inline if statements
 - using alerts for "are you sure?" prompts
 - skipped tests
 - shared eslint config -- warnings
@@ -38,5 +36,6 @@ sort out front end/back end ports/proxies
 - check for
   - inline imports
   - require statements
+  - inline if statements
 
 

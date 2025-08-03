@@ -1,5 +1,4 @@
 # Code Issues/Questions
-- shared eslint config -- warnings
 - skipped tests
 - logging system -- frontend & backend
 - using alerts for "are you sure?" prompts
@@ -37,5 +36,6 @@ sort out front end/back end ports/proxies
   - inline imports
   - require statements
   - inline if statements
+- shared eslint config -- warnings
 
 

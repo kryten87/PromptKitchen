@@ -28,6 +28,10 @@ improve theme
 
 close button for prompt view
 
+check for
+- inline imports
+- require statements
+- inline if statements
 
 # Issues I'm seeing with the prompts
 - failing to check things off

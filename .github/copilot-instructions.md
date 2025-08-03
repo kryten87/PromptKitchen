@@ -20,6 +20,7 @@
 
 
 ## Implementation Strategy
+- **Autonomy**: You are expected to work autonomously. After receiving a task, proceed with the implementation without asking for permission at each step. If you encounter issues, attempt to resolve them independently. Only ask for clarification if you are blocked or if a decision requires user input.
 - **Tasks**: _IMPORTANT!!!_ a task is not considered complete until all unit tests pass, the code is linted & fixed, and all packages build successfully. This is a critical part of the development process to ensure code quality and maintainability. Use `npm run check` in the root of the repository to check everything.
 - **Monorepo**: The codebase will be organized into a monorepo with three main packages: `frontend`, `backend`, and `shared`.
 - **Database Abstraction**: All database access will be performed through an abstraction layer to facilitate future migration to other SQL databases like PostgreSQL or MySQL. No ORM will be used.
@@ -33,10 +34,12 @@
 - **Test Files**: All test files must follow the `*.spec.ts` or `*.spec.tsx` naming convention.
 
 ## Task Completion Checklist
-- After you finish a task from the task list (eg. when you finish section 1.2.3), you **must**:
-  1. Run `npm run check` in the root to ensure all unit tests pass, code is linted & fixed, and all packages build successfully.
-  2. Only after `npm run check` passes, mark the task as complete in the task list with a ✅ character.
-  3. Never announce a task is finished until these steps are complete.
+- After you finish a task from the task list (eg. when you finish section 1.2.3), you **must** follow these steps precisely:
+  1. Run `npm run check` in the root of the repository.
+  2. If the check fails, you **must** analyze the errors and fix them.
+  3. Repeat steps 1 and 2 until `npm run check` passes successfully.
+  4. Only after `npm run check` passes, mark the task as complete in the task list with a ✅ character.
+  5. Do not announce that a task is finished until all these steps are complete. There is no need to ask for permission to proceed with these checks.
 
 Refer to `project/PRD.md` for further details and best practices.
 

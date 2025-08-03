@@ -6,7 +6,7 @@ description: "Maintain a structured task ledger for effective task management"
 
 # Task Ledger Instructions
 
-**Create** and **maintain** a comprehensive task ledger at `project/tasks/TASK.md`. This file serves as your memory repository and task planning system, helping you track progress, record important information, and maintain context throughout the task lifecycle. The task ledger is for your reference and can be removed once the task is complete.
+**Create** and **maintain** a comprehensive task ledger at `project/tasks/TASK.md`. This file serves as your memory repository and task planning system, helping you track progress, record important information, and maintain context throughout the task lifecycle. The task ledger is for your reference and can be removed once the task is complete. You are expected to manage this ledger autonomously without asking for permission.
 
 ## Importance of Task Ledger Maintenance
 
@@ -19,7 +19,7 @@ description: "Maintain a structured task ledger for effective task management"
 
 1. **Initialization**: Create the task ledger at the beginning of a new task
 2. **Regular Updates**:
-   - Update after completing any task item
+   - **After completing a task item**: First, verify the task is truly complete by running `npm run check`. Only after all checks pass should you mark the task as complete in the ledger.
    - Update after discovering new tasks or dependencies
    - Update after making important decisions
    - Update after researching and learning new information
@@ -99,4 +99,3 @@ Maintain this task ledger diligently throughout the task execution to ensure max
 ```
 
 ```
-````

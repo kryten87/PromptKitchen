@@ -172,6 +172,7 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 - ✅ 3.6.2. Create a `TestResultsView.tsx` component.
 - ✅ 3.6.3. Display the results in a table: `Test Case Name | Status (Pass/Fail) | Actual Output`.
 - [ ] 3.6.4. Style passing tests in green and failing tests in red.
+- [ ] 3.6.5. Integrate the `TestResultsView` component into the results display flow in the UI.
 
 ---
 

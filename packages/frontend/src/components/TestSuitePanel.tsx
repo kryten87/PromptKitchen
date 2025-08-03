@@ -2,6 +2,7 @@ import type { TestCase, TestSuite } from '@prompt-kitchen/shared/src/dtos';
 import { useCallback, useEffect, useState } from 'react';
 import { useApiClient } from '../hooks/useApiClient';
 import { useTestSuiteRunPolling } from '../hooks/useTestSuiteRunPolling';
+import { ConfirmModal } from './ConfirmModal';
 import { CreateTestSuiteModal } from './CreateTestSuiteModal';
 import { EditTestSuiteModal } from './EditTestSuiteModal';
 import { TestCaseEditor } from './TestCaseEditor';
@@ -33,6 +34,15 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
   const [runResults, setRunResults] = useState<Record<string, string>>({}); // testSuiteId -> message
   const [activeRunId, setActiveRunId] = useState<string | null>(null);
   const [showResultsModal, setShowResultsModal] = useState(false);
+
+  // Add state for confirmation modals and error alerts
+  const [confirmModal, setConfirmModal] = useState<{
+    open: boolean;
+    message: string;
+    onConfirm: () => Promise<void> | void;
+  } | null>(null);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [errorAlert, setErrorAlert] = useState<string | null>(null);
 
   const loadTestSuites = useCallback(async () => {
     setLoading(true);
@@ -85,21 +95,29 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
     ));
   };
 
-  const handleDeleteTestSuite = async (testSuiteId: string) => {
-    if (window.confirm('Are you sure you want to delete this test suite? This will also delete all test cases within it.')) {
-      try {
-        await apiClient.request(`/test-suites/${testSuiteId}`, { method: 'DELETE' });
-        setTestSuites(prev => prev.filter(suite => suite.id !== testSuiteId));
-        // Clear test case view if we're viewing the deleted suite
-        if (selectedTestSuiteForCases?.id === testSuiteId) {
-          setSelectedTestSuiteForCases(null);
-          setTestCases([]);
+  const handleDeleteTestSuite = (testSuiteId: string) => {
+    setConfirmModal({
+      open: true,
+      message: 'Are you sure you want to delete this test suite? This will also delete all test cases within it.',
+      onConfirm: async () => {
+        setConfirmLoading(true);
+        try {
+          await apiClient.request(`/test-suites/${testSuiteId}`, { method: 'DELETE' });
+          await loadTestSuites();
+          if (selectedTestSuiteForCases?.id === testSuiteId) {
+            setSelectedTestSuiteForCases(null);
+            setTestCases([]);
+          }
+          setError(null);
+          setConfirmModal(null);
+        } catch {
+          setErrorAlert('Failed to delete test suite');
+          setConfirmModal(null);
+        } finally {
+          setConfirmLoading(false);
         }
-        setError(null);
-      } catch {
-        alert('Failed to delete test suite');
-      }
-    }
+      },
+    });
   };
 
   const handleViewTestCases = (testSuite: TestSuite) => {
@@ -116,15 +134,24 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
     setShowTestCaseEditor(true);
   };
 
-  const handleDeleteTestCase = async (testCaseId: string) => {
-    if (window.confirm('Are you sure you want to delete this test case?')) {
-      try {
-        await apiClient.request(`/test-cases/${testCaseId}`, { method: 'DELETE' });
-        setTestCases(prev => prev.filter(tc => tc.id !== testCaseId));
-      } catch {
-        alert('Failed to delete test case');
-      }
-    }
+  const handleDeleteTestCase = (testCaseId: string) => {
+    setConfirmModal({
+      open: true,
+      message: 'Are you sure you want to delete this test case?',
+      onConfirm: async () => {
+        setConfirmLoading(true);
+        try {
+          await apiClient.request(`/test-cases/${testCaseId}`, { method: 'DELETE' });
+          setTestCases(prev => prev.filter(tc => tc.id !== testCaseId));
+          setConfirmModal(null);
+        } catch {
+          setErrorAlert('Failed to delete test case');
+          setConfirmModal(null);
+        } finally {
+          setConfirmLoading(false);
+        }
+      },
+    });
   };
 
   const handleTestCaseCreated = (testCase: TestCase) => {
@@ -152,6 +179,7 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
       }));
       setActiveRunId(response.runId);
       setShowResultsModal(true);
+      await loadTestSuites();
     } catch (error) {
       setRunResults(prev => ({
         ...prev,
@@ -330,7 +358,7 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
             <h4 className="text-lg font-semibold mb-2">Test Suite Results</h4>
             {polling && <div className="text-gray-500 mb-2">Polling for results...</div>}
             {pollingError && <div className="text-red-500 mb-2">{pollingError}</div>}
-            {runData && (
+            {runData && Array.isArray(runData.results) ? (
               <div>
                 <div className="mb-2 text-sm">Status: <span className="font-mono">{runData.status}</span> | Pass %: {runData.passPercentage?.toFixed(1) ?? 0}</div>
                 <TestResultsView
@@ -345,9 +373,36 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
                   <div className="mt-2 text-xs text-gray-500">Still running... results will update automatically.</div>
                 )}
               </div>
+            ) : runData && (
+              <div className="text-red-500 text-sm">Failed to load test suite results.</div>
             )}
           </div>
         </div>
+      )}
+
+      {/* ConfirmModal for delete confirmations */}
+      {confirmModal && (
+        <ConfirmModal
+          open={confirmModal.open}
+          message={confirmModal.message}
+          onConfirm={async () => {
+            if (confirmModal.onConfirm) {
+              await confirmModal.onConfirm();
+            }
+          }}
+          onCancel={() => !confirmLoading && setConfirmModal(null)}
+          loading={confirmLoading}
+        />
+      )}
+
+      {/* ConfirmModal for error alerts */}
+      {errorAlert && (
+        <ConfirmModal
+          open={true}
+          message={errorAlert}
+          onConfirm={() => setErrorAlert(null)}
+          onCancel={() => setErrorAlert(null)}
+        />
       )}
 
       <CreateTestSuiteModal

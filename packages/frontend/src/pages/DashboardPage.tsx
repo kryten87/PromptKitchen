@@ -1,5 +1,6 @@
 import type { Project } from '@prompt-kitchen/shared/src/dtos';
 import { useEffect, useState } from 'react';
+import { ConfirmModal } from '../components/ConfirmModal';
 import { CreateProjectModal } from '../components/CreateProjectModal';
 import { EditProjectModal } from '../components/EditProjectModal';
 import { useApiClient } from '../hooks/useApiClient';
@@ -11,6 +12,12 @@ export function DashboardPage() {
   const [showModal, setShowModal] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [confirmModal, setConfirmModal] = useState<{
+    open: boolean;
+    message: string;
+    onConfirm: () => void;
+  } | null>(null);
+  const [errorAlert, setErrorAlert] = useState<string | null>(null);
   const apiClient = useApiClient();
 
   useEffect(() => {
@@ -39,14 +46,19 @@ export function DashboardPage() {
   };
 
   const handleDelete = async (projectId: string) => {
-    if (window.confirm('Are you sure you want to delete this project?')) {
-      try {
-        await apiClient.request(`/projects/${projectId}`, { method: 'DELETE' });
-        setProjects(projects.filter(p => p.id !== projectId));
-      } catch {
-        alert('Failed to delete project');
-      }
-    }
+    setConfirmModal({
+      open: true,
+      message: 'Are you sure you want to delete this project?',
+      onConfirm: async () => {
+        setConfirmModal(null);
+        try {
+          await apiClient.request(`/projects/${projectId}`, { method: 'DELETE' });
+          setProjects(projects.filter(p => p.id !== projectId));
+        } catch {
+          setErrorAlert('Failed to delete project');
+        }
+      },
+    });
   };
 
   return (
@@ -111,6 +123,26 @@ export function DashboardPage() {
             </button>
           ))}
         </div>
+      )}
+
+      {/* ConfirmModal for delete confirmations */}
+      {confirmModal && (
+        <ConfirmModal
+          open={confirmModal.open}
+          message={confirmModal.message}
+          onConfirm={confirmModal.onConfirm}
+          onCancel={() => setConfirmModal(null)}
+        />
+      )}
+
+      {/* ConfirmModal for error alerts */}
+      {errorAlert && (
+        <ConfirmModal
+          open={true}
+          message={errorAlert}
+          onConfirm={() => setErrorAlert(null)}
+          onCancel={() => setErrorAlert(null)}
+        />
       )}
     </div>
   );

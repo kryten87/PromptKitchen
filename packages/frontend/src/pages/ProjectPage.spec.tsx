@@ -192,34 +192,27 @@ describe('ProjectPage', () => {
   });
 
   it('deletes a prompt with confirmation', async () => {
-    // Mock window.confirm
-    window.confirm = jest.fn().mockReturnValue(true);
-
     mockApiClient.request = jest.fn()
-      .mockImplementation((path: string, options?: { method?: string; body?: string; headers?: Record<string, string> }) => {
+      .mockImplementation((path: string) => {
         if (path === '/projects/1') return Promise.resolve(mockProject);
         if (path === '/projects/1/prompts') return Promise.resolve(mockPrompts);
-        if (path === '/prompts/p1' && options?.method === 'DELETE') return Promise.resolve();
+        if (path === '/prompts/p1') return Promise.resolve(); // DELETE
         return Promise.reject(new Error('Unknown path'));
       });
 
     renderProjectPage();
-
     await screen.findByText('Prompt 1');
     const deleteButtons = screen.getAllByText('Delete');
     fireEvent.click(deleteButtons[0]);
-
-    expect(window.confirm).toHaveBeenCalledWith('Are you sure you want to delete this prompt?');
-
+    // ConfirmModal should appear
+    expect(screen.getByText('Are you sure you want to delete this prompt?')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('confirm-yes'));
     await waitFor(() => {
       expect(mockApiClient.request).toHaveBeenCalledWith('/prompts/p1', { method: 'DELETE' });
     });
   });
 
   it('cancels delete when user declines confirmation', async () => {
-    // Mock window.confirm to return false
-    window.confirm = jest.fn().mockReturnValue(false);
-
     mockApiClient.request = jest.fn()
       .mockImplementation((path: string) => {
         if (path === '/projects/1') return Promise.resolve(mockProject);
@@ -228,13 +221,12 @@ describe('ProjectPage', () => {
       });
 
     renderProjectPage();
-
     await screen.findByText('Prompt 1');
     const deleteButtons = screen.getAllByText('Delete');
     fireEvent.click(deleteButtons[0]);
-
-    expect(window.confirm).toHaveBeenCalledWith('Are you sure you want to delete this prompt?');
-
+    // ConfirmModal should appear
+    expect(screen.getByText('Are you sure you want to delete this prompt?')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('confirm-no'));
     // DELETE should not be called
     expect(mockApiClient.request).not.toHaveBeenCalledWith('/prompts/p1', { method: 'DELETE' });
   });

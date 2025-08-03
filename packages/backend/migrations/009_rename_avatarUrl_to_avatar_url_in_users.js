@@ -1,4 +1,4 @@
-export async function up(knex) {
+async function up(knex) {
   // Only rename if the column exists and is not already snake_case
   const hasColumn = await knex.schema.hasColumn('users', 'avatarUrl');
   if (hasColumn) {
@@ -8,7 +8,7 @@ export async function up(knex) {
   }
 }
 
-export async function down(knex) {
+async function down(knex) {
   const hasColumn = await knex.schema.hasColumn('users', 'avatar_url');
   if (hasColumn) {
     await knex.schema.table('users', function(table) {
@@ -16,3 +16,5 @@ export async function down(knex) {
     });
   }
 }
+
+module.exports = { up, down };

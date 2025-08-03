@@ -140,36 +140,34 @@ export function ProjectPage() {
           ) : (
             <ul className="divide-y divide-gray-200 bg-white rounded shadow">
               {prompts.map((prompt) => (
-                <li key={prompt.id} className="p-4 hover:bg-gray-50">
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                    <div className="flex-1">
-                      <div className="font-bold text-lg">{prompt.name}</div>
-                      <div className="text-gray-600 text-sm truncate max-w-xl">{prompt.prompt}</div>
-                      <div className="text-xs text-gray-400">Prompt ID: {prompt.id}</div>
-                      <div className="text-xs text-gray-400">
-                        Last updated: {new Date(prompt.updatedAt).toLocaleString()}
-                      </div>
+                <li key={prompt.id} className="p-4 hover:bg-gray-50 flex flex-col h-full">
+                  <div className="flex-1 min-w-0">
+                    <div className="font-bold text-lg break-words whitespace-pre-wrap">{prompt.name}</div>
+                    <div className="text-gray-600 text-sm break-words whitespace-pre-wrap max-w-full">{prompt.prompt}</div>
+                    <div className="text-xs text-gray-400 break-all">Prompt ID: {prompt.id}</div>
+                    <div className="text-xs text-gray-400">
+                      Last updated: {new Date(prompt.updatedAt).toLocaleString()}
                     </div>
-                    <div className="flex space-x-2 mt-2 md:mt-0">
-                      <button
-                        onClick={() => handleViewPrompt(prompt)}
-                        className="px-3 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600"
-                      >
-                        View
-                      </button>
-                      <button
-                        onClick={() => handleEditPrompt(prompt)}
-                        className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDeletePrompt(prompt.id)}
-                        className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
-                      >
-                        Delete
-                      </button>
-                    </div>
+                  </div>
+                  <div className="flex justify-end mt-4 space-x-2">
+                    <button
+                      onClick={() => handleViewPrompt(prompt)}
+                      className="px-3 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600"
+                    >
+                      View
+                    </button>
+                    <button
+                      onClick={() => handleEditPrompt(prompt)}
+                      className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeletePrompt(prompt.id)}
+                      className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
+                    >
+                      Delete
+                    </button>
                   </div>
                 </li>
               ))}
@@ -177,51 +175,54 @@ export function ProjectPage() {
           )}
         </div>
 
-        <div>
-          {showEditor && (
-            <div>
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold">
-                  {isCreating ? 'Create New Prompt' : 'Edit Prompt'}
-                </h3>
-                <button
-                  onClick={handleCancelEditor}
-                  className="px-3 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600"
-                >
-                  Cancel
-                </button>
-              </div>
+        {/* Only render the second column if there is content to show */}
+        {(showEditor || (!showEditor && selectedPrompt)) && (
+          <div>
+            {showEditor && (
+              <div>
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-semibold">
+                    {isCreating ? 'Create New Prompt' : 'Edit Prompt'}
+                  </h3>
+                  <button
+                    onClick={handleCancelEditor}
+                    className="px-3 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600"
+                  >
+                    Cancel
+                  </button>
+                </div>
 
-              {isCreating ? (
-                <CreatePromptForm
-                  projectId={projectId!}
-                  onPromptCreated={handlePromptCreated}
-                />
-              ) : (
-                <PromptEditor
-                  prompt={selectedPrompt}
-                  onPromptUpdated={handlePromptUpdated}
-                  onViewHistory={() => setShowHistoryModal(true)}
-                />
-              )}
-            </div>
-          )}
-
-          {!showEditor && selectedPrompt && (
-            <div>
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold">Selected Prompt: {selectedPrompt.name}</h3>
-                <button
-                  onClick={() => handleEditPrompt(selectedPrompt)}
-                  className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
-                >
-                  Edit Prompt
-                </button>
+                {isCreating ? (
+                  <CreatePromptForm
+                    projectId={projectId!}
+                    onPromptCreated={handlePromptCreated}
+                  />
+                ) : (
+                  <PromptEditor
+                    prompt={selectedPrompt}
+                    onPromptUpdated={handlePromptUpdated}
+                    onViewHistory={() => setShowHistoryModal(true)}
+                  />
+                )}
               </div>
-              <TestSuitePanel promptId={selectedPrompt.id} />
-            </div>
-          )}
-        </div>
+            )}
+
+            {!showEditor && selectedPrompt && (
+              <div>
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-semibold">Selected Prompt: {selectedPrompt.name}</h3>
+                  <button
+                    onClick={() => handleEditPrompt(selectedPrompt)}
+                    className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
+                  >
+                    Edit Prompt
+                  </button>
+                </div>
+                <TestSuitePanel promptId={selectedPrompt.id} />
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <PromptHistoryModal

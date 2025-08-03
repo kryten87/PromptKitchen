@@ -18,6 +18,8 @@ use LLM to refine fix-problem and use-task-ledger prompts
 
 using alerts for "are you sure?" prompts
 
+playwright e2e tests
+
 # Issues I'm seeing with the prompts
 - failing to check things off
 - failing to use `npm run check` to test

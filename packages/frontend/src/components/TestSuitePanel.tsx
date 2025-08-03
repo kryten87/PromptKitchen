@@ -199,47 +199,41 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
         <>
           <ul className="divide-y divide-gray-200 bg-white rounded shadow mb-6">
             {testSuites.map((suite) => (
-              <li key={suite.id} className="p-3 hover:bg-gray-50">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                  <div className="flex-1">
-                    <div className="font-medium text-sm">{suite.name}</div>
-                    <div className="text-xs text-gray-400">Suite ID: {suite.id}</div>
-                    <div className="text-xs text-gray-400">
-                      Created: {new Date(suite.createdAt).toLocaleString()}
-                    </div>
-                    {runResults[suite.id] && (
-                      <div className={`text-xs mt-1 ${runResults[suite.id].includes('Failed') ? 'text-red-500' : 'text-green-600'}`}>
-                        {runResults[suite.id]}
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex space-x-2 mt-2 md:mt-0">
-                    <button
-                      onClick={() => handleViewTestCases(suite)}
-                      className="px-2 py-1 text-xs bg-purple-500 text-white rounded hover:bg-purple-600"
-                    >
-                      Test Cases
-                    </button>
-                    <button
-                      onClick={() => handleEditTestSuite(suite)}
-                      className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteTestSuite(suite.id)}
-                      className="px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
-                    >
-                      Delete
-                    </button>
-                    <button
-                      onClick={() => handleRunTestSuite(suite.id)}
-                      className="px-2 py-1 text-xs bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50"
-                      disabled={runningTestSuites.has(suite.id)}
-                    >
-                      {runningTestSuites.has(suite.id) ? 'Running...' : 'Run'}
-                    </button>
-                  </div>
+              <li key={suite.id} className="p-3 hover:bg-gray-50 flex flex-col h-full">
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-sm break-words whitespace-pre-wrap">{suite.name}</div>
+                  <div className="text-xs text-gray-400 break-all">Suite ID: {suite.id}</div>
+                  <div className="text-xs text-gray-400">Created: {new Date(suite.createdAt).toLocaleString()}</div>
+                  {runResults[suite.id] && (
+                    <div className={`text-xs mt-1 ${runResults[suite.id].includes('Failed') ? 'text-red-500' : 'text-green-600'}`}>{runResults[suite.id]}</div>
+                  )}
+                </div>
+                <div className="flex justify-end mt-4 space-x-2">
+                  <button
+                    onClick={() => handleViewTestCases(suite)}
+                    className="px-2 py-1 text-xs bg-purple-500 text-white rounded hover:bg-purple-600"
+                  >
+                    Test Cases
+                  </button>
+                  <button
+                    onClick={() => handleEditTestSuite(suite)}
+                    className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteTestSuite(suite.id)}
+                    className="px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
+                  >
+                    Delete
+                  </button>
+                  <button
+                    onClick={() => handleRunTestSuite(suite.id)}
+                    className="px-2 py-1 text-xs bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50"
+                    disabled={runningTestSuites.has(suite.id)}
+                  >
+                    {runningTestSuites.has(suite.id) ? 'Running...' : 'Run'}
+                  </button>
                 </div>
               </li>
             ))}
@@ -289,40 +283,28 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
               ) : (
                 <ul className="divide-y divide-gray-200 bg-white rounded shadow">
                   {testCases.map((testCase) => (
-                    <li key={testCase.id} className="p-3 hover:bg-gray-50">
-                      <div className="flex flex-col space-y-2">
-                        <div className="flex justify-between items-start">
-                          <div className="flex-1">
-                            <div className="text-sm font-medium">Test Case {testCase.id}</div>
-                            <div className="text-xs text-gray-500">
-                              Mode: <span className="font-mono">{testCase.runMode}</span>
-                            </div>
-                          </div>
-                          <div className="flex space-x-1">
-                            <button
-                              onClick={() => handleEditTestCase(testCase)}
-                              className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => handleDeleteTestCase(testCase.id)}
-                              className="px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </div>
+                    <li key={testCase.id} className="p-3 hover:bg-gray-50 flex flex-col h-full">
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium break-words whitespace-pre-wrap">Test Case {testCase.id}</div>
+                        <div className="text-xs text-gray-500">Mode: <span className="font-mono">{testCase.runMode}</span></div>
                         <div className="text-xs">
-                          <div className="mb-1">
-                            <strong>Inputs:</strong> {JSON.stringify(testCase.inputs)}
-                          </div>
-                          <div>
-                            <strong>Expected:</strong> {typeof testCase.expectedOutput === 'string'
-                              ? testCase.expectedOutput
-                              : JSON.stringify(testCase.expectedOutput)}
-                          </div>
+                          <div className="mb-1"><strong>Inputs:</strong> {JSON.stringify(testCase.inputs)}</div>
+                          <div><strong>Expected:</strong> {typeof testCase.expectedOutput === 'string' ? testCase.expectedOutput : JSON.stringify(testCase.expectedOutput)}</div>
                         </div>
+                      </div>
+                      <div className="flex justify-end mt-4 space-x-2">
+                        <button
+                          onClick={() => handleEditTestCase(testCase)}
+                          className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteTestCase(testCase.id)}
+                          className="px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
+                        >
+                          Delete
+                        </button>
                       </div>
                     </li>
                   ))}

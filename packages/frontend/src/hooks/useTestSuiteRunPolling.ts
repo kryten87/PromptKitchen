@@ -35,7 +35,9 @@ export function useTestSuiteRunPolling(runId: string | null, pollInterval = 2000
       setRun(null);
       setLoading(false);
       setError(null);
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
       cancelledRef.current = true;
       return;
     }
@@ -51,7 +53,9 @@ export function useTestSuiteRunPolling(runId: string | null, pollInterval = 2000
           setRun(data);
           if (data && (data.status === 'COMPLETED' || data.status === 'FAILED')) {
             setLoading(false);
-            if (intervalRef.current) clearInterval(intervalRef.current);
+            if (intervalRef.current) {
+              clearInterval(intervalRef.current);
+            }
           }
         }
       } catch (err) {
@@ -59,7 +63,9 @@ export function useTestSuiteRunPolling(runId: string | null, pollInterval = 2000
           setRun(null);
           setError(err instanceof Error ? err.message : 'Unknown error');
           setLoading(false);
-          if (intervalRef.current) clearInterval(intervalRef.current);
+          if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+          }
         }
       }
     }
@@ -68,7 +74,9 @@ export function useTestSuiteRunPolling(runId: string | null, pollInterval = 2000
     intervalRef.current = setInterval(fetchRun, pollInterval);
     return () => {
       cancelledRef.current = true;
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
     };
   }, [runId, apiClient, pollInterval]);
 

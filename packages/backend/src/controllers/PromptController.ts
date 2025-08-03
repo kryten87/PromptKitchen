@@ -38,7 +38,9 @@ export async function registerPromptRoutes(fastify: FastifyInstance, promptServi
       const schema = definePromptSchema().omit(['id', 'projectId', 'version', 'createdAt', 'updatedAt']);
       const updates = await schema.validate(request.body, { abortEarly: false, stripUnknown: true });
       const updated = await promptService.updatePrompt(id, updates);
-      if (!updated) return reply.status(404).send({ error: 'Not found' });
+      if (!updated) {
+        return reply.status(404).send({ error: 'Not found' });
+      }
       return reply.send(updated);
     } catch (err) {
       if (err instanceof yup.ValidationError) {
@@ -70,7 +72,9 @@ export async function registerPromptRoutes(fastify: FastifyInstance, promptServi
       return reply.status(400).send({ error: 'Missing or invalid version' });
     }
     const restored = await promptService.restorePromptFromHistory(id, version);
-    if (!restored) return reply.status(404).send({ error: 'Not found' });
+    if (!restored) {
+      return reply.status(404).send({ error: 'Not found' });
+    }
     return reply.send(restored);
   });
 }

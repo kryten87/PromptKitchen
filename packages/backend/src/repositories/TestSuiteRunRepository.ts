@@ -1,4 +1,4 @@
-import { TestResult, TestSuiteRun } from '@prompt-kitchen/shared/src/dtos';
+import { TestResult, TestSuiteRun, JsonValue } from '@prompt-kitchen/shared/src/dtos';
 import { randomUUID } from 'crypto';
 import { Knex } from 'knex';
 import { DatabaseConnector } from '../db/db';
@@ -78,13 +78,13 @@ export class TestSuiteRunRepository {
       promptHistoryId: run.prompt_history_id,
     };
     const results: TestResult[] = resultsRows.map((row: TestResultRow) => {
-      let output: string | Record<string, import('@prompt-kitchen/shared/src/dtos').JsonValue> = row.actual_output;
+      let output: string | Record<string, JsonValue> = row.actual_output;
       if (typeof output === 'string') {
         try {
           if ((output.startsWith('{') && output.endsWith('}')) || (output.startsWith('[') && output.endsWith(']'))) {
             const parsed = JSON.parse(output);
             if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-              output = parsed as Record<string, import('@prompt-kitchen/shared/src/dtos').JsonValue>;
+              output = parsed as Record<string, JsonValue>;
             } else if (parsed === null) {
               output = '';
             } else {

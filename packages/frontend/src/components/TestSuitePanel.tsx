@@ -26,6 +26,10 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
   const [showTestCaseEditor, setShowTestCaseEditor] = useState(false);
   const [editingTestCase, setEditingTestCase] = useState<TestCase | null>(null);
 
+  // Test suite execution state
+  const [runningTestSuites, setRunningTestSuites] = useState<Set<string>>(new Set());
+  const [runResults, setRunResults] = useState<Record<string, string>>({}); // testSuiteId -> message
+
   const loadTestSuites = useCallback(async () => {
     setLoading(true);
     try {
@@ -131,6 +135,32 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
     setShowTestCaseEditor(false);
   };
 
+  const handleRunTestSuite = async (testSuiteId: string) => {
+    setRunningTestSuites(prev => new Set(prev).add(testSuiteId));
+    setRunResults(prev => ({ ...prev, [testSuiteId]: '' }));
+
+    try {
+      const response = await apiClient.request<{ runId: string }>(`/test-suites/${testSuiteId}/run`, {
+        method: 'POST',
+      });
+      setRunResults(prev => ({
+        ...prev,
+        [testSuiteId]: `Test suite execution started. Run ID: ${response.runId}`
+      }));
+    } catch (error) {
+      setRunResults(prev => ({
+        ...prev,
+        [testSuiteId]: `Failed to start test suite execution: ${error instanceof Error ? error.message : 'Unknown error'}`
+      }));
+    } finally {
+      setRunningTestSuites(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(testSuiteId);
+        return newSet;
+      });
+    }
+  };
+
   const handleCancelTestCaseEditor = () => {
     setShowTestCaseEditor(false);
     setEditingTestCase(null);
@@ -170,6 +200,11 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
                     <div className="text-xs text-gray-400">
                       Created: {new Date(suite.createdAt).toLocaleString()}
                     </div>
+                    {runResults[suite.id] && (
+                      <div className={`text-xs mt-1 ${runResults[suite.id].includes('Failed') ? 'text-red-500' : 'text-green-600'}`}>
+                        {runResults[suite.id]}
+                      </div>
+                    )}
                   </div>
                   <div className="flex space-x-2 mt-2 md:mt-0">
                     <button
@@ -191,13 +226,11 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
                       Delete
                     </button>
                     <button
-                      onClick={() => {
-                        // TODO: Implement run test suite functionality
-                        console.log('Run test suite:', suite.id);
-                      }}
-                      className="px-2 py-1 text-xs bg-green-500 text-white rounded hover:bg-green-600"
+                      onClick={() => handleRunTestSuite(suite.id)}
+                      className="px-2 py-1 text-xs bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50"
+                      disabled={runningTestSuites.has(suite.id)}
                     >
-                      Run
+                      {runningTestSuites.has(suite.id) ? 'Running...' : 'Run'}
                     </button>
                   </div>
                 </div>

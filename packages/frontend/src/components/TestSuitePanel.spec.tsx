@@ -485,4 +485,92 @@ describe('TestSuitePanel', () => {
     // Check that test case view is closed
     expect(screen.queryByText('Test Cases for "Test Suite 1"')).not.toBeInTheDocument();
   });
+
+  it('runs test suite successfully', async () => {
+    const runResponse = { runId: 'run-123' };
+
+    mockApiClient.request
+      .mockResolvedValueOnce(mockTestSuites) // Initial test suites load
+      .mockResolvedValueOnce(runResponse); // Run API call
+
+    render(<TestSuitePanel promptId="prompt-1" />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Suite 1')).toBeInTheDocument();
+    });
+
+    // Click the Run button for the first test suite
+    const runButtons = screen.getAllByText('Run');
+    fireEvent.click(runButtons[0]);
+
+    // Check that it shows "Running..." state
+    expect(screen.getByText('Running...')).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(mockApiClient.request).toHaveBeenCalledWith('/test-suites/suite-1/run', {
+        method: 'POST',
+      });
+    });
+
+    // Check that it shows success message
+    await waitFor(() => {
+      expect(screen.getByText('Test suite execution started. Run ID: run-123')).toBeInTheDocument();
+    });
+
+    // Check that the button is no longer in running state
+    expect(screen.queryByText('Running...')).not.toBeInTheDocument();
+    expect(screen.getAllByText('Run')).toHaveLength(2);
+  });
+
+  it('shows error when test suite run fails', async () => {
+    mockApiClient.request
+      .mockResolvedValueOnce(mockTestSuites) // Initial test suites load
+      .mockRejectedValueOnce(new Error('API Error')); // Run API call fails
+
+    render(<TestSuitePanel promptId="prompt-1" />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Suite 1')).toBeInTheDocument();
+    });
+
+    // Click the Run button for the first test suite
+    const runButtons = screen.getAllByText('Run');
+    fireEvent.click(runButtons[0]);
+
+    // Check that it shows "Running..." state
+    expect(screen.getByText('Running...')).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.getByText('Failed to start test suite execution: API Error')).toBeInTheDocument();
+    });
+
+    // Check that the button is no longer in running state
+    expect(screen.queryByText('Running...')).not.toBeInTheDocument();
+    expect(screen.getAllByText('Run')).toHaveLength(2);
+  });
+
+  it('disables run button during execution', async () => {
+    mockApiClient.request
+      .mockResolvedValueOnce(mockTestSuites) // Initial test suites load
+      .mockImplementation(() => new Promise(() => {})); // Never resolves for run
+
+    render(<TestSuitePanel promptId="prompt-1" />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Suite 1')).toBeInTheDocument();
+    });
+
+    // Click the Run button for the first test suite
+    const runButtons = screen.getAllByText('Run');
+    fireEvent.click(runButtons[0]);
+
+    // Check that the button is disabled and shows "Running..."
+    const runningButton = screen.getByText('Running...');
+    expect(runningButton).toBeDisabled();
+
+    // Check that other run buttons are still enabled
+    const remainingRunButtons = screen.getAllByText('Run');
+    expect(remainingRunButtons).toHaveLength(1);
+    expect(remainingRunButtons[0]).not.toBeDisabled();
+  });
 });

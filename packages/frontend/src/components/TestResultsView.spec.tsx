@@ -28,8 +28,8 @@ describe('TestResultsView', () => {
       { id: '2', testCaseName: 'Test 2', status: 'fail', actualOutput: 'output2' },
     ];
     render(<TestResultsView results={results} />);
-    const passCell = screen.getByText('Pass');
-    const failCell = screen.getByText('Fail');
+    const passCell = screen.getByTestId('status-1');
+    const failCell = screen.getByTestId('status-2');
     expect(passCell).toHaveClass('text-green-600');
     expect(failCell).toHaveClass('text-red-600');
   });

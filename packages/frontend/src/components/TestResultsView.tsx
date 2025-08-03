@@ -30,10 +30,13 @@ export const TestResultsView: React.FC<TestResultsViewProps> = ({ results }) => 
           {results.map((result) => (
             <tr key={result.id}>
               <td className="px-4 py-2 whitespace-nowrap">{result.testCaseName}</td>
-              <td className={
-                `px-4 py-2 whitespace-nowrap font-semibold ` +
-                (result.status === 'pass' ? 'text-green-600' : 'text-red-600')
-              }>
+              <td
+                className={
+                  `px-4 py-2 whitespace-nowrap font-semibold ` +
+                  (result.status === 'pass' ? 'text-green-600' : 'text-red-600')
+                }
+                data-testid={`status-${result.id}`}
+              >
                 {result.status === 'pass' ? 'Pass' : 'Fail'}
               </td>
               <td className="px-4 py-2 whitespace-pre-wrap font-mono text-sm">{result.actualOutput}</td>

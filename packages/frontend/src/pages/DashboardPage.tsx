@@ -1,6 +1,5 @@
 import type { Project } from '@prompt-kitchen/shared/src/dtos';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { CreateProjectModal } from '../components/CreateProjectModal';
 import { EditProjectModal } from '../components/EditProjectModal';
 import { useApiClient } from '../hooks/useApiClient';
@@ -81,28 +80,35 @@ export function DashboardPage() {
       {!loading && !error && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {projects.map((project) => (
-            <div key={project.id} className="relative group block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100">
-              <Link to={`/projects/${project.id}`} className="block">
+            <button
+              key={project.id}
+              type="button"
+              className="relative group block p-6 w-full text-left bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onClick={() => window.location.assign(`/projects/${project.id}`)}
+              tabIndex={0}
+              aria-label={`Go to project ${project.name}`}
+            >
+              <div>
                 <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900">{project.name}</h5>
                 <p className="font-normal text-gray-700">{project.description || 'No description'}</p>
-              </Link>
+              </div>
               <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
-                  className="text-blue-600 hover:underline text-sm"
-                  onClick={() => handleEditClick(project)}
+                  className="text-blue-600 hover:underline text-sm z-10"
+                  onClick={e => { e.stopPropagation(); handleEditClick(project); }}
                   aria-label={`Edit ${project.name}`}
                 >
                   Edit
                 </button>
                 <button
-                  className="text-red-600 hover:underline text-sm"
-                  onClick={() => handleDelete(project.id)}
+                  className="text-red-600 hover:underline text-sm z-10"
+                  onClick={e => { e.stopPropagation(); handleDelete(project.id); }}
                   aria-label={`Delete ${project.name}`}
                 >
                   Delete
                 </button>
               </div>
-            </div>
+            </button>
           ))}
         </div>
       )}

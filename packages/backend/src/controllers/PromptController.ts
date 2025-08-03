@@ -35,7 +35,7 @@ export async function registerPromptRoutes(fastify: FastifyInstance, promptServi
   fastify.put('/api/prompts/:id', async (request: FastifyRequest<{ Params: PromptIdParams }>, reply: FastifyReply) => {
     try {
       const { id } = request.params;
-      const schema = definePromptSchema().omit(['id', 'projectId', 'createdAt', 'updatedAt']);
+      const schema = definePromptSchema().omit(['id', 'projectId', 'version', 'createdAt', 'updatedAt']);
       const updates = await schema.validate(request.body, { abortEarly: false, stripUnknown: true });
       const updated = await promptService.updatePrompt(id, updates);
       if (!updated) return reply.status(404).send({ error: 'Not found' });

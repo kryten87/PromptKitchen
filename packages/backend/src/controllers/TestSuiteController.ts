@@ -93,6 +93,11 @@ export async function registerTestSuiteRoutes(fastify: FastifyInstance, db: Data
     if (!promptRow) {
       return reply.status(404).send({ error: 'Prompt not found' });
     }
+    // Use correct column name for prompt text
+    const promptText = promptRow.prompt || promptRow.prompt_text;
+    if (!promptText) {
+      return reply.status(500).send({ error: 'Prompt text is missing in the database' });
+    }
     // Fetch latest prompt history for this prompt
     const promptHistoryRow = await db.knex('prompt_history').where({ prompt_id: suite.promptId }).orderBy('version', 'desc').first();
     if (!promptHistoryRow) {

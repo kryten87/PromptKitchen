@@ -77,14 +77,34 @@ export class TestSuiteRunRepository {
       passPercentage: run.pass_percentage,
       promptHistoryId: run.prompt_history_id,
     };
-    const results: TestResult[] = resultsRows.map((row: TestResultRow) => ({
-      id: row.id,
-      testSuiteRunId: row.test_suite_run_id,
-      testCaseId: row.test_case_id,
-      status: row.status === 'PASS' ? 'PASS' : 'FAIL',
-      output: row.actual_output,
-      createdAt: row.created_at ? new Date(row.created_at) : new Date(),
-    }));
+    const results: TestResult[] = resultsRows.map((row: TestResultRow) => {
+      let output: string | Record<string, import('@prompt-kitchen/shared/src/dtos').JsonValue> = row.actual_output;
+      if (typeof output === 'string') {
+        try {
+          if ((output.startsWith('{') && output.endsWith('}')) || (output.startsWith('[') && output.endsWith(']'))) {
+            const parsed = JSON.parse(output);
+            if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+              output = parsed as Record<string, import('@prompt-kitchen/shared/src/dtos').JsonValue>;
+            } else if (parsed === null) {
+              output = '';
+            } else {
+              // If parsed is array or primitive, fallback to string
+              output = JSON.stringify(parsed);
+            }
+          }
+        } catch {
+          // If parsing fails, keep as string
+        }
+      }
+      return {
+        id: row.id,
+        testSuiteRunId: row.test_suite_run_id,
+        testCaseId: row.test_case_id,
+        status: row.status === 'PASS' ? 'PASS' : 'FAIL',
+        output,
+        createdAt: row.created_at ? new Date(row.created_at) : new Date(),
+      };
+    });
     return { ...testSuiteRun, results };
   }
 }

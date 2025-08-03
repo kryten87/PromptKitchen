@@ -160,7 +160,7 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 ### 3.5. Test Suite View (UI-03, UI-04)
 - ✅ 3.5.1. Create a `TestSuitePanel.tsx` within the `ProjectPage.tsx`.
 - ✅ 3.5.2. Display a list of test suites for the selected prompt.
-- [ ] 3.5.3. Implement UI for creating, editing, and deleting test suites.
+- ✅ 3.5.3. Implement UI for creating, editing, and deleting test suites.
 - [ ] 3.5.4. Implement a `TestCaseEditor.tsx` to manage test cases within a suite.
     - [ ] 3.5.4.1. Inputs for key-value variables.
     - [ ] 3.5.4.2. An editor for the expected output (string or JSON).

@@ -1,8 +1,8 @@
 # Code Issues/Questions
-- using alerts for "are you sure?" prompts
-- skipped tests
 - shared eslint config -- warnings
+- skipped tests
 - logging system -- frontend & backend
+- using alerts for "are you sure?" prompts
 
 - frontend/src/mocks -- what is this?
 - are there dtos for every model?

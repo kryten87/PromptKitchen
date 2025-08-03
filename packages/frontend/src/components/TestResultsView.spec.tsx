@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { TestResult, TestResultsView } from './TestResultsView';
+import type { TestResult } from './TestResultsView';
+import { TestResultsView } from './TestResultsView';
 
 describe('TestResultsView', () => {
   it('renders no results message when results are empty', () => {

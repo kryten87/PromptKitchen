@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { CreatePromptForm } from '../components/CreatePromptForm';
 import { PromptEditor } from '../components/PromptEditor';
 import PromptHistoryModal from '../components/PromptHistoryModal';
+import { TestSuitePanel } from '../components/TestSuitePanel';
 import { useApiClient } from '../hooks/useApiClient';
 
 export function ProjectPage() {
@@ -52,6 +53,12 @@ export function ProjectPage() {
     setSelectedPrompt(prompt);
     setIsCreating(false);
     setShowEditor(true);
+  };
+
+  const handleViewPrompt = (prompt: Prompt) => {
+    setSelectedPrompt(prompt);
+    setIsCreating(false);
+    setShowEditor(false);
   };
 
   const handleDeletePrompt = async (promptId: string) => {
@@ -145,6 +152,12 @@ export function ProjectPage() {
                     </div>
                     <div className="flex space-x-2 mt-2 md:mt-0">
                       <button
+                        onClick={() => handleViewPrompt(prompt)}
+                        className="px-3 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600"
+                      >
+                        View
+                      </button>
+                      <button
                         onClick={() => handleEditPrompt(prompt)}
                         className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
                       >
@@ -191,6 +204,21 @@ export function ProjectPage() {
                   onViewHistory={() => setShowHistoryModal(true)}
                 />
               )}
+            </div>
+          )}
+
+          {!showEditor && selectedPrompt && (
+            <div>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold">Selected Prompt: {selectedPrompt.name}</h3>
+                <button
+                  onClick={() => handleEditPrompt(selectedPrompt)}
+                  className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                  Edit Prompt
+                </button>
+              </div>
+              <TestSuitePanel promptId={selectedPrompt.id} />
             </div>
           )}
         </div>

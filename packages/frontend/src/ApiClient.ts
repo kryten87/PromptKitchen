@@ -13,11 +13,16 @@ export class ApiClient {
 
   async request<T>(path: string, options: RequestInit = {}): Promise<T> {
     const token = this.session?.user?.token || localStorage.getItem('sessionToken');
-    const headers = {
-      'Content-Type': 'application/json',
+    const headers: HeadersInit = {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     };
+
+    // Only set Content-Type if there's a body
+    if (options.body) {
+      (headers as Record<string, string>)['Content-Type'] = 'application/json';
+    }
+
     const res = await fetch(`${this.baseUrl}${path}`, {
       ...options,
       headers,
@@ -25,6 +30,18 @@ export class ApiClient {
     if (!res.ok) {
       throw new Error(`API error: ${res.status}`);
     }
+
+    // Handle empty responses (like 204 No Content)
+    if (res.status === 204) {
+      return undefined as T;
+    }
+
+    // Check if response has content before trying to parse JSON
+    const contentType = res.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      return undefined as T;
+    }
+
     return res.json();
   }
 }

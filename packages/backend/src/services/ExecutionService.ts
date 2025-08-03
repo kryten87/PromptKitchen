@@ -44,6 +44,9 @@ export class ExecutionService {
     let passCount = 0;
     for (const testCase of toRun) {
       let prompt = promptText;
+      if (typeof prompt !== 'string') {
+        throw new Error('Prompt text is undefined or not a string');
+      }
       for (const [key, value] of Object.entries(testCase.inputs)) {
         prompt = prompt.replace(new RegExp(`{{${key}}}`, 'g'), String(value));
       }

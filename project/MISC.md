@@ -20,10 +20,26 @@ using alerts for "are you sure?" prompts
 
 playwright e2e tests
 
+skipped tests
+
+need a way to match results similar to jest matchers
+
+improve theme
+
+close button for prompt view
+
+view last tests results when looking at a test suite
+
+test results during tests -- show expected and actual values
+
+check for
+- inline imports
+- require statements
+- inline if statements
+
 # Issues I'm seeing with the prompts
 - failing to check things off
 - failing to use `npm run check` to test
 - too much stopping & asking me if I'd like to continue
 
 # Other thoughts
-- need a way to match results similar to jest matchers

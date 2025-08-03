@@ -165,7 +165,7 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
     - ✅ 3.5.4.1. Inputs for key-value variables.
     - ✅ 3.5.4.2. An editor for the expected output (string or JSON).
     - ✅ 3.5.4.3. Controls for setting the `run_mode` (`DEFAULT`, `SKIP`, `ONLY`).
-- [ ] 3.5.5. Add a "Run Test Suite" button.
+- ✅ 3.5.5. Add a "Run Test Suite" button.
 
 ### 3.6. Results Display (UI-04)
 - [ ] 3.6.1. After a run is initiated, poll the backend for results.

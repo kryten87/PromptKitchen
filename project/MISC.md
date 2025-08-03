@@ -1,6 +1,6 @@
 # Code Issues/Questions
-- skipped tests
 - logging system -- frontend & backend
+- skipped tests
 - using alerts for "are you sure?" prompts
 
 - frontend/src/mocks -- what is this?
@@ -8,7 +8,7 @@
 - refactor functions into small, pure helpers
 - ensure that access control is working -- person A can only see projects for person A
 - playwright e2e tests
-
+- set `X-Request-ID` header on front end & log it on the back end
 
 # Design & Functionality
 - improve theme

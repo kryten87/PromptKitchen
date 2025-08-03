@@ -1,4 +1,4 @@
-import { TestResult, TestSuiteRun, JsonValue } from '@prompt-kitchen/shared/src/dtos';
+import { JsonValue, TestResult, TestSuiteRun } from '@prompt-kitchen/shared/src/dtos';
 import { randomUUID } from 'crypto';
 import { Knex } from 'knex';
 import { DatabaseConnector } from '../db/db';

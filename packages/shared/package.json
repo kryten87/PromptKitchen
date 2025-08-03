@@ -20,5 +20,6 @@
   },
   "dependencies": {
     "yup": "^1.6.1"
-  }
+  },
+  "type": "module"
 }

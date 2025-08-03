@@ -1,7 +1,7 @@
 // packages/frontend/src/providers/SessionProvider.tsx
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
-import { SessionContext } from '../contexts/SessionContext';
+import { SessionContext } from '../contexts/SessionContextValue';
 import type { UserSession } from '../types';
 
 export function SessionProvider({ children }: { children: ReactNode }) {

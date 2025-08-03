@@ -155,7 +155,7 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
     - ✅ 3.4.3.5. Handle prompt updates via PromptEditor integration.
     - ✅ 3.4.3.6. Handle prompt deletion with confirmation dialog.
     - ✅ 3.4.3.7. Refresh prompt list after create/update/delete operations.
-- [ ] 3.4.4. Implement a `PromptHistoryModal.tsx` to display previous versions and a "Restore" button.
+- ✅ 3.4.4. Implement a `PromptHistoryModal.tsx` to display previous versions and a "Restore" button.
 
 ### 3.5. Test Suite View (UI-03, UI-04)
 - [ ] 3.5.1. Create a `TestSuitePanel.tsx` within the `ProjectPage.tsx`.

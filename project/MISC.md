@@ -28,6 +28,10 @@ improve theme
 
 close button for prompt view
 
+view last tests results when looking at a test suite
+
+test results during tests -- show expected and actual values
+
 check for
 - inline imports
 - require statements

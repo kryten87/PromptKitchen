@@ -1,6 +1,6 @@
 import { useContext, useMemo } from 'react';
 import { ApiClient } from '../ApiClient';
-import { SessionContext } from '../contexts/SessionContext';
+import { SessionContext } from '../contexts/SessionContextValue';
 
 export function useApiClient() {
   const session = useContext(SessionContext);

@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ProtectedRoute } from './ProtectedRoute';
-import { SessionProvider } from './contexts/SessionContext';
+import { SessionProvider } from './providers/SessionProvider';
 
 function TestComponent() {
   return <div>Protected Content</div>;

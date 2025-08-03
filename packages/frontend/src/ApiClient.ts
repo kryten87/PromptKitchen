@@ -1,7 +1,7 @@
 // Simple API client for backend communication
 // Handles auth token injection and error handling
 
-import type { SessionContextValue } from './contexts/SessionContext';
+import type { SessionContextValue } from './contexts/SessionContextValue';
 
 export class ApiClient {
   private baseUrl = '/api';

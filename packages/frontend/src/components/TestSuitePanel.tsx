@@ -5,6 +5,7 @@ import { useTestSuiteRunPolling } from '../hooks/useTestSuiteRunPolling';
 import { CreateTestSuiteModal } from './CreateTestSuiteModal';
 import { EditTestSuiteModal } from './EditTestSuiteModal';
 import { TestCaseEditor } from './TestCaseEditor';
+import { TestResultsView } from './TestResultsView';
 
 interface TestSuitePanelProps {
   promptId: string;
@@ -332,24 +333,14 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
             {runData && (
               <div>
                 <div className="mb-2 text-sm">Status: <span className="font-mono">{runData.status}</span> | Pass %: {runData.passPercentage?.toFixed(1) ?? 0}</div>
-                <table className="w-full text-sm border">
-                  <thead>
-                    <tr className="bg-gray-100">
-                      <th className="border px-2 py-1 text-left">Test Case ID</th>
-                      <th className="border px-2 py-1 text-left">Status</th>
-                      <th className="border px-2 py-1 text-left">Actual Output</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {runData.results.map((result: { id: string; testCaseId: string; status: string; output: string | object; }) => (
-                      <tr key={result.id}>
-                        <td className="border px-2 py-1 font-mono">{result.testCaseId}</td>
-                        <td className={`border px-2 py-1 font-bold ${result.status === 'PASS' ? 'text-green-600' : 'text-red-500'}`}>{result.status}</td>
-                        <td className="border px-2 py-1 font-mono whitespace-pre-wrap">{typeof result.output === 'string' ? result.output : JSON.stringify(result.output)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <TestResultsView
+                  results={runData.results.map(r => ({
+                    id: r.id,
+                    testCaseName: r.testCaseId, // No name, so use ID
+                    status: r.status.toLowerCase() === 'pass' ? 'pass' : 'fail',
+                    actualOutput: typeof r.output === 'string' ? r.output : JSON.stringify(r.output)
+                  }))}
+                />
                 {runData.status !== 'COMPLETED' && (
                   <div className="mt-2 text-xs text-gray-500">Still running... results will update automatically.</div>
                 )}

@@ -32,6 +32,7 @@
 - **Unit Testing**: Unit tests will be written concurrently with feature development. As each function or component is created or modified, corresponding unit tests must be created or updated to ensure correctness and prevent regressions.
 - **API Keys**: LLM API keys will be stored securely as environment variables on the server.
 - **Test Files**: All test files must follow the `*.spec.ts` or `*.spec.tsx` naming convention.
+- **Top-level Imports (Hard Requirement)**: All import statements must be static and placed at the top of each file. Inline or dynamic imports (e.g., `import()` inside functions or blocks) are strictly prohibited everywhere in the codebase, except for true dynamic loading scenarios (such as React lazy loading or code splitting). This rule applies to all backend, frontend, and shared code. Violations are not permitted and must be corrected immediately.
 
 ## Task Completion Checklist
 - After you finish a task from the task list (eg. when you finish section 1.2.3), you **must** follow these steps precisely:

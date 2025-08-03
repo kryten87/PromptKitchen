@@ -122,7 +122,7 @@ Prompt Kitchen is a web-based application designed to streamline the development
 - **Unit Testing**: Unit tests will be written concurrently with feature development. As each function or component is created or modified, corresponding unit tests must be created or updated to ensure correctness and prevent regressions.
 - **API Keys**: LLM API keys will be stored securely as environment variables on the server.
 - **Test Files**: All test files must follow the `*.spec.ts` or `*.spec.tsx` naming convention.
-- **Top-level Imports**: Always use top-level import statements for all dependencies. Do not use inline or dynamic imports except where absolutely necessary (e.g., true dynamic loading). This applies to all service, repository, and controller code.
+- **Top-level Imports (Hard Requirement)**: All import statements must be static and placed at the top of each file. Inline or dynamic imports (e.g., `import()` inside functions or blocks) are strictly prohibited everywhere in the codebase, except for true dynamic loading scenarios (such as React lazy loading or code splitting). This rule applies to all backend, frontend, and shared code, not just services, repositories, and controllers. Violations are not permitted and must be corrected immediately.
 
 ### 4.3. Data Models
 

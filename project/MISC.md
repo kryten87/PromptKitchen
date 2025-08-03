@@ -1,8 +1,4 @@
 # Code Issues/Questions
-- check for
-  - inline imports
-  - require statements
-  - inline if statements
 - using alerts for "are you sure?" prompts
 - skipped tests
 - shared eslint config -- warnings
@@ -35,3 +31,11 @@
 use LLM to refine fix-problem and use-task-ledger prompts
 
 sort out front end/back end ports/proxies
+
+# Code Issues/Questions
+- check for
+  - inline imports
+  - require statements
+  - inline if statements
+
+

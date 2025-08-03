@@ -14,6 +14,7 @@ description: "Maintain a structured task ledger for effective task management"
 - **Progress Tracking**: Record completed work, current tasks, and planned future steps
 - **Knowledge Repository**: Store research findings and key learnings to avoid redundant information lookups
 - **Decision Documentation**: Record important decisions and their rationale to maintain coherent task execution
+- **Top-level Imports (Hard Requirement)**: All import statements must be static and placed at the top of each file. Inline or dynamic imports (e.g., `import()` inside functions or blocks) are strictly prohibited everywhere in the codebase, except for true dynamic loading scenarios (such as React lazy loading or code splitting). This rule applies to all backend, frontend, and shared code. Violations are not permitted and must be corrected immediately.
 
 ## Update Guidelines
 
@@ -95,7 +96,5 @@ Maintain this task ledger diligently throughout the task execution to ensure max
 
 - Decision 1: [Choice made, rationale, and alternatives considered]
 - Decision 2: [Choice made, rationale, and alternatives considered]
-
-```
 
 ```

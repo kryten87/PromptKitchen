@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import type { TestCase, TestSuite } from '@prompt-kitchen/shared/src/dtos';
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { ApiClient } from '../ApiClient';
@@ -20,6 +21,44 @@ Object.defineProperty(window, 'confirm', {
   value: jest.fn(),
   configurable: true,
 });
+
+const mockTestSuites: TestSuite[] = [
+  {
+    id: 'suite-1',
+    promptId: 'prompt-1',
+    name: 'Test Suite 1',
+    createdAt: new Date('2025-01-01T00:00:00Z'),
+    updatedAt: new Date('2025-01-01T00:00:00Z'),
+  },
+  {
+    id: 'suite-2',
+    promptId: 'prompt-1',
+    name: 'Test Suite 2',
+    createdAt: new Date('2025-01-02T00:00:00Z'),
+    updatedAt: new Date('2025-01-02T00:00:00Z'),
+  },
+];
+
+const mockTestCases: TestCase[] = [
+  {
+    id: 'case-1',
+    testSuiteId: 'suite-1',
+    inputs: { name: 'Alice' },
+    expectedOutput: 'Hello Alice',
+    runMode: 'DEFAULT',
+    createdAt: new Date('2025-01-01T00:00:00Z'),
+    updatedAt: new Date('2025-01-01T00:00:00Z'),
+  },
+  {
+    id: 'case-2',
+    testSuiteId: 'suite-1',
+    inputs: { name: 'Bob', age: '30' },
+    expectedOutput: { greeting: 'Hello Bob', age: 30 },
+    runMode: 'ONLY',
+    createdAt: new Date('2025-01-01T00:00:00Z'),
+    updatedAt: new Date('2025-01-01T00:00:00Z'),
+  },
+];
 
 describe('TestSuitePanel', () => {
   beforeEach(() => {
@@ -49,27 +88,11 @@ describe('TestSuitePanel', () => {
     await waitFor(() => {
       expect(screen.getByText('No test suites found for this prompt.')).toBeInTheDocument();
     });
+
     expect(screen.getByText('Create Test Suite')).toBeInTheDocument();
   });
 
   it('renders test suites when data is loaded', async () => {
-    const mockTestSuites = [
-      {
-        id: 'suite-1',
-        promptId: 'prompt-1',
-        name: 'Test Suite 1',
-        createdAt: new Date('2025-01-01T00:00:00Z'),
-        updatedAt: new Date('2025-01-01T00:00:00Z'),
-      },
-      {
-        id: 'suite-2',
-        promptId: 'prompt-1',
-        name: 'Test Suite 2',
-        createdAt: new Date('2025-01-02T00:00:00Z'),
-        updatedAt: new Date('2025-01-02T00:00:00Z'),
-      },
-    ];
-
     mockApiClient.request.mockResolvedValue(mockTestSuites);
     render(<TestSuitePanel promptId="prompt-1" />);
 
@@ -79,6 +102,7 @@ describe('TestSuitePanel', () => {
     });
 
     // Check that action buttons are present
+    expect(screen.getAllByText('Test Cases')).toHaveLength(2);
     expect(screen.getAllByText('Edit')).toHaveLength(2);
     expect(screen.getAllByText('Delete')).toHaveLength(2);
     expect(screen.getAllByText('Run')).toHaveLength(2);
@@ -146,16 +170,6 @@ describe('TestSuitePanel', () => {
   });
 
   it('opens edit modal when edit button is clicked', async () => {
-    const mockTestSuites = [
-      {
-        id: 'suite-1',
-        promptId: 'prompt-1',
-        name: 'Test Suite 1',
-        createdAt: new Date('2025-01-01T00:00:00Z'),
-        updatedAt: new Date('2025-01-01T00:00:00Z'),
-      },
-    ];
-
     mockApiClient.request.mockResolvedValue(mockTestSuites);
     render(<TestSuitePanel promptId="prompt-1" />);
 
@@ -163,22 +177,12 @@ describe('TestSuitePanel', () => {
       expect(screen.getByText('Test Suite 1')).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByText('Edit'));
+    fireEvent.click(screen.getAllByText('Edit')[0]);
     expect(screen.getByText('Edit Test Suite')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Test Suite 1')).toBeInTheDocument();
   });
 
   it('updates test suite successfully', async () => {
-    const mockTestSuites = [
-      {
-        id: 'suite-1',
-        promptId: 'prompt-1',
-        name: 'Test Suite 1',
-        createdAt: new Date('2025-01-01T00:00:00Z'),
-        updatedAt: new Date('2025-01-01T00:00:00Z'),
-      },
-    ];
-
     const updatedTestSuite = {
       ...mockTestSuites[0],
       name: 'Updated Test Suite',
@@ -196,7 +200,7 @@ describe('TestSuitePanel', () => {
     });
 
     // Open edit modal
-    fireEvent.click(screen.getByText('Edit'));
+    fireEvent.click(screen.getAllByText('Edit')[0]);
 
     // Update the form
     const nameInput = screen.getByLabelText('Test Suite Name');
@@ -218,23 +222,6 @@ describe('TestSuitePanel', () => {
   });
 
   it('deletes test suite after confirmation', async () => {
-    const mockTestSuites = [
-      {
-        id: 'suite-1',
-        promptId: 'prompt-1',
-        name: 'Test Suite 1',
-        createdAt: new Date('2025-01-01T00:00:00Z'),
-        updatedAt: new Date('2025-01-01T00:00:00Z'),
-      },
-      {
-        id: 'suite-2',
-        promptId: 'prompt-1',
-        name: 'Test Suite 2',
-        createdAt: new Date('2025-01-02T00:00:00Z'),
-        updatedAt: new Date('2025-01-02T00:00:00Z'),
-      },
-    ];
-
     mockApiClient.request
       .mockResolvedValueOnce(mockTestSuites) // Initial load
       .mockResolvedValueOnce(undefined); // Delete API call
@@ -267,16 +254,6 @@ describe('TestSuitePanel', () => {
   it('does not delete test suite when confirmation is cancelled', async () => {
     (window.confirm as jest.Mock).mockReturnValue(false);
 
-    const mockTestSuites = [
-      {
-        id: 'suite-1',
-        promptId: 'prompt-1',
-        name: 'Test Suite 1',
-        createdAt: new Date('2025-01-01T00:00:00Z'),
-        updatedAt: new Date('2025-01-01T00:00:00Z'),
-      },
-    ];
-
     mockApiClient.request.mockResolvedValue(mockTestSuites);
     render(<TestSuitePanel promptId="prompt-1" />);
 
@@ -284,30 +261,20 @@ describe('TestSuitePanel', () => {
       expect(screen.getByText('Test Suite 1')).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByText('Delete'));
+    // Click delete button for first test suite
+    const deleteButtons = screen.getAllByText('Delete');
+    fireEvent.click(deleteButtons[0]);
 
-    // Check that delete API was not called
-    expect(mockApiClient.request).toHaveBeenCalledTimes(1); // Only initial load
+    // Ensure API was not called since confirmation was cancelled
+    expect(mockApiClient.request).toHaveBeenCalledTimes(1); // Only the initial load
     expect(screen.getByText('Test Suite 1')).toBeInTheDocument();
   });
 
-  it('shows error when delete fails', async () => {
-    // Mock window.alert for this test
-    const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
-
-    const mockTestSuites = [
-      {
-        id: 'suite-1',
-        promptId: 'prompt-1',
-        name: 'Test Suite 1',
-        createdAt: new Date('2025-01-01T00:00:00Z'),
-        updatedAt: new Date('2025-01-01T00:00:00Z'),
-      },
-    ];
-
+  // Test Cases functionality tests
+  it('shows test cases when Test Cases button is clicked', async () => {
     mockApiClient.request
-      .mockResolvedValueOnce(mockTestSuites) // Initial load
-      .mockRejectedValueOnce(new Error('Delete failed')); // Delete API call
+      .mockResolvedValueOnce(mockTestSuites) // Initial test suites load
+      .mockResolvedValueOnce(mockTestCases); // Test cases load
 
     render(<TestSuitePanel promptId="prompt-1" />);
 
@@ -315,16 +282,207 @@ describe('TestSuitePanel', () => {
       expect(screen.getByText('Test Suite 1')).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByText('Delete'));
+    // Click the Test Cases button for the first test suite
+    fireEvent.click(screen.getAllByText('Test Cases')[0]);
 
     await waitFor(() => {
-      expect(alertSpy).toHaveBeenCalledWith('Failed to delete test suite');
+      expect(screen.getByText('Test Cases for "Test Suite 1"')).toBeInTheDocument();
+      expect(mockApiClient.request).toHaveBeenCalledWith('/test-suites/suite-1/test-cases');
     });
 
-    // Test suite should still be in the list since delete failed
-    expect(screen.getByText('Test Suite 1')).toBeInTheDocument();
+    // Check that test cases are displayed
+    expect(screen.getByText('Test Case case-1')).toBeInTheDocument();
+    expect(screen.getByText('Test Case case-2')).toBeInTheDocument();
+    expect(screen.getByText('DEFAULT')).toBeInTheDocument();
+    expect(screen.getByText('ONLY')).toBeInTheDocument();
+  });
 
-    // Clean up
-    alertSpy.mockRestore();
+  it('shows empty state when no test cases exist', async () => {
+    mockApiClient.request
+      .mockResolvedValueOnce(mockTestSuites) // Initial test suites load
+      .mockResolvedValueOnce([]); // Empty test cases
+
+    render(<TestSuitePanel promptId="prompt-1" />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Suite 1')).toBeInTheDocument();
+    });
+
+    // Click the Test Cases button
+    fireEvent.click(screen.getAllByText('Test Cases')[0]);
+
+    await waitFor(() => {
+      expect(screen.getByText('No test cases found for this test suite.')).toBeInTheDocument();
+    });
+  });
+
+  it('shows test case editor when Add Test Case is clicked', async () => {
+    mockApiClient.request
+      .mockResolvedValueOnce(mockTestSuites) // Initial test suites load
+      .mockResolvedValueOnce([]); // Empty test cases
+
+    render(<TestSuitePanel promptId="prompt-1" />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Suite 1')).toBeInTheDocument();
+    });
+
+    // Click the Test Cases button
+    fireEvent.click(screen.getAllByText('Test Cases')[0]);
+
+    await waitFor(() => {
+      expect(screen.getByText('Add Test Case')).toBeInTheDocument();
+    });
+
+    // Click Add Test Case
+    fireEvent.click(screen.getByText('Add Test Case'));
+
+    expect(screen.getByText('Create New Test Case')).toBeInTheDocument();
+    expect(screen.getByText('Input Variables')).toBeInTheDocument();
+    expect(screen.getByText('Expected Output')).toBeInTheDocument();
+    expect(screen.getByText('Run Mode')).toBeInTheDocument();
+  });
+
+  it('shows test case editor when editing a test case', async () => {
+    mockApiClient.request
+      .mockResolvedValueOnce(mockTestSuites) // Initial test suites load
+      .mockResolvedValueOnce(mockTestCases); // Test cases load
+
+    render(<TestSuitePanel promptId="prompt-1" />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Suite 1')).toBeInTheDocument();
+    });
+
+    // Click the Test Cases button
+    fireEvent.click(screen.getAllByText('Test Cases')[0]);
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Case case-1')).toBeInTheDocument();
+    });
+
+    // Click Edit on the first test case
+    const editButtons = screen.getAllByText('Edit');
+    // Skip the test suite edit buttons (2) and click on test case edit button
+    fireEvent.click(editButtons[2]);
+
+    expect(screen.getByText('Edit Test Case')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('name')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('Alice')).toBeInTheDocument();
+  });
+
+  it('deletes test case after confirmation', async () => {
+    (window.confirm as jest.Mock).mockReturnValue(true);
+
+    mockApiClient.request
+      .mockResolvedValueOnce(mockTestSuites) // Initial test suites load
+      .mockResolvedValueOnce(mockTestCases) // Test cases load
+      .mockResolvedValueOnce(undefined); // Delete API call
+
+    render(<TestSuitePanel promptId="prompt-1" />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Suite 1')).toBeInTheDocument();
+    });
+
+    // Click the Test Cases button
+    fireEvent.click(screen.getAllByText('Test Cases')[0]);
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Case case-1')).toBeInTheDocument();
+    });
+
+    // Click Delete on the first test case
+    const testCaseDeleteButtons = screen.getAllByText('Delete');
+    // Skip the test suite delete buttons (2) and click on test case delete button
+    fireEvent.click(testCaseDeleteButtons[2]);
+
+    await waitFor(() => {
+      expect(mockApiClient.request).toHaveBeenCalledWith('/test-cases/case-1', {
+        method: 'DELETE',
+      });
+    });
+
+    // Check that the test case is removed from the list
+    await waitFor(() => {
+      expect(screen.queryByText('Test Case case-1')).not.toBeInTheDocument();
+    });
+    expect(screen.getByText('Test Case case-2')).toBeInTheDocument();
+  });
+
+  it('closes test cases view when Close button is clicked', async () => {
+    mockApiClient.request
+      .mockResolvedValueOnce(mockTestSuites) // Initial test suites load
+      .mockResolvedValueOnce(mockTestCases); // Test cases load
+
+    render(<TestSuitePanel promptId="prompt-1" />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Suite 1')).toBeInTheDocument();
+    });
+
+    // Click the Test Cases button
+    fireEvent.click(screen.getAllByText('Test Cases')[0]);
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Cases for "Test Suite 1"')).toBeInTheDocument();
+    });
+
+    // Click Close
+    fireEvent.click(screen.getByText('Close'));
+
+    expect(screen.queryByText('Test Cases for "Test Suite 1"')).not.toBeInTheDocument();
+  });
+
+  it('shows error when test cases fail to load', async () => {
+    mockApiClient.request
+      .mockResolvedValueOnce(mockTestSuites) // Initial test suites load
+      .mockRejectedValueOnce(new Error('API Error')); // Test cases load fails
+
+    render(<TestSuitePanel promptId="prompt-1" />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Suite 1')).toBeInTheDocument();
+    });
+
+    // Click the Test Cases button
+    fireEvent.click(screen.getAllByText('Test Cases')[0]);
+
+    await waitFor(() => {
+      expect(screen.getByText('Failed to load test cases')).toBeInTheDocument();
+    });
+  });
+
+  it('clears test case view when deleting the selected test suite', async () => {
+    mockApiClient.request
+      .mockResolvedValueOnce(mockTestSuites) // Initial test suites load
+      .mockResolvedValueOnce(mockTestCases) // Test cases load
+      .mockResolvedValueOnce(undefined); // Delete test suite API call
+
+    render(<TestSuitePanel promptId="prompt-1" />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Suite 1')).toBeInTheDocument();
+    });
+
+    // Open test cases view
+    fireEvent.click(screen.getAllByText('Test Cases')[0]);
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Cases for "Test Suite 1"')).toBeInTheDocument();
+    });
+
+    // Delete the test suite that's currently being viewed
+    const deleteButtons = screen.getAllByText('Delete');
+    fireEvent.click(deleteButtons[0]); // First delete button (test suite)
+
+    await waitFor(() => {
+      expect(mockApiClient.request).toHaveBeenCalledWith('/test-suites/suite-1', {
+        method: 'DELETE',
+      });
+    });
+
+    // Check that test case view is closed
+    expect(screen.queryByText('Test Cases for "Test Suite 1"')).not.toBeInTheDocument();
   });
 });

@@ -288,13 +288,22 @@ describe('ProjectPage', () => {
     expect(await screen.findByText('Failed to load project or prompts')).toBeInTheDocument();
   });
 
-  it('shows history alert when view history is clicked', async () => {
-    window.alert = jest.fn();
+  it('opens history modal when view history is clicked', async () => {
+    const mockHistory = [
+      {
+        id: 'h1',
+        promptId: 'p1',
+        prompt: 'Write a poem about AI.',
+        version: 1,
+        createdAt: new Date('2023-01-01'),
+      },
+    ];
 
     mockApiClient.request = jest.fn()
       .mockImplementation((path: string) => {
         if (path === '/projects/1') return Promise.resolve(mockProject);
         if (path === '/projects/1/prompts') return Promise.resolve(mockPrompts);
+        if (path === '/prompts/p1/history') return Promise.resolve(mockHistory);
         return Promise.reject(new Error('Unknown path'));
       });
 
@@ -307,6 +316,81 @@ describe('ProjectPage', () => {
     const viewHistoryButton = screen.getByText('View History');
     fireEvent.click(viewHistoryButton);
 
-    expect(window.alert).toHaveBeenCalledWith('History modal will be implemented in task 3.4.4');
+    // Check that the history modal opens
+    expect(await screen.findByText('Prompt History')).toBeInTheDocument();
+    expect(screen.getByText('Current Version: 1')).toBeInTheDocument();
+  });
+
+  it('restores prompt from history and updates the editor', async () => {
+    const mockHistory = [
+      {
+        id: 'h2',
+        promptId: 'p1',
+        prompt: 'Updated poem prompt.',
+        version: 2,
+        createdAt: new Date('2023-01-02'),
+      },
+      {
+        id: 'h1',
+        promptId: 'p1',
+        prompt: 'Original poem prompt.',
+        version: 1,
+        createdAt: new Date('2023-01-01'),
+      },
+    ];
+
+    // Mock prompt with version 2 to make version 1 restorable
+    const currentMockPrompts = [
+      {
+        ...mockPrompts[0],
+        version: 2,
+        prompt: 'Updated poem prompt.',
+      },
+      mockPrompts[1],
+    ];
+
+    const restoredPrompt = {
+      ...mockPrompts[0],
+      prompt: 'Original poem prompt.',
+      version: 3, // New version after restore
+    };
+
+    mockApiClient.request = jest.fn()
+      .mockImplementation((path: string, options?: { method?: string; body?: string; headers?: Record<string, string> }) => {
+        if (path === '/projects/1') return Promise.resolve(mockProject);
+        if (path === '/projects/1/prompts') return Promise.resolve(currentMockPrompts);
+        if (path === '/prompts/p1/history') return Promise.resolve(mockHistory);
+        if (path === '/prompts/p1/restore' && options?.method === 'POST') return Promise.resolve(restoredPrompt);
+        return Promise.reject(new Error('Unknown path'));
+      });
+
+    renderProjectPage();
+
+    await screen.findByText('Prompt 1');
+    const editButtons = screen.getAllByText('Edit');
+    fireEvent.click(editButtons[0]);
+
+    const viewHistoryButton = screen.getByText('View History');
+    fireEvent.click(viewHistoryButton);
+
+    // Wait for history modal to load
+    await screen.findByText('Prompt History');
+
+    // Should only have one restore button for version 1 (since current is version 2)
+    const restoreButtons = screen.getAllByText('Restore');
+    fireEvent.click(restoreButtons[0]); // Should restore version 1
+
+    await waitFor(() => {
+      expect(mockApiClient.request).toHaveBeenCalledWith('/prompts/p1/restore', {
+        method: 'POST',
+        body: JSON.stringify({ version: 1 }),
+        headers: { 'Content-Type': 'application/json' },
+      });
+    });
+
+    // Modal should close and prompt should be updated
+    await waitFor(() => {
+      expect(screen.queryByText('Prompt History')).not.toBeInTheDocument();
+    });
   });
 });

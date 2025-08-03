@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { CreatePromptForm } from '../components/CreatePromptForm';
 import { PromptEditor } from '../components/PromptEditor';
+import PromptHistoryModal from '../components/PromptHistoryModal';
 import { useApiClient } from '../hooks/useApiClient';
 
 export function ProjectPage() {
@@ -15,6 +16,7 @@ export function ProjectPage() {
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
 
   const loadProjectAndPrompts = useCallback(async () => {
     if (!projectId) {
@@ -89,6 +91,11 @@ export function ProjectPage() {
   const handlePromptUpdated = async (updatedPrompt: Prompt) => {
     await loadProjectAndPrompts();
     setSelectedPrompt(updatedPrompt);
+  };
+
+  const handlePromptRestored = async (restoredPrompt: Prompt) => {
+    await loadProjectAndPrompts();
+    setSelectedPrompt(restoredPrompt);
   };
 
   const handleCancelEditor = () => {
@@ -181,16 +188,20 @@ export function ProjectPage() {
                 <PromptEditor
                   prompt={selectedPrompt}
                   onPromptUpdated={handlePromptUpdated}
-                  onViewHistory={() => {
-                    // TODO: Implement history modal in next task
-                    alert('History modal will be implemented in task 3.4.4');
-                  }}
+                  onViewHistory={() => setShowHistoryModal(true)}
                 />
               )}
             </div>
           )}
         </div>
       </div>
+
+      <PromptHistoryModal
+        isOpen={showHistoryModal}
+        onClose={() => setShowHistoryModal(false)}
+        prompt={selectedPrompt}
+        onPromptRestored={handlePromptRestored}
+      />
     </div>
   );
 }

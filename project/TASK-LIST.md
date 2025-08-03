@@ -170,7 +170,7 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 ### 3.6. Results Display (UI-04)
 - ✅ 3.6.1. After a test suite run is initiated, the frontend should poll the backend for results and display them to the user. Ensure the polling logic is robust and fully tested. Do not proceed to later sections. ✅
 - ✅ 3.6.2. Create a `TestResultsView.tsx` component.
-- [ ] 3.6.3. Display the results in a table: `Test Case Name | Status (Pass/Fail) | Actual Output`.
+- ✅ 3.6.3. Display the results in a table: `Test Case Name | Status (Pass/Fail) | Actual Output`.
 - [ ] 3.6.4. Style passing tests in green and failing tests in red.
 
 ---

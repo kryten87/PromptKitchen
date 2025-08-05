@@ -1,4 +1,4 @@
-export async function up(knex) {
+async function up(knex) {
   return knex.schema.createTable('users', function(table) {
     table.string('id').primary();
     table.string('email').notNullable().unique();
@@ -10,6 +10,8 @@ export async function up(knex) {
   });
 }
 
-export async function down(knex) {
+async function down(knex) {
   return knex.schema.dropTableIfExists('users');
 }
+
+module.exports = { up, down };

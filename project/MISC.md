@@ -1,14 +1,13 @@
 # Code Issues/Questions
 - logging system -- frontend & backend
+  - set `X-Request-ID` header on front end & log it on the back end?
 - skipped tests
-- using alerts for "are you sure?" prompts
-
 - frontend/src/mocks -- what is this?
 - are there dtos for every model?
 - refactor functions into small, pure helpers
 - ensure that access control is working -- person A can only see projects for person A
 - playwright e2e tests
-- set `X-Request-ID` header on front end & log it on the back end
+- shared eslint config -- warnings
 
 # Design & Functionality
 - improve theme
@@ -36,6 +35,6 @@ sort out front end/back end ports/proxies
   - inline imports
   - require statements
   - inline if statements
-- shared eslint config -- warnings
+- using alerts for "are you sure?" prompts
 
 

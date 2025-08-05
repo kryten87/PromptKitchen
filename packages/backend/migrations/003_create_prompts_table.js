@@ -1,4 +1,4 @@
-export async function up(knex) {
+async function up(knex) {
   return knex.schema.createTable('prompts', function(table) {
     table.string('id').primary();
     table.string('project_id').notNullable().references('id').inTable('projects').onDelete('CASCADE');
@@ -10,6 +10,8 @@ export async function up(knex) {
   });
 }
 
-export async function down(knex) {
+async function down(knex) {
   return knex.schema.dropTableIfExists('prompts');
 }
+
+module.exports = { up, down };

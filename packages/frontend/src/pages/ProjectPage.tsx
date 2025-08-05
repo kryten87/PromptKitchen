@@ -1,6 +1,7 @@
 import type { Project, Prompt } from '@prompt-kitchen/shared/src/dtos';
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { ConfirmModal } from '../components/ConfirmModal';
 import { CreatePromptForm } from '../components/CreatePromptForm';
 import { PromptEditor } from '../components/PromptEditor';
 import PromptHistoryModal from '../components/PromptHistoryModal';
@@ -18,6 +19,12 @@ export function ProjectPage() {
   const [isCreating, setIsCreating] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [confirmModal, setConfirmModal] = useState<{
+    open: boolean;
+    message: string;
+    onConfirm: () => void;
+  } | null>(null);
+  const [errorAlert, setErrorAlert] = useState<string | null>(null);
 
   const loadProjectAndPrompts = useCallback(async () => {
     if (!projectId) {
@@ -62,19 +69,23 @@ export function ProjectPage() {
   };
 
   const handleDeletePrompt = async (promptId: string) => {
-    if (window.confirm('Are you sure you want to delete this prompt?')) {
-      try {
-        await apiClient.request(`/prompts/${promptId}`, { method: 'DELETE' });
-        await loadProjectAndPrompts();
-        // Hide editor if we're editing the deleted prompt
-        if (selectedPrompt?.id === promptId) {
-          setShowEditor(false);
-          setSelectedPrompt(null);
+    setConfirmModal({
+      open: true,
+      message: 'Are you sure you want to delete this prompt?',
+      onConfirm: async () => {
+        setConfirmModal(null);
+        try {
+          await apiClient.request(`/prompts/${promptId}`, { method: 'DELETE' });
+          await loadProjectAndPrompts();
+          if (selectedPrompt?.id === promptId) {
+            setShowEditor(false);
+            setSelectedPrompt(null);
+          }
+        } catch {
+          setErrorAlert('Failed to delete prompt');
         }
-      } catch {
-        alert('Failed to delete prompt');
-      }
-    }
+      },
+    });
   };
 
   const handlePromptCreated = async (newPrompt: Omit<Prompt, 'id' | 'version' | 'createdAt' | 'updatedAt'>) => {
@@ -91,7 +102,7 @@ export function ProjectPage() {
       setSelectedPrompt(created);
       setIsCreating(false);
     } catch {
-      alert('Failed to create prompt');
+      setErrorAlert('Failed to create prompt');
     }
   };
 
@@ -175,7 +186,6 @@ export function ProjectPage() {
           )}
         </div>
 
-        {/* Only render the second column if there is content to show */}
         {(showEditor || (!showEditor && selectedPrompt)) && (
           <div>
             {showEditor && (
@@ -231,6 +241,24 @@ export function ProjectPage() {
         prompt={selectedPrompt}
         onPromptRestored={handlePromptRestored}
       />
+
+      {confirmModal && (
+        <ConfirmModal
+          open={confirmModal.open}
+          message={confirmModal.message}
+          onConfirm={confirmModal.onConfirm}
+          onCancel={() => setConfirmModal(null)}
+        />
+      )}
+
+      {errorAlert && (
+        <ConfirmModal
+          open={true}
+          message={errorAlert}
+          onConfirm={() => setErrorAlert(null)}
+          onCancel={() => setErrorAlert(null)}
+        />
+      )}
     </div>
   );
 }

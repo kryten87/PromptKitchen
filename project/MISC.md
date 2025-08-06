@@ -3,7 +3,6 @@
   - set `X-Request-ID` header on front end & log it on the back end?
 - skipped tests
 - frontend/src/mocks -- what is this?
-- are there dtos for every model?
 - refactor functions into small, pure helpers
 - ensure that access control is working -- person A can only see projects for person A
 - playwright e2e tests
@@ -36,5 +35,6 @@ sort out front end/back end ports/proxies
   - require statements
   - inline if statements
 - using alerts for "are you sure?" prompts
+- are there dtos for every model?
 
 

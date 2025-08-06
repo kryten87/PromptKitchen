@@ -1,19 +1,20 @@
 # Code Issues/Questions
+- skipped tests
+- refactor functions into small, pure helpers
 - logging system -- frontend & backend
   - set `X-Request-ID` header on front end & log it on the back end?
-- skipped tests
 - frontend/src/mocks -- what is this?
-- refactor functions into small, pure helpers
 - ensure that access control is working -- person A can only see projects for person A
 - playwright e2e tests
 - shared eslint config -- warnings
 
 
 # New Features
-- need a way to match results similar to jest matchers
+- functional log out button
+- test results during tests -- show expected and actual values
 - close button for prompt view
 - view last tests results when looking at a test suite
-- test results during tests -- show expected and actual values
+- need a way to match results similar to jest matchers
 
 # DONE --------------------------
 

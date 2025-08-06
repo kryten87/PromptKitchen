@@ -7,11 +7,11 @@ interface AppLayoutProps {
 
 export function AppLayout({ sidebar, children }: AppLayoutProps) {
   return (
-    <div className="flex h-screen">
-      <aside className="w-64 bg-gray-900 text-white flex-shrink-0">
+    <div className="flex h-screen bg-background">
+      <aside className="w-64 bg-white text-text-primary flex-shrink-0 shadow-lg">
         {sidebar}
       </aside>
-      <main className="flex-1 bg-gray-50 overflow-auto p-6">
+      <main className="flex-1 overflow-auto p-6">
         {children}
       </main>
     </div>

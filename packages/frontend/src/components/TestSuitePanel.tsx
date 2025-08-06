@@ -215,7 +215,7 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold">Test Suites</h3>
         <button
-          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm"
+          className="bg-primary text-white font-bold py-2 px-4 rounded text-sm"
           onClick={() => setShowCreateModal(true)}
         >
           Create Test Suite
@@ -240,25 +240,25 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
                 <div className="flex justify-end mt-4 space-x-2">
                   <button
                     onClick={() => handleViewTestCases(suite)}
-                    className="px-2 py-1 text-xs bg-purple-500 text-white rounded hover:bg-purple-600"
+                    className="px-2 py-1 text-xs bg-btn-subtle text-text-primary rounded hover:bg-btn-subtle-hover"
                   >
                     Test Cases
                   </button>
                   <button
                     onClick={() => handleEditTestSuite(suite)}
-                    className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
+                    className="px-2 py-1 text-xs bg-btn-subtle text-text-primary rounded hover:bg-btn-subtle-hover"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDeleteTestSuite(suite.id)}
-                    className="px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
+                    className="px-2 py-1 text-xs bg-warning text-white rounded hover:opacity-90"
                   >
                     Delete
                   </button>
                   <button
                     onClick={() => handleRunTestSuite(suite.id)}
-                    className="px-2 py-1 text-xs bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50"
+                    className="px-2 py-1 text-xs bg-btn-success text-text-primary rounded hover:opacity-90 disabled:opacity-50"
                     disabled={runningTestSuites.has(suite.id)}
                   >
                     {runningTestSuites.has(suite.id) ? 'Running...' : 'Run'}
@@ -278,13 +278,13 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
                 <div className="flex gap-2">
                   <button
                     onClick={handleCreateTestCase}
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm"
+                    className="bg-primary text-white font-bold py-1 px-3 rounded text-sm"
                   >
                     Add Test Case
                   </button>
                   <button
                     onClick={() => setSelectedTestSuiteForCases(null)}
-                    className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-1 px-3 rounded text-sm"
+                    className="bg-btn-subtle text-text-primary font-bold py-1 px-3 rounded text-sm hover:bg-btn-subtle-hover"
                   >
                     Close
                   </button>
@@ -324,13 +324,13 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
                       <div className="flex justify-end mt-4 space-x-2">
                         <button
                           onClick={() => handleEditTestCase(testCase)}
-                          className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
+                          className="px-2 py-1 text-xs bg-btn-subtle text-text-primary rounded hover:bg-btn-subtle-hover"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDeleteTestCase(testCase.id)}
-                          className="px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
+                          className="px-2 py-1 text-xs bg-warning text-white rounded hover:opacity-90"
                         >
                           Delete
                         </button>

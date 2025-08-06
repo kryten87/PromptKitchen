@@ -13,8 +13,8 @@ const NavItem = ({ to, icon, label }: { to: string, icon: React.ReactNode, label
     className={({ isActive }) =>
       `flex items-center px-4 py-2 text-lg rounded-lg transition-colors duration-200 ${
         isActive
-          ? 'bg-gray-900 text-white'
-          : 'text-gray-600 hover:bg-gray-100'
+          ? 'bg-primary text-white'
+          : 'text-text-secondary hover:bg-btn-subtle-hover'
       }`
     }
   >
@@ -44,7 +44,7 @@ function Sidebar() {
       </nav>
 
       <div>
-        <button className="flex items-center w-full px-4 py-2 text-lg text-white bg-gray-800 rounded-lg hover:bg-gray-900">
+        <button className="flex items-center w-full px-4 py-2 text-lg text-text-secondary rounded-lg bg-btn-subtle hover:bg-btn-subtle-hover">
           <LiaSignOutAltSolid className="mr-3" />
           Log out
         </button>

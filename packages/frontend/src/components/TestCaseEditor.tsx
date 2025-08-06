@@ -174,7 +174,7 @@ export function TestCaseEditor({
             <button
               type="button"
               onClick={addInputField}
-              className="text-sm bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
+              className="text-sm bg-btn-subtle text-text-primary px-2 py-1 rounded hover:bg-btn-subtle-hover"
               disabled={loading}
             >
               Add Input
@@ -204,7 +204,7 @@ export function TestCaseEditor({
                 <button
                   type="button"
                   onClick={() => removeInput(key)}
-                  className="text-red-500 hover:text-red-700 px-2"
+                  className="text-warning hover:opacity-80 px-2"
                   disabled={loading}
                 >
                   ✕
@@ -294,14 +294,14 @@ export function TestCaseEditor({
           <button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
+            className="px-4 py-2 bg-btn-subtle text-text-primary rounded hover:bg-btn-subtle-hover disabled:opacity-50"
             disabled={loading}
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+            className="px-4 py-2 bg-primary text-white rounded hover:opacity-90 disabled:opacity-50"
             disabled={!isValid || loading}
           >
             {loading ? 'Saving...' : (isEditing ? 'Update' : 'Create')}

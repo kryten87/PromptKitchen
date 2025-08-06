@@ -138,7 +138,7 @@ export function ProjectPage() {
         <h2 className="text-xl font-semibold">Prompts</h2>
         <button
           onClick={handleCreateNewPrompt}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          className="bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded"
         >
           Create New Prompt
         </button>
@@ -163,19 +163,19 @@ export function ProjectPage() {
                   <div className="flex justify-end mt-4 space-x-2">
                     <button
                       onClick={() => handleViewPrompt(prompt)}
-                      className="px-3 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600"
+                      className="px-3 py-1 text-sm bg-gray-800 text-white rounded hover:bg-gray-900"
                     >
                       View
                     </button>
                     <button
                       onClick={() => handleEditPrompt(prompt)}
-                      className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
+                      className="px-3 py-1 text-sm bg-gray-800 text-white rounded hover:bg-gray-900"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDeletePrompt(prompt.id)}
-                      className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
+                      className="px-3 py-1 text-sm bg-red-800 text-white rounded hover:bg-red-900"
                     >
                       Delete
                     </button>
@@ -196,7 +196,7 @@ export function ProjectPage() {
                   </h3>
                   <button
                     onClick={handleCancelEditor}
-                    className="px-3 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600"
+                    className="px-3 py-1 text-sm bg-gray-700 text-white rounded hover:bg-gray-800"
                   >
                     Cancel
                   </button>
@@ -223,7 +223,7 @@ export function ProjectPage() {
                   <h3 className="text-lg font-semibold">Selected Prompt: {selectedPrompt.name}</h3>
                   <button
                     onClick={() => handleEditPrompt(selectedPrompt)}
-                    className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
+                    className="px-3 py-1 text-sm bg-gray-800 text-white rounded hover:bg-gray-900"
                   >
                     Edit Prompt
                   </button>

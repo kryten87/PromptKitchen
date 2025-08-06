@@ -14,7 +14,7 @@ export function ConfirmModal({ open, message, onConfirm, onCancel, loading }: Co
         <div className="mb-6 text-gray-900 dark:text-gray-100 text-base">{message}</div>
         <div className="flex justify-end gap-2">
           <button
-            className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50"
+            className="px-4 py-2 rounded bg-gray-700 text-white hover:bg-gray-600 disabled:opacity-50"
             onClick={onCancel}
             data-testid="confirm-no"
             disabled={loading}
@@ -22,7 +22,7 @@ export function ConfirmModal({ open, message, onConfirm, onCancel, loading }: Co
             No
           </button>
           <button
-            className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+            className="px-4 py-2 rounded bg-gray-800 text-white hover:bg-gray-900 disabled:opacity-50"
             onClick={onConfirm}
             data-testid="confirm-yes"
             disabled={loading}

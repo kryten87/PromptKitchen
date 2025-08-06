@@ -1,13 +1,9 @@
 import {
-  LiaHomeSolid,
-  LiaChartBarSolid,
-  LiaCompassSolid,
-  LiaShoppingBagSolid,
-  LiaCommentSolid,
   LiaCogSolid,
+  LiaHomeSolid,
   LiaQuestionCircleSolid,
-  LiaUserFriendsSolid,
   LiaSignOutAltSolid,
+  LiaUserFriendsSolid,
 } from 'react-icons/lia';
 import { NavLink } from 'react-router-dom';
 
@@ -31,19 +27,12 @@ function Sidebar() {
   return (
     <div className="flex flex-col h-full p-4 bg-white shadow-lg">
       <div className="flex items-center mb-8">
-        <div className="bg-gray-900 text-white text-2xl font-bold rounded-full w-10 h-10 flex items-center justify-center">
-          X
-        </div>
-        <span className="ml-3 text-2xl font-bold">Xenith</span>
+        <span className="ml-3 text-2xl font-bold">Prompt Kitchen</span>
       </div>
 
       <nav className="flex-grow">
         <ul>
           <li><NavItem to="/dashboard" icon={<LiaHomeSolid />} label="Home" /></li>
-          <li><NavItem to="/analytics" icon={<LiaChartBarSolid />} label="Analytics" /></li>
-          <li><NavItem to="/explore" icon={<LiaCompassSolid />} label="Explore" /></li>
-          <li><NavItem to="/shop" icon={<LiaShoppingBagSolid />} label="Shop" /></li>
-          <li><NavItem to="/chat" icon={<LiaCommentSolid />} label="Chat" /></li>
         </ul>
 
         <h2 className="mt-8 mb-4 text-sm font-semibold text-gray-400 uppercase">Tools</h2>
@@ -55,7 +44,7 @@ function Sidebar() {
       </nav>
 
       <div>
-        <button className="flex items-center w-full px-4 py-2 text-lg text-gray-600 rounded-lg hover:bg-gray-100">
+        <button className="flex items-center w-full px-4 py-2 text-lg text-white bg-gray-800 rounded-lg hover:bg-gray-900">
           <LiaSignOutAltSolid className="mr-3" />
           Log out
         </button>

@@ -66,7 +66,7 @@ export function DashboardPage() {
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Dashboard</h1>
         <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          className="bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded"
           onClick={() => setShowModal(true)}
         >
           New Project
@@ -95,7 +95,7 @@ export function DashboardPage() {
             <button
               key={project.id}
               type="button"
-              className="relative group block p-6 w-full text-left bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="relative group block p-6 w-full text-left bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400"
               onClick={() => window.location.assign(`/projects/${project.id}`)}
               tabIndex={0}
               aria-label={`Go to project ${project.name}`}
@@ -106,14 +106,14 @@ export function DashboardPage() {
               </div>
               <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
-                  className="text-blue-600 hover:underline text-sm z-10"
+                  className="bg-gray-800 hover:bg-gray-900 text-white font-bold py-1 px-2 rounded text-xs z-10"
                   onClick={e => { e.stopPropagation(); handleEditClick(project); }}
                   aria-label={`Edit ${project.name}`}
                 >
                   Edit
                 </button>
                 <button
-                  className="text-red-600 hover:underline text-sm z-10"
+                  className="bg-red-800 hover:bg-red-900 text-white font-bold py-1 px-2 rounded text-xs z-10"
                   onClick={e => { e.stopPropagation(); handleDelete(project.id); }}
                   aria-label={`Delete ${project.name}`}
                 >

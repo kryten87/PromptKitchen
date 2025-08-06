@@ -27,10 +27,6 @@ function App() {
                 <DashboardPage />
               </ProtectedRoute>
             } />
-            <Route path="/analytics" element={<ProtectedRoute><div>Analytics</div></ProtectedRoute>} />
-            <Route path="/explore" element={<ProtectedRoute><div>Explore</div></ProtectedRoute>} />
-            <Route path="/shop" element={<ProtectedRoute><div>Shop</div></ProtectedRoute>} />
-            <Route path="/chat" element={<ProtectedRoute><div>Chat</div></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><div>Settings</div></ProtectedRoute>} />
             <Route path="/help" element={<ProtectedRoute><div>Help</div></ProtectedRoute>} />
             <Route path="/manage-users" element={<ProtectedRoute><div>Manage Users</div></ProtectedRoute>} />

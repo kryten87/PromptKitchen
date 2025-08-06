@@ -5,7 +5,8 @@ import {
   LiaSignOutAltSolid,
   LiaUserFriendsSolid,
 } from 'react-icons/lia';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useSession } from '../hooks/useSession';
 
 const NavItem = ({ to, icon, label }: { to: string, icon: React.ReactNode, label: string }) => (
   <NavLink
@@ -24,6 +25,14 @@ const NavItem = ({ to, icon, label }: { to: string, icon: React.ReactNode, label
 );
 
 function Sidebar() {
+  const navigate = useNavigate();
+  const { setUser } = useSession();
+
+  const handleLogout = () => {
+    setUser(null);
+    navigate('/');
+  };
+
   return (
     <div className="flex flex-col h-full p-4 bg-white shadow-lg">
       <div className="flex items-center mb-8">
@@ -44,7 +53,10 @@ function Sidebar() {
       </nav>
 
       <div>
-        <button className="flex items-center w-full px-4 py-2 text-lg text-text-secondary rounded-lg bg-btn-subtle hover:bg-btn-subtle-hover">
+        <button 
+          className="flex items-center w-full px-4 py-2 text-lg text-text-secondary rounded-lg bg-btn-subtle hover:bg-btn-subtle-hover"
+          onClick={handleLogout}
+        >
           <LiaSignOutAltSolid className="mr-3" />
           Log out
         </button>

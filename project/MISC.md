@@ -10,7 +10,6 @@
 
 
 # New Features
-- functional log out button
 - test results during tests -- show expected and actual values
 - close button for prompt view
 - view last tests results when looking at a test suite
@@ -38,4 +37,6 @@ sort out front end/back end ports/proxies
 # Design & Functionality
 - improve theme
 
+# New Features
+- functional log out button
 

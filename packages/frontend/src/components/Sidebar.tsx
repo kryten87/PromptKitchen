@@ -53,7 +53,7 @@ function Sidebar() {
       </nav>
 
       <div>
-        <button 
+        <button
           className="flex items-center w-full px-4 py-2 text-lg text-text-secondary rounded-lg bg-btn-subtle hover:bg-btn-subtle-hover"
           onClick={handleLogout}
         >

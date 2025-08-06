@@ -1,5 +1,6 @@
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { AppLayout } from './AppLayout';
+import { Sidebar } from './components/Sidebar';
 import { AboutPage } from './pages/AboutPage';
 import { AuthCallback } from './pages/AuthCallback';
 import { DashboardPage } from './pages/DashboardPage';
@@ -13,7 +14,7 @@ function App() {
     <SessionProvider>
       <Router>
         <AppLayout
-          sidebar={<div className="p-4 font-bold">Prompt Kitchen</div>}
+          sidebar={<Sidebar />}
         >
           <Routes>
             <Route path="/" element={
@@ -26,6 +27,9 @@ function App() {
                 <DashboardPage />
               </ProtectedRoute>
             } />
+            <Route path="/settings" element={<ProtectedRoute><div>Settings</div></ProtectedRoute>} />
+            <Route path="/help" element={<ProtectedRoute><div>Help</div></ProtectedRoute>} />
+            <Route path="/manage-users" element={<ProtectedRoute><div>Manage Users</div></ProtectedRoute>} />
             <Route path="/about" element={
               <ProtectedRoute>
                 <AboutPage />

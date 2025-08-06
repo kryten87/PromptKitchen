@@ -118,7 +118,7 @@ export function PromptEditor({ prompt, onPromptUpdated, onViewHistory }: PromptE
         <button
           type="button"
           onClick={onViewHistory}
-          className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          className="px-4 py-2 text-sm font-medium text-text-secondary bg-btn-subtle border border-gray-300 rounded-md hover:bg-btn-subtle-hover focus:ring-2 focus:ring-offset-2 focus:ring-primary"
           disabled={loading}
         >
           View History
@@ -128,7 +128,7 @@ export function PromptEditor({ prompt, onPromptUpdated, onViewHistory }: PromptE
           type="button"
           onClick={handleSave}
           disabled={!canSave || loading}
-          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-4 py-2 text-sm font-medium text-white bg-primary border border-transparent rounded-md hover:opacity-90 focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? 'Saving...' : 'Save'}
         </button>

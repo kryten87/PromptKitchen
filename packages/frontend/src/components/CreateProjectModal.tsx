@@ -71,7 +71,7 @@ export function CreateProjectModal({ isOpen, onClose, onProjectCreated }: Create
           <div className="flex justify-end gap-2">
             <button
               type="button"
-              className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
+              className="px-4 py-2 rounded bg-btn-subtle hover:bg-btn-subtle-hover text-text-secondary"
               onClick={onClose}
               disabled={loading}
             >
@@ -79,7 +79,7 @@ export function CreateProjectModal({ isOpen, onClose, onProjectCreated }: Create
             </button>
             <button
               type="submit"
-              className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
+              className="px-4 py-2 rounded bg-primary hover:opacity-90 text-white"
               disabled={loading}
             >
               {loading ? 'Creating...' : 'Create'}

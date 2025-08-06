@@ -8,9 +8,6 @@
 - playwright e2e tests
 - shared eslint config -- warnings
 
-# Design & Functionality
-- improve theme
-
 
 # New Features
 - need a way to match results similar to jest matchers
@@ -36,5 +33,8 @@ sort out front end/back end ports/proxies
   - inline if statements
 - using alerts for "are you sure?" prompts
 - are there dtos for every model?
+
+# Design & Functionality
+- improve theme
 
 

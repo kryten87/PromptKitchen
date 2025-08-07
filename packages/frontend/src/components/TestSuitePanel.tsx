@@ -34,6 +34,9 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
   const [runResults, setRunResults] = useState<Record<string, string>>({}); // testSuiteId -> message
   const [activeRunId, setActiveRunId] = useState<string | null>(null);
   const [showResultsModal, setShowResultsModal] = useState(false);
+  
+  // State for test cases used in results display
+  const [resultsTestCases, setResultsTestCases] = useState<TestCase[]>([]);
 
   // Add state for confirmation modals and error alerts
   const [confirmModal, setConfirmModal] = useState<{
@@ -67,6 +70,16 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
       setTestCasesError('Failed to load test cases');
     } finally {
       setLoadingTestCases(false);
+    }
+  }, [apiClient]);
+
+  const loadResultsTestCases = useCallback(async (testSuiteId: string) => {
+    try {
+      const cases = await apiClient.request<TestCase[]>(`/test-suites/${testSuiteId}/test-cases`);
+      setResultsTestCases(Array.isArray(cases) ? cases : []);
+    } catch {
+      // If loading fails, set empty array so results can still be shown without expected output
+      setResultsTestCases([]);
     }
   }, [apiClient]);
 
@@ -201,6 +214,13 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
 
   // Poll for run results if a run is active
   const { run: runData, loading: polling, error: pollingError } = useTestSuiteRunPolling(activeRunId, 2000);
+
+  // Load test cases for results when runData becomes available
+  useEffect(() => {
+    if (runData && runData.testSuiteId) {
+      loadResultsTestCases(runData.testSuiteId);
+    }
+  }, [runData, loadResultsTestCases]);
 
   if (loading) {
     return <div className="p-4">Loading test suites...</div>;
@@ -362,12 +382,23 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
               <div>
                 <div className="mb-2 text-sm">Status: <span className="font-mono">{runData.status}</span> | Pass %: {runData.passPercentage?.toFixed(1) ?? 0}</div>
                 <TestResultsView
-                  results={runData.results.map(r => ({
-                    id: r.id,
-                    testCaseName: r.testCaseId, // No name, so use ID
-                    status: r.status.toLowerCase() === 'pass' ? 'pass' : 'fail',
-                    actualOutput: typeof r.output === 'string' ? r.output : JSON.stringify(r.output)
-                  }))}
+                  results={runData.results.map(r => {
+                    // Find the corresponding test case to get expected output
+                    const testCase = resultsTestCases.find(tc => tc.id === r.testCaseId);
+                    const expectedOutput = testCase 
+                      ? (typeof testCase.expectedOutput === 'string' 
+                          ? testCase.expectedOutput 
+                          : JSON.stringify(testCase.expectedOutput))
+                      : 'Expected output not available';
+                    
+                    return {
+                      id: r.id,
+                      testCaseName: r.testCaseId, // No name, so use ID
+                      status: r.status.toLowerCase() === 'pass' ? 'pass' : 'fail',
+                      expectedOutput,
+                      actualOutput: typeof r.output === 'string' ? r.output : JSON.stringify(r.output)
+                    };
+                  })}
                 />
                 {runData.status !== 'COMPLETED' && (
                   <div className="mt-2 text-xs text-gray-500">Still running... results will update automatically.</div>

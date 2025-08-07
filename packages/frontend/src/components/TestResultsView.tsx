@@ -5,6 +5,7 @@ export interface TestResult {
   testCaseName: string;
   status: 'pass' | 'fail';
   actualOutput: string;
+  expectedOutput: string;
 }
 
 export interface TestResultsViewProps {
@@ -23,6 +24,7 @@ export const TestResultsView: React.FC<TestResultsViewProps> = ({ results }) => 
           <tr>
             <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Test Case Name</th>
             <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expected Output</th>
             <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actual Output</th>
           </tr>
         </thead>
@@ -39,6 +41,7 @@ export const TestResultsView: React.FC<TestResultsViewProps> = ({ results }) => 
               >
                 {result.status === 'pass' ? 'Pass' : 'Fail'}
               </td>
+              <td className="px-4 py-2 whitespace-pre-wrap font-mono text-sm">{result.expectedOutput}</td>
               <td className="px-4 py-2 whitespace-pre-wrap font-mono text-sm">{result.actualOutput}</td>
             </tr>
           ))}

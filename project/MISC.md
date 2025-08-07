@@ -10,7 +10,6 @@
 
 
 # New Features
-- test results during tests -- show expected and actual values
 - close button for prompt view
 - view last tests results when looking at a test suite
 - need a way to match results similar to jest matchers
@@ -39,4 +38,5 @@ sort out front end/back end ports/proxies
 
 # New Features
 - functional log out button
+- test results during tests -- show expected and actual values
 

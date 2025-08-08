@@ -1,4 +1,6 @@
 # Code Issues/Questions
+- clean up module loading
+  - remove ts-node-dev and replace with tsx
 - skipped tests
 - refactor functions into small, pure helpers
 - logging system -- frontend & backend

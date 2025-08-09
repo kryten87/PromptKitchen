@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "ts-node-dev src/index.ts",
+    "dev": "tsx src/index.ts",
     "build": "tsc",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "test:watch": "jest --watch",
@@ -29,7 +29,6 @@
     "@types/node": "^24.1.0",
     "jest": "^29.7.0",
     "ts-jest": "^29.2.5",
-    "ts-node": "^10.9.2",
-    "ts-node-dev": "^2.0.0"
+    "ts-node": "^10.9.2"
   }
 }

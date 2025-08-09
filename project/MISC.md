@@ -6,7 +6,6 @@
 - frontend/src/mocks -- what is this?
 - ensure that access control is working -- person A can only see projects for person A
 - playwright e2e tests
-- shared eslint config -- warnings
 
 
 # New Features
@@ -32,6 +31,10 @@ sort out front end/back end ports/proxies
   - inline if statements
 - using alerts for "are you sure?" prompts
 - are there dtos for every model?
+- clean up module loading
+  - remove ts-node-dev and replace with tsx
+- move database migrations
+- shared eslint config -- warnings
 
 # Design & Functionality
 - improve theme

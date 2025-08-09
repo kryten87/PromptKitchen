@@ -1,16 +1,11 @@
 import fs from 'fs';
 import path from 'path';
 import { DatabaseConnector } from '../db/db';
+import { runMigrations } from '../db/migrate';
 import { TestCaseRepository } from '../repositories/TestCaseRepository';
 import { TestSuiteRepository } from '../repositories/TestSuiteRepository';
 
 const TEST_DB_PATH = path.join(__dirname, '../../dev.test.sqlite3');
-
-async function runMigrations(db: DatabaseConnector) {
-  await db.knex.migrate.latest({
-    directory: path.join(__dirname, '../../migrations'),
-  });
-}
 
 describe('TestCaseRepository', () => {
   let db: DatabaseConnector;

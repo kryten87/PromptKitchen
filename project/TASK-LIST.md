@@ -26,7 +26,7 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 - ✅ 1.3.3. Install Fastify, TypeScript, `ts-node`, and other initial dependencies.
 - ✅ 1.3.4. Create a `tsconfig.json` extending the root config.
 - ✅ 1.3.5. Set up a basic Fastify server in `src/index.ts`.
-- ✅ 1.3.6. Add npm scripts for `dev` (using `ts-node-dev`) and `build` (using `tsc`).
+- ✅ 1.3.6. Add npm scripts for `dev` (using `tsx`) and `build` (using `tsc`).
 - ✅ 1.3.7. Add the `packages/shared` package as a dependency.
 
 ### 1.4. Frontend Scaffolding
@@ -179,10 +179,10 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 ## Phase 4: Integration, Testing & Deployment
 
 ### 4.1. End-to-End Testing
-- [ ] 4.1.1. Write end-to-end tests for the main user flows (e.g., using Cypress or Playwright).
-    - [ ] 4.1.1.1. User login flow.
-    - [ ] 4.1.1.2. Create project -> create prompt -> create test suite -> run test -> view results.
-    - [ ] 4.1.1.3. Prompt versioning and restoration flow.
+- [ ] 4.1.1. Set up Playwright so we can write end-to-end tests for the main user flows
+- [ ] 4.1.2. Write Playwright tests for user login flow.
+- [ ] 4.1.3. Write Playwright tests for create project -> create prompt -> create test suite -> run test -> view results.
+- [ ] 4.1.4. Write Playwright tests for prompt versioning and restoration flow.
 
 ### 4.2. Finalization
 - [ ] 4.2.1. Review and refine the UI/UX.

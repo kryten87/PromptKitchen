@@ -1,5 +1,7 @@
-async function up(knex) {
-  return knex.schema.createTable('test_cases', function(table) {
+import type { Knex } from 'knex';
+
+export async function up(knex: Knex): Promise<void> {
+  return knex.schema.createTable('test_cases', function(table: Knex.TableBuilder) {
     table.string('id').primary();
     table.string('test_suite_id').notNullable().references('id').inTable('test_suites').onDelete('CASCADE');
     table.json('inputs').notNullable();
@@ -11,8 +13,6 @@ async function up(knex) {
   });
 }
 
-async function down(knex) {
+export async function down(knex: Knex): Promise<void> {
   return knex.schema.dropTableIfExists('test_cases');
 }
-
-module.exports = { up, down };

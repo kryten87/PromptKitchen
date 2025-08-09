@@ -10,8 +10,8 @@ describe('TestSuiteRunRepository', () => {
 
   beforeAll(async () => {
     // Run all migrations instead of manually creating tables
-    const migrationsDir = path.resolve(__dirname, '../../migrations');
-    await db.knex.migrate.latest({ directory: migrationsDir });
+    const migrationsDir = path.resolve(__dirname, '../migrations');
+    await db.knex.migrate.latest({ directory: migrationsDir, extension: 'ts' });
   });
 
   beforeEach(() => {

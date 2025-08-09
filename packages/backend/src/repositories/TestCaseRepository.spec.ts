@@ -8,7 +8,8 @@ const TEST_DB_PATH = path.join(__dirname, '../../dev.test.sqlite3');
 
 async function runMigrations(db: DatabaseConnector) {
   await db.knex.migrate.latest({
-    directory: path.join(__dirname, '../../migrations'),
+    directory: path.join(__dirname, '../migrations'),
+    extension: 'ts',
   });
 }
 

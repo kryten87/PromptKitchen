@@ -13,37 +13,42 @@ function App() {
   return (
     <SessionProvider>
       <Router>
-        <AppLayout
-          sidebar={<Sidebar />}
-        >
-          <Routes>
-            <Route path="/" element={
-              <ProtectedRoute>
-                <DashboardPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <DashboardPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/settings" element={<ProtectedRoute><div>Settings</div></ProtectedRoute>} />
-            <Route path="/help" element={<ProtectedRoute><div>Help</div></ProtectedRoute>} />
-            <Route path="/manage-users" element={<ProtectedRoute><div>Manage Users</div></ProtectedRoute>} />
-            <Route path="/about" element={
-              <ProtectedRoute>
-                <AboutPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/projects/:projectId" element={
-              <ProtectedRoute>
-                <ProjectPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/oauth/callback" element={<AuthCallback />} />
-          </Routes>
-        </AppLayout>
+        <Routes>
+          {/* Public routes without sidebar */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/oauth/callback" element={<AuthCallback />} />
+
+          {/* Protected routes with sidebar */}
+          <Route path="/*" element={
+            <AppLayout sidebar={<Sidebar />}>
+              <Routes>
+                <Route path="/" element={
+                  <ProtectedRoute>
+                    <DashboardPage />
+                  </ProtectedRoute>
+                } />
+                <Route path="/dashboard" element={
+                  <ProtectedRoute>
+                    <DashboardPage />
+                  </ProtectedRoute>
+                } />
+                <Route path="/settings" element={<ProtectedRoute><div>Settings</div></ProtectedRoute>} />
+                <Route path="/help" element={<ProtectedRoute><div>Help</div></ProtectedRoute>} />
+                <Route path="/manage-users" element={<ProtectedRoute><div>Manage Users</div></ProtectedRoute>} />
+                <Route path="/about" element={
+                  <ProtectedRoute>
+                    <AboutPage />
+                  </ProtectedRoute>
+                } />
+                <Route path="/projects/:projectId" element={
+                  <ProtectedRoute>
+                    <ProjectPage />
+                  </ProtectedRoute>
+                } />
+              </Routes>
+            </AppLayout>
+          } />
+        </Routes>
       </Router>
     </SessionProvider>
   );

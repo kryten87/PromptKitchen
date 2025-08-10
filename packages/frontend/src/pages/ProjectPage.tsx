@@ -224,12 +224,20 @@ export function ProjectPage() {
               <div>
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-lg font-semibold">Selected Prompt: {selectedPrompt.name}</h3>
-                  <button
-                    onClick={() => handleEditPrompt(selectedPrompt)}
-                    className="px-3 py-1 text-sm bg-primary text-white rounded hover:opacity-90"
-                  >
-                    Edit Prompt
-                  </button>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => setSelectedPrompt(null)}
+                      className="px-3 py-1 text-sm bg-btn-subtle text-text-secondary rounded hover:bg-btn-subtle-hover"
+                    >
+                      Close
+                    </button>
+                    <button
+                      onClick={() => handleEditPrompt(selectedPrompt)}
+                      className="px-3 py-1 text-sm bg-primary text-white rounded hover:opacity-90"
+                    >
+                      Edit Prompt
+                    </button>
+                  </div>
                 </div>
                 <TestSuitePanel promptId={selectedPrompt.id} />
               </div>

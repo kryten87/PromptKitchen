@@ -248,16 +248,8 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
         <>
           <ul className="divide-y divide-gray-200 bg-white rounded shadow mb-6">
             {testSuites.map((suite) => (
-              <li key={suite.id} className="p-3 hover:bg-gray-50 flex flex-col h-full">
-                <div className="flex-1 min-w-0">
-                  <div className="font-medium text-sm break-words whitespace-pre-wrap">{suite.name}</div>
-                  <div className="text-xs text-gray-400 break-all">Suite ID: {suite.id}</div>
-                  <div className="text-xs text-gray-400">Created: {new Date(suite.createdAt).toLocaleString()}</div>
-                  {runResults[suite.id] && (
-                    <div className={`text-xs mt-1 ${runResults[suite.id].includes('Failed') ? 'text-red-500' : 'text-green-600'}`}>{runResults[suite.id]}</div>
-                  )}
-                </div>
-                <div className="flex justify-end mt-4 space-x-2">
+              <li key={suite.id} className="p-3 hover:bg-gray-50 relative">
+                <div className="absolute top-3 right-3 flex space-x-2">
                   <button
                     onClick={() => handleViewTestCases(suite)}
                     className="px-2 py-1 text-xs bg-btn-subtle text-text-primary rounded hover:bg-btn-subtle-hover"
@@ -283,6 +275,14 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
                   >
                     {runningTestSuites.has(suite.id) ? 'Running...' : 'Run'}
                   </button>
+                </div>
+                <div className="pr-80">
+                  <div className="font-medium text-sm break-words whitespace-pre-wrap">{suite.name}</div>
+                  <div className="text-xs text-gray-400 break-all">Suite ID: {suite.id}</div>
+                  <div className="text-xs text-gray-400">Created: {new Date(suite.createdAt).toLocaleString()}</div>
+                  {runResults[suite.id] && (
+                    <div className={`text-xs mt-1 ${runResults[suite.id].includes('Failed') ? 'text-red-500' : 'text-green-600'}`}>{runResults[suite.id]}</div>
+                  )}
                 </div>
               </li>
             ))}

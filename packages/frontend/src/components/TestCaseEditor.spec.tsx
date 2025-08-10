@@ -135,7 +135,7 @@ describe('TestCaseEditor', () => {
     expect(screen.getByDisplayValue('age')).toBeInTheDocument();
 
     const removeButtons = screen.getAllByText('✕');
-    fireEvent.click(removeButtons[1]); // Remove first input field
+    fireEvent.click(removeButtons[0]); // Remove first input field
 
     expect(screen.queryByDisplayValue('name')).not.toBeInTheDocument();
     expect(screen.getByDisplayValue('age')).toBeInTheDocument();

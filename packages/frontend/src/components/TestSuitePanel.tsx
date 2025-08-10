@@ -34,7 +34,7 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
   const [runResults, setRunResults] = useState<Record<string, string>>({}); // testSuiteId -> message
   const [activeRunId, setActiveRunId] = useState<string | null>(null);
   const [showResultsModal, setShowResultsModal] = useState(false);
-  
+
   // State for test cases used in results display
   const [resultsTestCases, setResultsTestCases] = useState<TestCase[]>([]);
 
@@ -235,7 +235,7 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold">Test Suites</h3>
         <button
-          className="bg-primary text-white font-bold py-2 px-4 rounded text-sm"
+          className="bg-primary text-white py-2 px-4 rounded text-sm"
           onClick={() => setShowCreateModal(true)}
         >
           Create Test Suite
@@ -248,16 +248,8 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
         <>
           <ul className="divide-y divide-gray-200 bg-white rounded shadow mb-6">
             {testSuites.map((suite) => (
-              <li key={suite.id} className="p-3 hover:bg-gray-50 flex flex-col h-full">
-                <div className="flex-1 min-w-0">
-                  <div className="font-medium text-sm break-words whitespace-pre-wrap">{suite.name}</div>
-                  <div className="text-xs text-gray-400 break-all">Suite ID: {suite.id}</div>
-                  <div className="text-xs text-gray-400">Created: {new Date(suite.createdAt).toLocaleString()}</div>
-                  {runResults[suite.id] && (
-                    <div className={`text-xs mt-1 ${runResults[suite.id].includes('Failed') ? 'text-red-500' : 'text-green-600'}`}>{runResults[suite.id]}</div>
-                  )}
-                </div>
-                <div className="flex justify-end mt-4 space-x-2">
+              <li key={suite.id} className="p-3 hover:bg-gray-50 relative">
+                <div className="absolute top-3 right-3 flex space-x-2">
                   <button
                     onClick={() => handleViewTestCases(suite)}
                     className="px-2 py-1 text-xs bg-btn-subtle text-text-primary rounded hover:bg-btn-subtle-hover"
@@ -284,6 +276,14 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
                     {runningTestSuites.has(suite.id) ? 'Running...' : 'Run'}
                   </button>
                 </div>
+                <div className="pr-80">
+                  <div className="font-medium text-sm break-words whitespace-pre-wrap">{suite.name}</div>
+                  <div className="text-xs text-gray-400 break-all">Suite ID: {suite.id}</div>
+                  <div className="text-xs text-gray-400">Created: {new Date(suite.createdAt).toLocaleString()}</div>
+                  {runResults[suite.id] && (
+                    <div className={`text-xs mt-1 ${runResults[suite.id].includes('Failed') ? 'text-red-500' : 'text-green-600'}`}>{runResults[suite.id]}</div>
+                  )}
+                </div>
               </li>
             ))}
           </ul>
@@ -298,20 +298,20 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
                 <div className="flex gap-2">
                   <button
                     onClick={handleCreateTestCase}
-                    className="bg-primary text-white font-bold py-1 px-3 rounded text-sm"
+                    className="bg-primary text-white py-1 px-3 rounded text-sm"
                   >
                     Add Test Case
                   </button>
                   <button
                     onClick={() => setSelectedTestSuiteForCases(null)}
-                    className="bg-btn-subtle text-text-primary font-bold py-1 px-3 rounded text-sm hover:bg-btn-subtle-hover"
+                    className="bg-btn-subtle text-text-primary py-1 px-3 rounded text-sm hover:bg-btn-subtle-hover"
                   >
                     Close
                   </button>
                 </div>
               </div>
 
-              {showTestCaseEditor && (
+              {showTestCaseEditor ? (
                 <div className="mb-4">
                   <TestCaseEditor
                     testSuiteId={selectedTestSuiteForCases.id}
@@ -321,9 +321,7 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
                     onCancel={handleCancelTestCaseEditor}
                   />
                 </div>
-              )}
-
-              {loadingTestCases ? (
+              ) : loadingTestCases ? (
                 <div className="text-gray-500 text-sm">Loading test cases...</div>
               ) : testCasesError ? (
                 <div className="text-red-500 text-sm">{testCasesError}</div>
@@ -332,16 +330,8 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
               ) : (
                 <ul className="divide-y divide-gray-200 bg-white rounded shadow">
                   {testCases.map((testCase) => (
-                    <li key={testCase.id} className="p-3 hover:bg-gray-50 flex flex-col h-full">
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium break-words whitespace-pre-wrap">Test Case {testCase.id}</div>
-                        <div className="text-xs text-gray-500">Mode: <span className="font-mono">{testCase.runMode}</span></div>
-                        <div className="text-xs">
-                          <div className="mb-1"><strong>Inputs:</strong> {JSON.stringify(testCase.inputs)}</div>
-                          <div><strong>Expected:</strong> {typeof testCase.expectedOutput === 'string' ? testCase.expectedOutput : JSON.stringify(testCase.expectedOutput)}</div>
-                        </div>
-                      </div>
-                      <div className="flex justify-end mt-4 space-x-2">
+                    <li key={testCase.id} className="p-3 hover:bg-gray-50 relative">
+                      <div className="absolute top-3 right-3 flex space-x-2">
                         <button
                           onClick={() => handleEditTestCase(testCase)}
                           className="px-2 py-1 text-xs bg-btn-subtle text-text-primary rounded hover:bg-btn-subtle-hover"
@@ -354,6 +344,14 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
                         >
                           Delete
                         </button>
+                      </div>
+                      <div className="pr-20">
+                        <div className="text-sm font-medium break-words whitespace-pre-wrap">Test Case {testCase.id}</div>
+                        <div className="text-xs text-gray-500">Mode: <span className="font-mono">{testCase.runMode}</span></div>
+                        <div className="text-xs">
+                          <div className="mb-1"><strong>Inputs:</strong> {JSON.stringify(testCase.inputs)}</div>
+                          <div><strong>Expected:</strong> {typeof testCase.expectedOutput === 'string' ? testCase.expectedOutput : JSON.stringify(testCase.expectedOutput)}</div>
+                        </div>
                       </div>
                     </li>
                   ))}
@@ -385,12 +383,12 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
                   results={runData.results.map(r => {
                     // Find the corresponding test case to get expected output
                     const testCase = resultsTestCases.find(tc => tc.id === r.testCaseId);
-                    const expectedOutput = testCase 
-                      ? (typeof testCase.expectedOutput === 'string' 
-                          ? testCase.expectedOutput 
+                    const expectedOutput = testCase
+                      ? (typeof testCase.expectedOutput === 'string'
+                          ? testCase.expectedOutput
                           : JSON.stringify(testCase.expectedOutput))
                       : 'Expected output not available';
-                    
+
                     return {
                       id: r.id,
                       testCaseName: r.testCaseId, // No name, so use ID

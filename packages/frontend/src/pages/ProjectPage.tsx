@@ -152,6 +152,29 @@ export function ProjectPage() {
             <ul className="divide-y divide-gray-200 bg-white rounded shadow">
               {prompts.map((prompt) => (
                 <li key={prompt.id} className="p-4 hover:bg-gray-50 flex flex-col h-full">
+                  <div className="flex justify-between items-start mb-3">
+                    <div></div>
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => handleViewPrompt(prompt)}
+                        className="px-3 py-1 text-sm bg-btn-subtle text-text-secondary rounded hover:bg-btn-subtle-hover"
+                      >
+                        View
+                      </button>
+                      <button
+                        onClick={() => handleEditPrompt(prompt)}
+                        className="px-3 py-1 text-sm bg-btn-subtle text-text-secondary rounded hover:bg-btn-subtle-hover"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeletePrompt(prompt.id)}
+                        className="px-3 py-1 text-sm bg-warning text-white rounded hover:opacity-90"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
                   <div className="flex-1 min-w-0">
                     <div className="font-bold text-lg break-words whitespace-pre-wrap">{prompt.name}</div>
                     <div className="text-gray-600 text-sm break-words whitespace-pre-wrap max-w-full">{prompt.prompt}</div>
@@ -159,26 +182,6 @@ export function ProjectPage() {
                     <div className="text-xs text-gray-400">
                       Last updated: {new Date(prompt.updatedAt).toLocaleString()}
                     </div>
-                  </div>
-                  <div className="flex justify-end mt-4 space-x-2">
-                    <button
-                      onClick={() => handleViewPrompt(prompt)}
-                      className="px-3 py-1 text-sm bg-btn-subtle text-text-secondary rounded hover:bg-btn-subtle-hover"
-                    >
-                      View
-                    </button>
-                    <button
-                      onClick={() => handleEditPrompt(prompt)}
-                      className="px-3 py-1 text-sm bg-btn-subtle text-text-secondary rounded hover:bg-btn-subtle-hover"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeletePrompt(prompt.id)}
-                      className="px-3 py-1 text-sm bg-warning text-white rounded hover:opacity-90"
-                    >
-                      Delete
-                    </button>
                   </div>
                 </li>
               ))}

@@ -155,16 +155,27 @@ export function TestCaseEditor({
         <h3 className="text-lg font-semibold">
           {isEditing ? 'Edit Test Case' : 'Create New Test Case'}
         </h3>
-        <button
-          onClick={onCancel}
-          className="text-gray-500 hover:text-gray-700"
-          disabled={loading}
-        >
-          ✕
-        </button>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="px-4 py-2 bg-btn-subtle text-text-primary rounded hover:bg-btn-subtle-hover disabled:opacity-50"
+            disabled={loading}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            form="test-case-form"
+            className="px-4 py-2 bg-primary text-white rounded hover:opacity-90 disabled:opacity-50"
+            disabled={!isValid || loading}
+          >
+            {loading ? 'Saving...' : (isEditing ? 'Update' : 'Create')}
+          </button>
+        </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form id="test-case-form" onSubmit={handleSubmit} className="space-y-4">
         {/* Input Variables Section */}
         <div>
           <div className="flex justify-between items-center mb-2">
@@ -288,25 +299,6 @@ export function TestCaseEditor({
         {error && (
           <div className="text-red-500 text-sm">{error}</div>
         )}
-
-        {/* Action Buttons */}
-        <div className="flex justify-end gap-2 pt-4 border-t">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="px-4 py-2 bg-btn-subtle text-text-primary rounded hover:bg-btn-subtle-hover disabled:opacity-50"
-            disabled={loading}
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="px-4 py-2 bg-primary text-white rounded hover:opacity-90 disabled:opacity-50"
-            disabled={!isValid || loading}
-          >
-            {loading ? 'Saving...' : (isEditing ? 'Update' : 'Create')}
-          </button>
-        </div>
       </form>
     </div>
   );

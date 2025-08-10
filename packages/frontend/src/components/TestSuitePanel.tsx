@@ -311,7 +311,7 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
                 </div>
               </div>
 
-              {showTestCaseEditor && (
+              {showTestCaseEditor ? (
                 <div className="mb-4">
                   <TestCaseEditor
                     testSuiteId={selectedTestSuiteForCases.id}
@@ -321,9 +321,7 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
                     onCancel={handleCancelTestCaseEditor}
                   />
                 </div>
-              )}
-
-              {loadingTestCases ? (
+              ) : loadingTestCases ? (
                 <div className="text-gray-500 text-sm">Loading test cases...</div>
               ) : testCasesError ? (
                 <div className="text-red-500 text-sm">{testCasesError}</div>

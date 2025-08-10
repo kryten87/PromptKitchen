@@ -332,16 +332,8 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
               ) : (
                 <ul className="divide-y divide-gray-200 bg-white rounded shadow">
                   {testCases.map((testCase) => (
-                    <li key={testCase.id} className="p-3 hover:bg-gray-50 flex flex-col h-full">
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium break-words whitespace-pre-wrap">Test Case {testCase.id}</div>
-                        <div className="text-xs text-gray-500">Mode: <span className="font-mono">{testCase.runMode}</span></div>
-                        <div className="text-xs">
-                          <div className="mb-1"><strong>Inputs:</strong> {JSON.stringify(testCase.inputs)}</div>
-                          <div><strong>Expected:</strong> {typeof testCase.expectedOutput === 'string' ? testCase.expectedOutput : JSON.stringify(testCase.expectedOutput)}</div>
-                        </div>
-                      </div>
-                      <div className="flex justify-end mt-4 space-x-2">
+                    <li key={testCase.id} className="p-3 hover:bg-gray-50 relative">
+                      <div className="absolute top-3 right-3 flex space-x-2">
                         <button
                           onClick={() => handleEditTestCase(testCase)}
                           className="px-2 py-1 text-xs bg-btn-subtle text-text-primary rounded hover:bg-btn-subtle-hover"
@@ -354,6 +346,14 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
                         >
                           Delete
                         </button>
+                      </div>
+                      <div className="pr-20">
+                        <div className="text-sm font-medium break-words whitespace-pre-wrap">Test Case {testCase.id}</div>
+                        <div className="text-xs text-gray-500">Mode: <span className="font-mono">{testCase.runMode}</span></div>
+                        <div className="text-xs">
+                          <div className="mb-1"><strong>Inputs:</strong> {JSON.stringify(testCase.inputs)}</div>
+                          <div><strong>Expected:</strong> {typeof testCase.expectedOutput === 'string' ? testCase.expectedOutput : JSON.stringify(testCase.expectedOutput)}</div>
+                        </div>
                       </div>
                     </li>
                   ))}

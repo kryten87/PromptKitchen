@@ -34,7 +34,7 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
   const [runResults, setRunResults] = useState<Record<string, string>>({}); // testSuiteId -> message
   const [activeRunId, setActiveRunId] = useState<string | null>(null);
   const [showResultsModal, setShowResultsModal] = useState(false);
-  
+
   // State for test cases used in results display
   const [resultsTestCases, setResultsTestCases] = useState<TestCase[]>([]);
 
@@ -235,7 +235,7 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold">Test Suites</h3>
         <button
-          className="bg-primary text-white font-bold py-2 px-4 rounded text-sm"
+          className="bg-primary text-white py-2 px-4 rounded text-sm"
           onClick={() => setShowCreateModal(true)}
         >
           Create Test Suite
@@ -298,13 +298,13 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
                 <div className="flex gap-2">
                   <button
                     onClick={handleCreateTestCase}
-                    className="bg-primary text-white font-bold py-1 px-3 rounded text-sm"
+                    className="bg-primary text-white py-1 px-3 rounded text-sm"
                   >
                     Add Test Case
                   </button>
                   <button
                     onClick={() => setSelectedTestSuiteForCases(null)}
-                    className="bg-btn-subtle text-text-primary font-bold py-1 px-3 rounded text-sm hover:bg-btn-subtle-hover"
+                    className="bg-btn-subtle text-text-primary py-1 px-3 rounded text-sm hover:bg-btn-subtle-hover"
                   >
                     Close
                   </button>
@@ -385,12 +385,12 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
                   results={runData.results.map(r => {
                     // Find the corresponding test case to get expected output
                     const testCase = resultsTestCases.find(tc => tc.id === r.testCaseId);
-                    const expectedOutput = testCase 
-                      ? (typeof testCase.expectedOutput === 'string' 
-                          ? testCase.expectedOutput 
+                    const expectedOutput = testCase
+                      ? (typeof testCase.expectedOutput === 'string'
+                          ? testCase.expectedOutput
                           : JSON.stringify(testCase.expectedOutput))
                       : 'Expected output not available';
-                    
+
                     return {
                       id: r.id,
                       testCaseName: r.testCaseId, // No name, so use ID

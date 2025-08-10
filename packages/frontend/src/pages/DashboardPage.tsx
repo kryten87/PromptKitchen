@@ -66,7 +66,7 @@ export function DashboardPage() {
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Dashboard</h1>
         <button
-          className="bg-primary hover:opacity-90 text-white font-bold py-2 px-4 rounded"
+          className="bg-primary hover:opacity-90 text-white py-2 px-4 rounded"
           onClick={() => setShowModal(true)}
         >
           New Project
@@ -106,14 +106,14 @@ export function DashboardPage() {
               </div>
               <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
-                  className="bg-btn-subtle hover:bg-btn-subtle-hover text-text-secondary font-bold py-1 px-2 rounded text-xs z-10"
+                  className="bg-btn-subtle hover:bg-btn-subtle-hover text-text-secondary py-1 px-2 rounded text-xs z-10"
                   onClick={e => { e.stopPropagation(); handleEditClick(project); }}
                   aria-label={`Edit ${project.name}`}
                 >
                   Edit
                 </button>
                 <button
-                  className="bg-warning hover:opacity-90 text-white font-bold py-1 px-2 rounded text-xs z-10"
+                  className="bg-warning hover:opacity-90 text-white py-1 px-2 rounded text-xs z-10"
                   onClick={e => { e.stopPropagation(); handleDelete(project.id); }}
                   aria-label={`Delete ${project.name}`}
                 >

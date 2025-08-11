@@ -180,6 +180,13 @@ export const registry: Record<string, Matcher> = { /* toEqual, ... */ };
 
 ### Assertions Editor — Detailed UI Design (Wireframe, Components, Interactions)
 
+#### Visual Wireframe (SVG)
+- Inline view:
+
+![Test Case Assertions Editor Wireframe](design/editor/testcase-assertions-editor-wireframe.svg)
+
+- Direct link: design/editor/testcase-assertions-editor-wireframe.svg
+
 #### Wireframe (ASCII)
 ```
 Test Case Editor

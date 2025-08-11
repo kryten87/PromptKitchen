@@ -187,7 +187,79 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 - ✅ 4.1.6. Gather feedback from users or stakeholders and iterate on UI improvements.
 - ✅ 4.1.7. Document any major UI/UX changes in the project design notes.
 
-### 4.2. matching placeholder
+### 4.2. Enhanced Test Matching (PRD-TEST-MATCH)
+
+#### 4.2.1 Shared (packages/shared) — Types, Registry, Evaluator
+- [ ] 4.2.1.1 Add DTO/types: `JsonPath`, `MatcherName`, `PathMatchMode`, `Assertion`, `AssertionResult` (in `packages/shared/src/types.ts` or `dtos.ts`) and export from `index`.
+- [ ] 4.2.1.2 Define matcher interfaces in `packages/shared/src/evaluation`: `MatcherContext`, `Matcher`, and `registry` scaffold.
+- [ ] 4.2.1.3 Add dependency `jsonpath-plus`; implement `resolveJsonPath(actual, path): unknown[]` with sugar normalization (prepend `$` when missing).
+- [ ] 4.2.1.4 Add dependency `fast-deep-equal`; implement `deepEqual(a,b)` util in `MatcherContext`.
+- [ ] 4.2.1.5 Implement matcher `toEqual` (deep equality) and message builder.
+- [ ] 4.2.1.6 Implement matcher `toBeNull` and message builder.
+- [ ] 4.2.1.7 Implement matcher `toContain`:
+  - arrays: any element deep-equals expected.
+  - strings: substring contains expected; support `{ value: string; caseInsensitive?: boolean }`.
+  - messages for both modes.
+- [ ] 4.2.1.8 Implement matcher `toMatch` (strings only): accepts `string` or `{ source, flags }`. Defer regex compilation policy to consumer via evaluator options (see backend/frontend tasks).
+- [ ] 4.2.1.9 Implement matcher `toBeOneOf` using deep-equals against any option.
+- [ ] 4.2.1.10 Implement `evaluateAssertions(actual, assertions, opts?)`:
+  - Resolve values via `resolveJsonPath` (0 results -> `[undefined]`).
+  - Evaluate per value, aggregate by `pathMatch` (ANY/ALL), then apply `not`.
+  - Build `AssertionResult[]` with friendly messages and `actualSamples`.
+  - Export everything from `packages/shared/src/evaluation/index.ts`.
+- [ ] 4.2.1.11 Unit tests (Jest) for each matcher including edge cases (undefined/null, arrays/objects, case-insensitive string containment, regex flags).
+- [ ] 4.2.1.12 Unit tests (Jest) for `evaluateAssertions` covering ANY vs ALL, `not`, zero-results behavior, multiple values.
+- [ ] 4.2.1.13 Ensure `npm run -w shared build && npm run check` passes.
+
+#### 4.2.2 Backend (packages/backend) — Migrations & Config
+- [ ] 4.2.2.1 Migration `010_add_assertions_to_test_cases`: add nullable `assertions` TEXT to `test_cases`.
+- [ ] 4.2.2.2 Migration `011_add_details_to_test_results`: add nullable `details` TEXT to `test_results`.
+- [ ] 4.2.2.3 Migration tests: run up/down idempotently; verify columns exist.
+- [ ] 4.2.2.4 Add env defaults to config: `PK_MAX_ASSERTION_JSON_BYTES=65536`, `PK_MAX_TEST_RESULT_DETAILS_BYTES=524288`, `PK_REGEX_MAX_SOURCE_LEN=1024`, `PK_REGEX_MAX_TEST_STR_LEN=100000`, `PK_REGEX_ALLOWED_FLAGS=imsu`.
+- [ ] 4.2.2.5 Add dependencies: `re2` (node-re2) and `safe-regex2`.
+- [ ] 4.2.2.6 Implement `compileSafeRegex(pattern, flags, limits)` utility:
+  - Validate flags against whitelist and source length.
+  - Prefer RE2; if unavailable, reject patterns failing `safe-regex2` check.
+  - Return a callable `{ test(str): boolean }` to be used by evaluator.
+
+#### 4.2.3 Backend — Evaluation Integration & Persistence
+- [ ] 4.2.3.1 Create `EvaluationService` that wraps shared `evaluateAssertions` and injects `compileSafeRegex` via options.
+- [ ] 4.2.3.2 Update execution pipeline: if `testCase.assertions?.length > 0`, use `EvaluationService`; else legacy exact/deep-equal.
+- [ ] 4.2.3.3 Persist `AssertionResult[]` JSON into `test_results.details` (nullable when legacy path used).
+- [ ] 4.2.3.4 Implement details size cap (`PK_MAX_TEST_RESULT_DETAILS_BYTES`): truncate `actualSamples` with `...truncated` marker and include SHA-256 hash of full content.
+- [ ] 4.2.3.5 Unit tests:
+  - assertions path end-to-end (pass/fail, ANY/ALL, `not`).
+  - regex safety and allowed flags enforcement.
+  - details persistence + truncation + hashing.
+- [ ] 4.2.3.6 Ensure `npm run -w backend test && npm run check` passes.
+
+#### 4.2.4 Frontend (packages/frontend) — Test Case Editor UI
+- [ ] 4.2.4.1 Add `AssertionsSection` inside existing `TestCaseEditor`.
+- [ ] 4.2.4.2 Create `AssertionRow` with: Path input, ANY/ALL segmented toggle, Matcher select, NOT checkbox, Remove button.
+- [ ] 4.2.4.3 Create single contextual `ExpectedPanel` (docked side on wide screens):
+  - toMatch: pattern input + flags checkboxes (i, m, s, u) with validation.
+  - toBeOneOf: list editor (add/remove/reorder).
+  - toEqual/toContain: JSON/Text editor; when Text + toContain, add “Case-insensitive” checkbox.
+- [ ] 4.2.4.4 Add toolbar actions: Add assertion, Import from last output (basic path/value scaffold), Preview.
+- [ ] 4.2.4.5 Wire client-side Preview using shared `evaluateAssertions`.
+- [ ] 4.2.4.6 Add inline validation: JSONPath parse, JSON validity, regex flags/length.
+- [ ] 4.2.4.7 Add `data-testid` attributes for all new controls (align with 4.3.8 naming pattern).
+- [ ] 4.2.4.8 Unit tests (RTL/Jest) for adapters/validators and preview rendering.
+- [ ] 4.2.4.9 Ensure `npm run -w frontend test && npm run check` passes.
+
+#### 4.2.5 Frontend — Results View Enhancements
+- [ ] 4.2.5.1 Update `TestResultsView` to render per-assertion chips: Pass/Fail, path, matcher, mode.
+- [ ] 4.2.5.2 Add expandable area to show `actualSamples` (respect truncation marker and show hash if present).
+- [ ] 4.2.5.3 Unit tests for rendering assertion details and expand/collapse.
+
+#### 4.2.6 Documentation & Examples
+- [ ] 4.2.6.1 Link the SVG wireframe in PRD (done); verify path `project/design/editor/testcase-assertions-editor-wireframe.svg` works in repo.
+- [ ] 4.2.6.2 Add a short “Migration (legacy -> assertions)” note: one-click create `toEqual` at `$` from `expected_output`.
+- [ ] 4.2.6.3 Add JSONPath tips/examples to project docs.
+
+#### 4.2.7 Finalization
+- [ ] 4.2.7.1 Run `npm run check` at repo root; fix lint/build/test failures.
+- [ ] 4.2.7.2 Mark section 4.2 tasks complete only after checks pass.
 
 ### 4.3. End-to-End Testing
 

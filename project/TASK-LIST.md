@@ -190,8 +190,8 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 ### 4.2. Enhanced Test Matching (PRD-TEST-MATCH)
 
 #### 4.2.1 Shared (packages/shared) — Types, Registry, Evaluator
-- ✅ 4.2.1.1 Add DTO/types: `JsonPath`, `MatcherName`, `PathMatchMode`, `Assertion`, `AssertionResult` (in `packages/shared/src/types.ts` or `dtos.ts`) and export from `index`.
-- [ ] 4.2.1.2 Define matcher interfaces in `packages/shared/src/evaluation`: `MatcherContext`, `Matcher`, and `registry` scaffold.
+✅ 4.2.1.1 Add DTO/types: `JsonPath`, `MatcherName`, `PathMatchMode`, `Assertion`, `AssertionResult` (in `packages/shared/src/types.ts` or `dtos.ts`) and export from `index`.
+✅ 4.2.1.2 Define matcher interfaces in `packages/shared/src/evaluation`: `MatcherContext`, `Matcher`, and `registry` scaffold.
 - [ ] 4.2.1.3 Add dependency `jsonpath-plus`; implement `resolveJsonPath(actual, path): unknown[]` with sugar normalization (prepend `$` when missing).
 - [ ] 4.2.1.4 Add dependency `fast-deep-equal`; implement `deepEqual(a,b)` util in `MatcherContext`.
 - [ ] 4.2.1.5 Implement matcher `toEqual` (deep equality) and message builder.
@@ -206,7 +206,6 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
   - Resolve values via `resolveJsonPath` (0 results -> `[undefined]`).
   - Evaluate per value, aggregate by `pathMatch` (ANY/ALL), then apply `not`.
   - Build `AssertionResult[]` with friendly messages and `actualSamples`.
-  - Export everything from `packages/shared/src/evaluation/index.ts`.
 - [ ] 4.2.1.11 Unit tests (Jest) for each matcher including edge cases (undefined/null, arrays/objects, case-insensitive string containment, regex flags).
 - [ ] 4.2.1.12 Unit tests (Jest) for `evaluateAssertions` covering ANY vs ALL, `not`, zero-results behavior, multiple values.
 - [ ] 4.2.1.13 Ensure `npm run -w shared build && npm run check` passes.

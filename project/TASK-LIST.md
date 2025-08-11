@@ -187,76 +187,78 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 - ✅ 4.1.6. Gather feedback from users or stakeholders and iterate on UI improvements.
 - ✅ 4.1.7. Document any major UI/UX changes in the project design notes.
 
-### 4.2. End-to-End Testing
+### 4.2. matching placeholder
+
+### 4.3. End-to-End Testing
 
 (Strategy: Create dedicated `packages/e2e` Playwright workspace; use ephemeral per-worker SQLite DB via temp file path; inject JWT directly into `localStorage`; mock LLM + execution endpoints; happy-path coverage only; run Chromium/Firefox/WebKit in parallel; no CI workflow yet; use `.env.e2e`; add `data-testid` attributes for resilient selectors.)
 
-- [ ] 4.2.1. Create `packages/e2e` workspace (package.json with Playwright, TypeScript, tsconfig, eslint config inherit root).
-- [ ] 4.2.2. Install Playwright (`@playwright/test`) and browsers (`npx playwright install --with-deps`).
-- [ ] 4.2.3. Add root script `e2e` => `npm run -w e2e test` and ensure workspace registration in root `package.json`.
-- [ ] 4.2.4. Create `.env.e2e` (frontend & backend vars; include `E2E=1`, disable real OpenAI calls, set dummy API key).
-- [ ] 4.2.5. Backend enhancement: allow DB filename override via env (e.g., `DB_FILE`); if unset default existing behavior.
-- [ ] 4.2.6. Add helper to generate per-worker temp SQLite file path (e.g., in global setup) and export to backend process env.
-- [ ] 4.2.7. Add backend test-mode behavior when `E2E=1`:
-  - [ ] 4.2.7.1. Mock LLM route responses deterministically (e.g., echo prompt + suffix).
-  - [ ] 4.2.7.2. Short-circuit execution queue to synchronous in-process run with predictable output.
-  - [ ] 4.2.7.3. Disable external network calls.
-- [ ] 4.2.8. Add `data-testid` attributes (kebab-case) across frontend components:
-  - [ ] 4.2.8.1. Login: login-page, google-login-button.
-  - [ ] 4.2.8.2. Sidebar: sidebar, nav-projects-link.
-  - [ ] 4.2.8.3. Dashboard: dashboard-page, create-project-button, project-name-input, project-description-input, project-list, project-list-item-<id>, project-edit-button, project-delete-button, project-submit-button.
-  - [ ] 4.2.8.4. Project page: project-page, prompt-list, create-prompt-button, prompt-list-item-<id>, prompt-edit-button, prompt-delete-button.
-  - [ ] 4.2.8.5. Prompt editor modal: prompt-editor, prompt-name-input, prompt-text-input, prompt-save-button, prompt-history-button.
-  - [ ] 4.2.8.6. Prompt history modal: prompt-history-modal, prompt-history-row-<version>, prompt-history-restore-button.
-  - [ ] 4.2.8.7. Test suite panel: test-suite-panel, add-test-suite-button, test-suite-list, test-suite-list-item-<id>, test-suite-edit-button, test-suite-delete-button.
-  - [ ] 4.2.8.8. Test case editor: test-case-editor, add-test-case-button, test-case-row-<id>, test-case-name-input, test-case-inputs-kv-pair, test-case-expected-output-input, test-case-run-mode-select, test-case-save-button.
-  - [ ] 4.2.8.9. Execution: run-test-suite-button, test-run-status, test-results-table, test-result-row-<id>, test-result-status-pass, test-result-status-fail.
-  - [ ] 4.2.8.10. Generic utilities: confirm-dialog, confirm-yes-button, confirm-no-button (ensure replacement for any native confirm usage).
-- [ ] 4.2.9. Export a shared selector utility in e2e package (e.g., `getTestId(id)` returning `[data-testid="id"]`).
-- [ ] 4.2.10. Create Playwright config (`playwright.config.ts`): multiple projects (chromium, firefox, webkit); global setup & teardown; retries=0; workers=default.
-- [ ] 4.2.11. Implement global setup script:
-  - [ ] 4.2.11.1. Allocate temp dir per run.
-  - [ ] 4.2.11.2. Start backend (spawn) with `DB_FILE` pointing to worker template DB (migrations auto-run).
-  - [ ] 4.2.11.3. Wait for backend health endpoint.
-  - [ ] 4.2.11.4. Start frontend dev server (vite) on fixed port.
-  - [ ] 4.2.11.5. Produce a ready file with base URLs for tests.
-- [ ] 4.2.12. Implement global teardown to kill backend & frontend processes.
-- [ ] 4.2.13. Implement per-worker fixture to clone pristine migrated DB file into a fresh copy before each test (faster than down/up migrations).
-- [ ] 4.2.14. Implement auth helper:
-  - [ ] 4.2.14.1. Generate deterministic JWT for seeded test user (document secret usage) OR call backend test endpoint if added.
-  - [ ] 4.2.14.2. Inject token + user object into `localStorage` before first navigation.
-- [ ] 4.2.15. Seeding utility (beforeEach): create base user via API if not present, else reuse.
-- [ ] 4.2.16. Test spec: login (token injection verifies redirect to dashboard).
-- [ ] 4.2.17. Test spec: create project (assert project appears in list).
-- [ ] 4.2.18. Test spec: create prompt under project (assert prompt appears; open editor; save).
-- [ ] 4.2.19. Test spec: create test suite + test case (assert in list).
-- [ ] 4.2.20. Test spec: run test suite -> poll status -> view deterministic pass result row(s).
-- [ ] 4.2.21. Test spec: update prompt -> create new version -> restore prior version (assert restored text & new history entry).
-- [ ] 4.2.22. Utility: polling helper for test run status with timeout.
-- [ ] 4.2.23. Linting integration: add e2e package to root eslint & `npm run check` pipeline.
-- [ ] 4.2.24. Documentation: add `project/tasks/e2e-README.md` explaining strategy & how to run.
-- [ ] 4.2.25. Ensure `npm run check` includes building frontend & backend before e2e (or adjust e2e to use source directly).
-- [ ] 4.2.26. Add scripts to clean temp DB artifacts (`npm run e2e:clean`).
-- [ ] 4.2.27. Verify parallel run stability (no cross-test DB contamination).
-- [ ] 4.2.28. Final pass: confirm all added `data-testid` exist & used in specs only (avoid text selectors).
-- [ ] 4.2.29. Update TASK list marking subtasks complete only after `npm run check` passes.
+- [ ] 4.3.1. Create `packages/e2e` workspace (package.json with Playwright, TypeScript, tsconfig, eslint config inherit root).
+- [ ] 4.3.2. Install Playwright (`@playwright/test`) and browsers (`npx playwright install --with-deps`).
+- [ ] 4.3.3. Add root script `e2e` => `npm run -w e2e test` and ensure workspace registration in root `package.json`.
+- [ ] 4.3.4. Create `.env.e2e` (frontend & backend vars; include `E2E=1`, disable real OpenAI calls, set dummy API key).
+- [ ] 4.3.5. Backend enhancement: allow DB filename override via env (e.g., `DB_FILE`); if unset default existing behavior.
+- [ ] 4.3.6. Add helper to generate per-worker temp SQLite file path (e.g., in global setup) and export to backend process env.
+- [ ] 4.3.7. Add backend test-mode behavior when `E2E=1`:
+  - [ ] 4.3.7.1. Mock LLM route responses deterministically (e.g., echo prompt + suffix).
+  - [ ] 4.3.7.2. Short-circuit execution queue to synchronous in-process run with predictable output.
+  - [ ] 4.3.7.3. Disable external network calls.
+- [ ] 4.3.8. Add `data-testid` attributes (kebab-case) across frontend components:
+  - [ ] 4.3.8.1. Login: login-page, google-login-button.
+  - [ ] 4.3.8.2. Sidebar: sidebar, nav-projects-link.
+  - [ ] 4.3.8.3. Dashboard: dashboard-page, create-project-button, project-name-input, project-description-input, project-list, project-list-item-<id>, project-edit-button, project-delete-button, project-submit-button.
+  - [ ] 4.3.8.4. Project page: project-page, prompt-list, create-prompt-button, prompt-list-item-<id>, prompt-edit-button, prompt-delete-button.
+  - [ ] 4.3.8.5. Prompt editor modal: prompt-editor, prompt-name-input, prompt-text-input, prompt-save-button, prompt-history-button.
+  - [ ] 4.3.8.6. Prompt history modal: prompt-history-modal, prompt-history-row-<version>, prompt-history-restore-button.
+  - [ ] 4.3.8.7. Test suite panel: test-suite-panel, add-test-suite-button, test-suite-list, test-suite-list-item-<id>, test-suite-edit-button, test-suite-delete-button.
+  - [ ] 4.3.8.8. Test case editor: test-case-editor, add-test-case-button, test-case-row-<id>, test-case-name-input, test-case-inputs-kv-pair, test-case-expected-output-input, test-case-run-mode-select, test-case-save-button.
+  - [ ] 4.3.8.9. Execution: run-test-suite-button, test-run-status, test-results-table, test-result-row-<id>, test-result-status-pass, test-result-status-fail.
+  - [ ] 4.3.8.10. Generic utilities: confirm-dialog, confirm-yes-button, confirm-no-button (ensure replacement for any native confirm usage).
+- [ ] 4.3.9. Export a shared selector utility in e2e package (e.g., `getTestId(id)` returning `[data-testid="id"]`).
+- [ ] 4.3.10. Create Playwright config (`playwright.config.ts`): multiple projects (chromium, firefox, webkit); global setup & teardown; retries=0; workers=default.
+- [ ] 4.3.11. Implement global setup script:
+  - [ ] 4.3.11.1. Allocate temp dir per run.
+  - [ ] 4.3.11.2. Start backend (spawn) with `DB_FILE` pointing to worker template DB (migrations auto-run).
+  - [ ] 4.3.11.3. Wait for backend health endpoint.
+  - [ ] 4.3.11.4. Start frontend dev server (vite) on fixed port.
+  - [ ] 4.3.11.5. Produce a ready file with base URLs for tests.
+- [ ] 4.3.12. Implement global teardown to kill backend & frontend processes.
+- [ ] 4.3.13. Implement per-worker fixture to clone pristine migrated DB file into a fresh copy before each test (faster than down/up migrations).
+- [ ] 4.3.14. Implement auth helper:
+  - [ ] 4.3.14.1. Generate deterministic JWT for seeded test user (document secret usage) OR call backend test endpoint if added.
+  - [ ] 4.3.14.2. Inject token + user object into `localStorage` before first navigation.
+- [ ] 4.3.15. Seeding utility (beforeEach): create base user via API if not present, else reuse.
+- [ ] 4.3.16. Test spec: login (token injection verifies redirect to dashboard).
+- [ ] 4.3.17. Test spec: create project (assert project appears in list).
+- [ ] 4.3.18. Test spec: create prompt under project (assert prompt appears; open editor; save).
+- [ ] 4.3.19. Test spec: create test suite + test case (assert in list).
+- [ ] 4.3.20. Test spec: run test suite -> poll status -> view deterministic pass result row(s).
+- [ ] 4.3.21. Test spec: update prompt -> create new version -> restore prior version (assert restored text & new history entry).
+- [ ] 4.3.22. Utility: polling helper for test run status with timeout.
+- [ ] 4.3.23. Linting integration: add e2e package to root eslint & `npm run check` pipeline.
+- [ ] 4.3.24. Documentation: add `project/tasks/e2e-README.md` explaining strategy & how to run.
+- [ ] 4.3.25. Ensure `npm run check` includes building frontend & backend before e2e (or adjust e2e to use source directly).
+- [ ] 4.3.26. Add scripts to clean temp DB artifacts (`npm run e2e:clean`).
+- [ ] 4.3.27. Verify parallel run stability (no cross-test DB contamination).
+- [ ] 4.3.28. Final pass: confirm all added `data-testid` exist & used in specs only (avoid text selectors).
+- [ ] 4.3.29. Update TASK list marking subtasks complete only after `npm run check` passes.
 
-### 4.3. Finalization
-- [ ] 4.3.1. Add comprehensive error handling and user feedback messages.
-- [ ] 4.3.2. Write README files for `frontend`, `backend`, and root directories.
-- [ ] 4.3.3. Prepare environment variable templates (`.env.example`).
+### 4.4. Finalization
+- [ ] 4.4.1. Add comprehensive error handling and user feedback messages.
+- [ ] 4.4.2. Write README files for `frontend`, `backend`, and root directories.
+- [ ] 4.4.3. Prepare environment variable templates (`.env.example`).
 
-### 4.4. Deployment
-- [ ] 4.4.1. Create Dockerfiles for the `frontend` and `backend`.
-- [ ] 4.4.2. Create a `docker-compose.yml` for local development and deployment.
-- [ ] 4.4.3. Set up a CI/CD pipeline (e.g., GitHub Actions) to automate testing and building.
-- [ ] 4.4.4. Deploy the application to a hosting provider.
+### 4.5. Deployment
+- [ ] 4.5.1. Create Dockerfiles for the `frontend` and `backend`.
+- [ ] 4.5.2. Create a `docker-compose.yml` for local development and deployment.
+- [ ] 4.5.3. Set up a CI/CD pipeline (e.g., GitHub Actions) to automate testing and building.
+- [ ] 4.5.4. Deploy the application to a hosting provider.
 
-### 4.5. Review and Refine the UI/UX
-- [ ] 4.5.1. Review all main user flows for clarity, consistency, and usability.
-- [ ] 4.5.2. Refine layout, spacing, and visual hierarchy for all major screens.
-- [ ] 4.5.3. Ensure accessibility best practices (labels, keyboard navigation, color contrast).
-- [ ] 4.5.4. Validate responsiveness across desktop, tablet, and mobile breakpoints.
-- [ ] 4.5.5. Update any outdated icons, colors, or design elements to match the latest design palette.
-- [ ] 4.5.6. Gather feedback from users or stakeholders and iterate on UI improvements.
-- [ ] 4.5.7. Document any major UI/UX changes in the project design notes.
+### 4.6. Review and Refine the UI/UX
+- [ ] 4.6.1. Review all main user flows for clarity, consistency, and usability.
+- [ ] 4.6.2. Refine layout, spacing, and visual hierarchy for all major screens.
+- [ ] 4.6.3. Ensure accessibility best practices (labels, keyboard navigation, color contrast).
+- [ ] 4.6.4. Validate responsiveness across desktop, tablet, and mobile breakpoints.
+- [ ] 4.6.5. Update any outdated icons, colors, or design elements to match the latest design palette.
+- [ ] 4.6.6. Gather feedback from users or stakeholders and iterate on UI improvements.
+- [ ] 4.6.7. Document any major UI/UX changes in the project design notes.

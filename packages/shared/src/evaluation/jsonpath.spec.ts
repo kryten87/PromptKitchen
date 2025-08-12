@@ -15,9 +15,9 @@ describe('normalizeJsonPath', () => {
   });
 
   it('returns $ for non-string', () => {
-    expect(normalizeJsonPath(undefined as any)).toBe('$');
-    expect(normalizeJsonPath(null as any)).toBe('$');
-    expect(normalizeJsonPath(123 as any)).toBe('$');
+  expect(normalizeJsonPath(undefined as unknown as string)).toBe('$');
+  expect(normalizeJsonPath(null as unknown as string)).toBe('$');
+  expect(normalizeJsonPath(123 as unknown as string)).toBe('$');
   });
 
   it('returns unchanged if already starts with $', () => {
@@ -51,7 +51,7 @@ describe('resolveJsonPath', () => {
   });
 
   it('returns $ for non-string path', () => {
-    expect(resolveJsonPath(obj, undefined as any)).toEqual([obj]);
+  expect(resolveJsonPath(obj, undefined as unknown as string)).toEqual([obj]);
   });
 
   it('returns [undefined] for invalid path', () => {

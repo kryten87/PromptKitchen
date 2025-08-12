@@ -201,7 +201,7 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
   - strings: substring contains expected; support `{ value: string; caseInsensitive?: boolean }`.
   - messages for both modes.
 - ✅ 4.2.1.8 Implement matcher `toMatch` (strings only): accepts `string` or `{ source, flags }`. Defer regex compilation policy to consumer via evaluator options (see backend/frontend tasks).
-- [ ] 4.2.1.9 Implement matcher `toBeOneOf` using deep-equals against any option.
+- ✅ 4.2.1.9 Implement matcher `toBeOneOf` using deep-equals against any option.
 - [ ] 4.2.1.10 Implement `evaluateAssertions(actual, assertions, opts?)`:
   - Resolve values via `resolveJsonPath` (0 results -> `[undefined]`).
   - Evaluate per value, aggregate by `pathMatch` (ANY/ALL), then apply `not`.

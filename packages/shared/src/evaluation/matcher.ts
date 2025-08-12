@@ -205,9 +205,37 @@ export const toContainMatcher: Matcher = {
   },
 };
 
+
+export const toBeOneOfMatcher: Matcher = {
+  name: 'toBeOneOf',
+  arity: 'one',
+  evaluate(value: unknown, expected: unknown, ctx: MatcherContext): boolean {
+    if (!Array.isArray(expected)) return false;
+    return expected.some((option) => ctx.deepEqual(value, option));
+  },
+  describe(value: unknown, expected: unknown, not: boolean): string {
+    if (!Array.isArray(expected)) {
+      return 'expected value for toBeOneOf must be an array';
+    }
+    const pass = expected.some((option) => deepEqual(value, option));
+    if (!not) {
+      if (pass) {
+        return `value is one of the expected options`;
+      }
+      return `expected value to be one of ${JSON.stringify(expected)}, got ${JSON.stringify(value)}`;
+    } else {
+      if (!pass) {
+        return `expected value NOT to be one of ${JSON.stringify(expected)}, got ${JSON.stringify(value)}`;
+      }
+      return 'value is NOT one of the expected options';
+    }
+  },
+};
+
 export const registry: Record<string, Matcher> = {
   toEqual: toEqualMatcher,
   toBeNull: toBeNullMatcher,
   toContain: toContainMatcher,
   toMatch: toMatchMatcher,
+  toBeOneOf: toBeOneOfMatcher,
 };

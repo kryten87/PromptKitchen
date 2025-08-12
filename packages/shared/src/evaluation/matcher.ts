@@ -22,4 +22,28 @@ export interface Matcher {
   describe(value: unknown, expected: unknown, not: boolean): string;
 }
 
-export const registry: Record<string, Matcher> = {};
+export const toEqualMatcher: Matcher = {
+  name: 'toEqual',
+  arity: 'one',
+  evaluate(value: unknown, expected: unknown, ctx: MatcherContext): boolean {
+    return ctx.deepEqual(value, expected);
+  },
+  describe(value: unknown, expected: unknown, not: boolean): string {
+    const pass = deepEqual(value, expected);
+    if (!not) {
+      if (pass) {
+        return 'value deeply equals expected';
+      }
+      return `expected value to deeply equal ${JSON.stringify(expected)}, got ${JSON.stringify(value)}`;
+    } else {
+      if (!pass) {
+        return `expected value NOT to deeply equal ${JSON.stringify(expected)}, got ${JSON.stringify(value)}`;
+      }
+      return 'value NOT deeply equals expected';
+    }
+  },
+};
+
+export const registry: Record<string, Matcher> = {
+  toEqual: toEqualMatcher,
+};

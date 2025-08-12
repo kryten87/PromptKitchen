@@ -1,3 +1,68 @@
+export const toMatchMatcher: Matcher = {
+  name: 'toMatch',
+  arity: 'one',
+  evaluate(value: unknown, expected: unknown): boolean {
+    if (typeof value !== 'string') {
+      return false;
+    }
+    let pattern: string;
+    let flags = '';
+    if (typeof expected === 'string') {
+      pattern = expected;
+    } else if (
+      expected && typeof expected === 'object' && 'source' in expected
+    ) {
+      const expObj = expected as { source: string; flags?: string };
+      pattern = expObj.source;
+      flags = expObj.flags ?? '';
+    } else {
+      return false;
+    }
+    try {
+      const re = new RegExp(pattern, flags);
+      return re.test(value);
+    } catch {
+      return false;
+    }
+  },
+  describe(value: unknown, expected: unknown, not: boolean): string {
+    if (typeof value !== 'string') {
+      return 'toMatch matcher only supports strings';
+    }
+    let pattern: string;
+    let flags = '';
+    if (typeof expected === 'string') {
+      pattern = expected;
+    } else if (
+      expected && typeof expected === 'object' && 'source' in expected
+    ) {
+      const expObj = expected as { source: string; flags?: string };
+      pattern = expObj.source;
+      flags = expObj.flags ?? '';
+    } else {
+      return 'expected value for toMatch must be a string or { source, flags }';
+    }
+    let pass = false;
+    try {
+      const re = new RegExp(pattern, flags);
+      pass = re.test(value);
+    } catch {
+      return `invalid pattern: ${JSON.stringify(pattern)} with flags ${JSON.stringify(flags)}`;
+    }
+    const flagMsg = flags ? ` (flags: ${flags})` : '';
+    if (!not) {
+      if (pass) {
+        return `value matches pattern /${pattern}/${flags}${flagMsg}`;
+      }
+      return `expected value to match /${pattern}/${flags}${flagMsg}, got ${JSON.stringify(value)}`;
+    } else {
+      if (!pass) {
+        return `expected value NOT to match /${pattern}/${flags}${flagMsg}, got ${JSON.stringify(value)}`;
+      }
+      return `value NOT matches pattern /${pattern}/${flags}${flagMsg}`;
+    }
+  },
+};
 export const toBeNullMatcher: Matcher = {
   name: 'toBeNull',
   arity: 'none',
@@ -144,4 +209,5 @@ export const registry: Record<string, Matcher> = {
   toEqual: toEqualMatcher,
   toBeNull: toBeNullMatcher,
   toContain: toContainMatcher,
+  toMatch: toMatchMatcher,
 };

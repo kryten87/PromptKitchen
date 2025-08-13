@@ -38,6 +38,13 @@
 
 - **Task Ledger Deletion Reminder**: If a task ledger is used (see `project/tasks/TASK.md`), it must be deleted after the task is completed. Do not leave ledger files in the repository after their purpose is fulfilled.
 
+
+## Migration Testing Notes
+
+If you need to run a migration test, always use a temporary SQLite file in the `/tmp` directory (e.g., `/tmp/test-migrate.sqlite3`).
+- Run migration scripts against this file to avoid interfering with application data.
+- After the test completes, delete the temporary file to keep the environment clean.
+
 ## Task Completion Checklist
 - After you finish a task from the task list (eg. when you finish section 1.2.3), you **must** follow these steps precisely:
   1. Run `npm run check` in the root of the repository.

@@ -4,17 +4,18 @@ dotenv.config();
 
 import fastifyOauth2 from '@fastify/oauth2';
 import Fastify from 'fastify';
+import { loadPKConfig } from './config';
 import { registerAuthController } from './controllers/AuthController';
 import { registerProjectRoutes } from './controllers/ProjectController';
-import { registerTestSuiteRoutes } from './controllers/TestSuiteController';
 import { registerPromptRoutes } from './controllers/PromptController';
+import { registerTestSuiteRoutes } from './controllers/TestSuiteController';
 import { DatabaseConnector } from './db/db';
 import { runMigrations } from './db/migrate';
 import { ProjectRepository } from './repositories/ProjectRepository';
 import { UserRepository } from './repositories/UserRepository';
 import { ProjectService } from './services/ProjectService';
-import { UserService } from './services/UserService';
 import { PromptService } from './services/PromptService';
+import { UserService } from './services/UserService';
 
 // Patch FastifyInstance type to include googleOAuth2
 import type { OAuth2Namespace } from '@fastify/oauth2';
@@ -26,6 +27,8 @@ declare module 'fastify' {
   }
 }
 
+
+const PK_CONFIG = loadPKConfig();
 const server = Fastify({
   logger: true,
 });

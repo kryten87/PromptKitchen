@@ -36,6 +36,11 @@ description: "Maintain a structured task ledger for effective task management"
 
 Maintain this task ledger diligently throughout the task execution to ensure maximum effectiveness and continuity.
 
+
+## Task Ledger Deletion Reminder
+
+After the task is completed, you must delete the task ledger file (`project/tasks/TASK.md`). Do not leave ledger files in the repository after their purpose is fulfilled.
+
 ## Required Structure
 
 ````markdown

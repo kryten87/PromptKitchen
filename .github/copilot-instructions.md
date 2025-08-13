@@ -34,6 +34,10 @@
 - **Test Files**: All test files must follow the `*.spec.ts` or `*.spec.tsx` naming convention.
 - **Top-level Imports (Hard Requirement)**: All import statements must be static and placed at the top of each file. Inline or dynamic imports (e.g., `import()` inside functions or blocks) are strictly prohibited everywhere in the codebase, except for true dynamic loading scenarios (such as React lazy loading or code splitting). This rule applies to all backend, frontend, and shared code. Violations are not permitted and must be corrected immediately.
 
+- **Barrel Files Are Forbidden**: It is strictly forbidden to write barrel files (e.g., files that re-export symbols from other modules, such as `index.ts` with `export * from './foo'`). All imports must be direct and explicit. Barrel files introduce ambiguity, complicate static analysis, and violate the project's import discipline. Any barrel file found must be deleted and replaced with explicit imports.
+
+- **Task Ledger Deletion Reminder**: If a task ledger is used (see `project/tasks/TASK.md`), it must be deleted after the task is completed. Do not leave ledger files in the repository after their purpose is fulfilled.
+
 ## Task Completion Checklist
 - After you finish a task from the task list (eg. when you finish section 1.2.3), you **must** follow these steps precisely:
   1. Run `npm run check` in the root of the repository.

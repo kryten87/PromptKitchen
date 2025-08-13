@@ -211,8 +211,8 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 - ✅ 4.2.1.13 Ensure `npm run -w shared build && npm run check` passes.
 
 #### 4.2.2 Backend (packages/backend) — Migrations & Config
-- [ ] 4.2.2.1 Migration `010_add_assertions_to_test_cases`: add nullable `assertions` TEXT to `test_cases`.
-- [ ] 4.2.2.2 Migration `011_add_details_to_test_results`: add nullable `details` TEXT to `test_results`.
+- ✅ 4.2.2.1 Migration `010_add_assertions_to_test_cases`: add nullable `assertions` TEXT to `test_cases`.
+- ✅ 4.2.2.2 Migration `011_add_details_to_test_results`: add nullable `details` TEXT to `test_results`.
 - [ ] 4.2.2.3 Migration tests: run up/down idempotently; verify columns exist.
 - [ ] 4.2.2.4 Add env defaults to config: `PK_MAX_ASSERTION_JSON_BYTES=65536`, `PK_MAX_TEST_RESULT_DETAILS_BYTES=524288`, `PK_REGEX_MAX_SOURCE_LEN=1024`, `PK_REGEX_MAX_TEST_STR_LEN=100000`, `PK_REGEX_ALLOWED_FLAGS=imsu`.
 - [ ] 4.2.2.5 Add dependencies: `re2` (node-re2) and `safe-regex2`.

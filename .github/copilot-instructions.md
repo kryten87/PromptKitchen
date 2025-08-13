@@ -51,6 +51,7 @@ If you need to run a migration test, always use a temporary SQLite file in the `
   2. If the check fails, you **must** analyze the errors and fix them.
   3. Repeat steps 1 and 2 until `npm run check` passes successfully.
   4. Only after `npm run check` passes, mark the task as complete in the task list with a ✅ character.
+     - **Important:** When updating the task list to mark an item as done, the **only** change you should make is to replace `[ ]` with `✅`. Do **not** change indentation, formatting, or reflow any lines. Do **not** reformat or adjust whitespace—just swap the checkbox.
   5. Do not announce that a task is finished until all these steps are complete. There is no need to ask for permission to proceed with these checks.
 
 Refer to `project/PRD.md` for further details and best practices.

@@ -206,9 +206,9 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
   - Resolve values via `resolveJsonPath` (0 results -> `[undefined]`).
   - Evaluate per value, aggregate by `pathMatch` (ANY/ALL), then apply `not`.
   - Build `AssertionResult[]` with friendly messages and `actualSamples`.
-- [ ] 4.2.1.11 Unit tests (Jest) for each matcher including edge cases (undefined/null, arrays/objects, case-insensitive string containment, regex flags).
-- [ ] 4.2.1.12 Unit tests (Jest) for `evaluateAssertions` covering ANY vs ALL, `not`, zero-results behavior, multiple values.
-- [ ] 4.2.1.13 Ensure `npm run -w shared build && npm run check` passes.
+- ✅ 4.2.1.11 Unit tests (Jest) for each matcher including edge cases (undefined/null, arrays/objects, case-insensitive string containment, regex flags).
+- ✅ 4.2.1.12 Unit tests (Jest) for `evaluateAssertions` covering ANY vs ALL, `not`, zero-results behavior, multiple values.
+- ✅ 4.2.1.13 Ensure `npm run -w shared build && npm run check` passes.
 
 #### 4.2.2 Backend (packages/backend) — Migrations & Config
 - [ ] 4.2.2.1 Migration `010_add_assertions_to_test_cases`: add nullable `assertions` TEXT to `test_cases`.

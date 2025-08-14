@@ -220,6 +220,7 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
     - Validate flags against whitelist and source length.
     - Prefer RE2; if unavailable, reject patterns failing `safe-regex2` check.
     - Return a callable `{ test(str): boolean }` to be used by evaluator.
+
 - [ ] 4.2.3 Backend — Evaluation Integration & Persistence
   - [ ] 4.2.3.1 Create `EvaluationService` that wraps shared `evaluateAssertions` and injects `compileSafeRegex` via options.
   - [ ] 4.2.3.2 Update execution pipeline: if `testCase.assertions?.length > 0`, use `EvaluationService`; else legacy exact/deep-equal.
@@ -230,6 +231,7 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
     - regex safety and allowed flags enforcement.
     - details persistence + truncation + hashing.
   - [ ] 4.2.3.6 Ensure `npm run -w backend test && npm run check` passes.
+
 - [ ] 4.2.4 Frontend (packages/frontend) — Test Case Editor UI
   - [ ] 4.2.4.1 Add `AssertionsSection` inside existing `TestCaseEditor`.
   - [ ] 4.2.4.2 Create `AssertionRow` with: Path input, ANY/ALL segmented toggle, Matcher select, NOT checkbox, Remove button.
@@ -243,14 +245,17 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
   - [ ] 4.2.4.7 Add `data-testid` attributes for all new controls (align with 4.3.8 naming pattern).
   - [ ] 4.2.4.8 Unit tests (RTL/Jest) for adapters/validators and preview rendering.
   - [ ] 4.2.4.9 Ensure `npm run -w frontend test && npm run check` passes.
+
 - [ ] 4.2.5 Frontend — Results View Enhancements
   - [ ] 4.2.5.1 Update `TestResultsView` to render per-assertion chips: Pass/Fail, path, matcher, mode.
   - [ ] 4.2.5.2 Add expandable area to show `actualSamples` (respect truncation marker and show hash if present).
   - [ ] 4.2.5.3 Unit tests for rendering assertion details and expand/collapse.
+
 - [ ] 4.2.6 Documentation & Examples
   - [ ] 4.2.6.1 Link the SVG wireframe in PRD (done); verify path `project/design/editor/testcase-assertions-editor-wireframe.svg` works in repo.
   - [ ] 4.2.6.2 Add a short “Migration (legacy -> assertions)” note: one-click create `toEqual` at `$` from `expected_output`.
   - [ ] 4.2.6.3 Add JSONPath tips/examples to project docs.
+
 - [ ] 4.2.7 Finalization
   - [ ] 4.2.7.1 Run `npm run check` at repo root; fix lint/build/test failures.
   - [ ] 4.2.7.2 Mark section 4.2 tasks complete only after checks pass.

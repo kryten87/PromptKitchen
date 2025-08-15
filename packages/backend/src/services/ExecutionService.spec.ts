@@ -1,3 +1,4 @@
+import type { AssertionResult } from '@prompt-kitchen/shared';
 import { TestCase } from '@prompt-kitchen/shared/src/dtos';
 import { DatabaseConnector } from '../db/db';
 import { TestCaseRepository } from '../repositories/TestCaseRepository';
@@ -64,7 +65,19 @@ describe('ExecutionService', () => {
   });
 
   it('should get test suite run results', async () => {
-    // Mock the repo to return a DTO-like object with correct status type
+    // Mock the repo to return a DTO-like object with correct status type and details
+    const mockDetails: AssertionResult[] = [
+      {
+        assertionId: 'a1',
+        path: '$',
+        matcher: 'toEqual',
+        not: false,
+        pathMatch: 'ANY',
+        passed: true,
+        actualSamples: ['Echo: Hello Alice'],
+        message: 'Matched',
+      },
+    ];
     service['testSuiteRunRepo'].getTestSuiteRunWithResults = jest.fn(async () => ({
       id: 'run1',
       testSuiteId: 'suite1',
@@ -73,11 +86,12 @@ describe('ExecutionService', () => {
       passPercentage: 50,
       promptHistoryId: 'hist1',
       results: [
-        { id: 'result1', testSuiteRunId: 'run1', testCaseId: 'case1', status: 'PASS' as const, output: 'Echo: Hello Alice', createdAt: new Date() },
+        { id: 'result1', testSuiteRunId: 'run1', testCaseId: 'case1', status: 'PASS' as const, output: 'Echo: Hello Alice', createdAt: new Date(), details: mockDetails },
       ],
     })) as unknown as typeof service['testSuiteRunRepo']['getTestSuiteRunWithResults'];
     const result = await service.getTestSuiteRun('run1');
     expect(result).toBeDefined();
     expect(result?.results[0].status).toBe('PASS');
+    expect(result?.results[0].details).toEqual(mockDetails);
   });
 });

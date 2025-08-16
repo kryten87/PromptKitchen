@@ -38,6 +38,20 @@
 
 - **Task Ledger Deletion Reminder**: If a task ledger is used (see `project/tasks/TASK.md`), it must be deleted after the task is completed. Do not leave ledger files in the repository after their purpose is fulfilled.
 
+## Frontend Testing Attributes
+
+- **Data TestID Naming Scheme**: All frontend components must use `data-testid` attributes following a strict naming convention for automated testing. The naming scheme is:
+  - **Format**: `[component]-[function]-[type]` or `[component]-[function]-[type]-[unique-id]`
+  - **Case**: All lowercase, kebab-case
+  - **Component**: The React component name converted to kebab-case (e.g., `ConfirmationModal` becomes `confirmation-modal`)
+  - **Function**: Describes what the element does (e.g., `ok`, `cancel`, `submit`, `delete`)
+  - **Type**: Matches the HTML element type (e.g., `button`, `input`, `form`, `modal`, `row`)
+  - **Unique ID**: For collection elements, use the data ID (e.g., database ID) when available. Avoid array indices unless absolutely necessary as they are not static values.
+  - **Examples**:
+    - Single element: `"confirmation-modal-ok-button"`
+    - Collection element: `"test-results-result-row-abcd1234"`
+    - Input field: `"user-profile-email-input"`
+    - Form: `"project-create-form"`
 
 ## Migration Testing Notes
 

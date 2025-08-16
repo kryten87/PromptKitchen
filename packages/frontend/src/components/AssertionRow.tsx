@@ -45,6 +45,7 @@ export function AssertionRow({ assertion, onChange, onRemove }: AssertionRowProp
         </select>
 
         <button
+          type="button"
           onClick={() => setShowPanel(!showPanel)}
           className="text-sm text-blue-500 hover:underline"
         >
@@ -52,6 +53,7 @@ export function AssertionRow({ assertion, onChange, onRemove }: AssertionRowProp
         </button>
 
         <button
+          type="button"
           onClick={() => onRemove(assertion.id)}
           className="text-sm text-red-500 hover:underline"
         >

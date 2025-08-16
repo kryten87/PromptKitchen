@@ -244,7 +244,7 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
   - ✅ 4.2.4.6 Add inline validation: JSONPath parse, JSON validity, regex flags/length.
   - ✅ 4.2.4.7 Add `data-testid` attributes for all new controls (follow the naming scheme in the copilot instructions file)
   - ✅ 4.2.4.8 Unit tests (RTL/Jest) for adapters/validators and preview rendering.
-  - [ ] 4.2.4.9 Ensure `npm run -w frontend test && npm run check` passes.
+  - ✅ 4.2.4.9 Ensure `npm run -w frontend test && npm run check` passes.
 
 - [ ] 4.2.5 Frontend — Results View Enhancements
   - [ ] 4.2.5.1 Update `TestResultsView` to render per-assertion chips: Pass/Fail, path, matcher, mode.

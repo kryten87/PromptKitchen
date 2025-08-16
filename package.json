@@ -11,7 +11,7 @@
     "lint": "npm run lint --workspaces",
     "lint:fix": "npm run lint:fix --workspaces",
     "test": "npm run test --workspaces",
-    "validate:tasklist": "git diff --exit-code ./project/TASK-LIST.md && echo 'TASK-LIST has not been updated.'"
+    "validate:tasklist": "git diff --exit-code ./project/TASK-LIST.md && echo 'TASK-LIST.md has not been updated.'"
   },
   "keywords": [],
   "author": "",

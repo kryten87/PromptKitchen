@@ -1,5 +1,5 @@
-import { definePromptSchema } from './validation';
 import * as yup from 'yup';
+import { definePromptSchema } from './validation';
 
 describe('Validation Tests', () => {
   it('should validate a valid prompt schema', () => {

@@ -1,6 +1,6 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { AssertionsSection } from './AssertionsSection';
 import type { Assertion } from '@prompt-kitchen/shared/src/types';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { AssertionsSection } from './AssertionsSection';
 
 interface TestAssertion extends Assertion {
   id: string;

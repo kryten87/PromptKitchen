@@ -8,7 +8,7 @@
     "build": "npm run build --workspaces",
     "check": "npm run build && npm run lint:fix && npm run test",
     "lint": "npm run lint --workspaces",
-    "lint:fix": "npm run lint --fix --workspaces",
+    "lint:fix": "npm run lint:fix --workspaces",
     "test": "npm run test --workspaces"
   },
   "keywords": [],

@@ -4,11 +4,11 @@ describe('toMatchMatcher', () => {
   describe('string pattern', () => {
     it('returns true if string matches pattern', () => {
       expect(toMatchMatcher.evaluate('hello world', 'hello', defaultMatcherContext)).toBe(true);
-  expect(toMatchMatcher.evaluate('abc123', '\\d+', defaultMatcherContext)).toBe(true);
+      expect(toMatchMatcher.evaluate('abc123', '\\d+', defaultMatcherContext)).toBe(true);
     });
     it('returns false if string does not match pattern', () => {
       expect(toMatchMatcher.evaluate('hello world', 'bye', defaultMatcherContext)).toBe(false);
-  expect(toMatchMatcher.evaluate('abc', '\\d+', defaultMatcherContext)).toBe(false);
+      expect(toMatchMatcher.evaluate('abc', '\\d+', defaultMatcherContext)).toBe(false);
     });
   });
 

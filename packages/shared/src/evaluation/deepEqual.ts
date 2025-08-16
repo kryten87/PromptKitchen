@@ -7,5 +7,5 @@ import deepEqualLib from 'fast-deep-equal';
  * @returns true if values are deeply equal, false otherwise
  */
 export function deepEqual(a: unknown, b: unknown): boolean {
-    return deepEqualLib(a, b);
+  return deepEqualLib(a, b);
 }

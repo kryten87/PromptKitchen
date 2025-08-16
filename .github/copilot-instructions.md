@@ -74,3 +74,5 @@ Refer to `project/PRD.md` for further details and best practices.
 
 - **Task Ledger Deletion**: After completing a task, delete the task ledger file (`project/tasks/TASK.md`). This is a strict requirement to keep the repository clean.
 
+- **Critical Requirement for TASK-LIST.md**: If you are asked to complete a numbered section in `project/TASK-LIST.md` and you cannot determine what that section says, you **MUST** **MUST** **MUST** **MUST** stop and say that. **DO NOT UNDER ANY CIRCUMSTANCES MAKE UP INSTRUCTIONS!!!**
+

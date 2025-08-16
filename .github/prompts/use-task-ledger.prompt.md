@@ -11,6 +11,8 @@ description: "Maintain a structured task ledger for effective task management"
 
 Before considering a task complete, you **MUST** **MUST** **MUST** **MUST** run `npm run check:task`. If this script reports that the `TASK-LIST.md` file has not been updated, you **MUST** **MUST** **MUST** **MUST** update it before marking the task as complete. This step is non-negotiable and must be followed without exception.
 
+If you are asked to complete a numbered section in `project/TASK-LIST.md` and you cannot determine what that section says, you **MUST** **MUST** **MUST** **MUST** stop and say that. **DO NOT UNDER ANY CIRCUMSTANCES MAKE UP INSTRUCTIONS!!!**
+
 ## Importance of Task Ledger Maintenance
 
 - **Context Preservation**: Update the ledger frequently as context compaction may cause information loss

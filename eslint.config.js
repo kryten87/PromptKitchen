@@ -15,5 +15,8 @@ export default tseslint.config(
       '**/*.config.js*',
       '**/*.config.cjs',
     ],
+    rules: {
+  'indent': ['error', 2, { SwitchCase: 1 }],
+    },
   }
 );

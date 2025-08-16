@@ -44,4 +44,42 @@ describe('TestResultsView', () => {
     expect(screen.getByText('Expected Output')).toBeInTheDocument();
     expect(screen.getByText('Actual Output')).toBeInTheDocument();
   });
+  it('renders assertion chips for results with assertionResults', () => {
+    const results: TestResult[] = [
+      {
+        id: '1',
+        testCaseName: 'Test 1',
+        status: 'pass',
+        expectedOutput: 'expected1',
+        actualOutput: 'output1',
+        assertionResults: [
+          {
+            assertionId: 'a1',
+            path: '$.foo',
+            matcher: 'toEqual',
+            not: false,
+            pathMatch: 'ANY',
+            passed: true,
+            actualSamples: ['bar'],
+            message: 'Matched',
+          },
+          {
+            assertionId: 'a2',
+            path: '$.bar',
+            matcher: 'toMatch',
+            not: false,
+            pathMatch: 'ALL',
+            passed: false,
+            actualSamples: ['baz'],
+            message: 'Did not match',
+          },
+        ],
+      },
+    ];
+    render(<TestResultsView results={results} />);
+    const chip1 = screen.getByTestId('test-results-assertion-chip-a1');
+    const chip2 = screen.getByTestId('test-results-assertion-chip-a2');
+    expect(chip1).toHaveTextContent('Pass | $.foo | toEqual | ANY');
+    expect(chip2).toHaveTextContent('Fail | $.bar | toMatch | ALL');
+  });
 });

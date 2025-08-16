@@ -1,6 +1,5 @@
-
-import type { Assertion, AssertionResult } from '@prompt-kitchen/shared';
-import { evaluateAssertions, MatcherContext } from '@prompt-kitchen/shared';
+import type { Assertion, AssertionResult, MatcherContext } from '@prompt-kitchen/shared';
+import { evaluateAssertions } from '@prompt-kitchen/shared';
 // EvaluationService.ts
 // Provides methods for exact string match and deep JSON equality
 

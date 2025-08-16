@@ -1,4 +1,4 @@
-import { evaluateAssertions } from '@prompt-kitchen/shared/src/evaluation';
+import { evaluateAssertions } from '@prompt-kitchen/shared/src/evaluation/evaluateAssertions';
 import { defaultMatcherContext } from '@prompt-kitchen/shared/src/evaluation/matcher';
 import type { AssertionResult, Assertion as SharedAssertion } from '@prompt-kitchen/shared/src/types';
 import { useCallback, useState } from 'react';

@@ -1,6 +1,6 @@
 import { evaluateAssertions } from '@prompt-kitchen/shared/src/evaluation';
 import { defaultMatcherContext } from '@prompt-kitchen/shared/src/evaluation/matcher';
-import type { Assertion as SharedAssertion } from '@prompt-kitchen/shared/src/types';
+import type { Assertion as SharedAssertion, AssertionResult } from '@prompt-kitchen/shared/src/types';
 import { useCallback, useState } from 'react';
 import { AssertionRow } from './AssertionRow';
 import { ExpectedPanel } from './ExpectedPanel';
@@ -18,6 +18,7 @@ interface AssertionsSectionProps {
 export function AssertionsSection({ assertions = [], onChange }: AssertionsSectionProps) {
   const [items, setItems] = useState<Assertion[]>(assertions);
   const [selectedAssertion, setSelectedAssertion] = useState<Assertion | null>(null);
+  const [previewResults, setPreviewResults] = useState<AssertionResult[]>([]);
 
   const handleChange = useCallback(
     (a: Assertion) => {
@@ -60,7 +61,9 @@ export function AssertionsSection({ assertions = [], onChange }: AssertionsSecti
   const handlePreview = () => {
     const sampleOutput = { user: { name: 'John' }, items: [{ id: 1 }, { id: 2 }] }; // Mock sample output
     const results = evaluateAssertions(sampleOutput, items, { matcherContext: defaultMatcherContext });
-    console.log('Preview Results:', results); // Replace with actual UI rendering logic
+
+    // Render results in the UI
+    setPreviewResults(results.results);
   };
 
   return (
@@ -91,6 +94,19 @@ export function AssertionsSection({ assertions = [], onChange }: AssertionsSecti
           Preview
         </button>
       </div>
+
+      {previewResults.length > 0 && (
+        <div className="mt-4">
+          <h3 className="text-sm font-medium text-gray-700">Preview Results</h3>
+          <ul className="list-disc pl-5">
+            {previewResults.map((result, index) => (
+              <li key={index} className={result.passed ? 'text-green-600' : 'text-red-600'}>
+                {result.message}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {selectedAssertion && (
         <ExpectedPanel

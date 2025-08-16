@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Assertion } from './AssertionsSection';
 import { ExpectedPanel } from './ExpectedPanel';
+import type { MatcherName } from '@prompt-kitchen/shared/src/types';
 
 interface AssertionRowProps {
   assertion: Assertion;
@@ -33,7 +34,7 @@ export function AssertionRow({ assertion, onChange, onRemove }: AssertionRowProp
 
         <select
           value={assertion.matcher}
-          onChange={(e) => onChange({ ...assertion, matcher: e.target.value })}
+          onChange={(e) => onChange({ ...assertion, matcher: e.target.value as MatcherName })}
           className="border border-gray-300 rounded px-2 py-1 text-sm"
         >
           <option value="toEqual">toEqual</option>

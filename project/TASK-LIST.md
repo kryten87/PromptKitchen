@@ -225,7 +225,7 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
   - ✅ 4.2.3.1 Create `EvaluationService` that wraps shared `evaluateAssertions` and injects `compileSafeRegex` via options.
   - ✅ 4.2.3.2 Update execution pipeline: if `testCase.assertions?.length > 0`, use `EvaluationService`; else legacy exact/deep-equal.
   - ✅ 4.2.3.3 Persist `AssertionResult[]` JSON into `test_results.details` (nullable when legacy path used).
-  - [ ] 4.2.3.4 Implement details size cap (`PK_MAX_TEST_RESULT_DETAILS_BYTES`): truncate `actualSamples` with `...truncated` marker and include SHA-256 hash of full content.
+  - ✅ 4.2.3.4 Implement details size cap (`PK_MAX_TEST_RESULT_DETAILS_BYTES`): truncate `actualSamples` with `...truncated` marker and include SHA-256 hash of full content.
   - [ ] 4.2.3.5 Unit tests:
     - assertions path end-to-end (pass/fail, ANY/ALL, `not`).
     - regex safety and allowed flags enforcement.

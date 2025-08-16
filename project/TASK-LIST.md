@@ -242,7 +242,7 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
   - ✅ 4.2.4.4 Add toolbar actions: Add assertion, Import from last output (basic path/value scaffold), Preview.
   - ✅ 4.2.4.5 Wire client-side Preview using shared `evaluateAssertions`.
   - ✅ 4.2.4.6 Add inline validation: JSONPath parse, JSON validity, regex flags/length.
-  - [ ] 4.2.4.7 Add `data-testid` attributes for all new controls (align with 4.3.8 naming pattern).
+  - [ ] 4.2.4.7 Add `data-testid` attributes for all new controls (follow the naming scheme in the copilot instructions file)
   - [ ] 4.2.4.8 Unit tests (RTL/Jest) for adapters/validators and preview rendering.
   - [ ] 4.2.4.9 Ensure `npm run -w frontend test && npm run check` passes.
 
@@ -274,17 +274,7 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
   - [ ] 4.3.7.1. Mock LLM route responses deterministically (e.g., echo prompt + suffix).
   - [ ] 4.3.7.2. Short-circuit execution queue to synchronous in-process run with predictable output.
   - [ ] 4.3.7.3. Disable external network calls.
-- [ ] 4.3.8. Add `data-testid` attributes (kebab-case) across frontend components:
-  - [ ] 4.3.8.1. Login: login-page, google-login-button.
-  - [ ] 4.3.8.2. Sidebar: sidebar, nav-projects-link.
-  - [ ] 4.3.8.3. Dashboard: dashboard-page, create-project-button, project-name-input, project-description-input, project-list, project-list-item-<id>, project-edit-button, project-delete-button, project-submit-button.
-  - [ ] 4.3.8.4. Project page: project-page, prompt-list, create-prompt-button, prompt-list-item-<id>, prompt-edit-button, prompt-delete-button.
-  - [ ] 4.3.8.5. Prompt editor modal: prompt-editor, prompt-name-input, prompt-text-input, prompt-save-button, prompt-history-button.
-  - [ ] 4.3.8.6. Prompt history modal: prompt-history-modal, prompt-history-row-<version>, prompt-history-restore-button.
-  - [ ] 4.3.8.7. Test suite panel: test-suite-panel, add-test-suite-button, test-suite-list, test-suite-list-item-<id>, test-suite-edit-button, test-suite-delete-button.
-  - [ ] 4.3.8.8. Test case editor: test-case-editor, add-test-case-button, test-case-row-<id>, test-case-name-input, test-case-inputs-kv-pair, test-case-expected-output-input, test-case-run-mode-select, test-case-save-button.
-  - [ ] 4.3.8.9. Execution: run-test-suite-button, test-run-status, test-results-table, test-result-row-<id>, test-result-status-pass, test-result-status-fail.
-  - [ ] 4.3.8.10. Generic utilities: confirm-dialog, confirm-yes-button, confirm-no-button (ensure replacement for any native confirm usage).
+- [ ] 4.3.8. Add `data-testid` attributes (follow the naming scheme in the copilot instructions file)
 - [ ] 4.3.9. Export a shared selector utility in e2e package (e.g., `getTestId(id)` returning `[data-testid="id"]`).
 - [ ] 4.3.10. Create Playwright config (`playwright.config.ts`): multiple projects (chromium, firefox, webkit); global setup & teardown; retries=0; workers=default.
 - [ ] 4.3.11. Implement global setup script:

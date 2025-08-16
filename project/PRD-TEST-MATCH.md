@@ -301,3 +301,18 @@ Test Case Editor
 3) toContain on strings: Include a Case-insensitive option (UI checkbox). ✅
 4) JSON copy/paste import/export: Deferred to post-MVP. ✅
 
+## Updated Features
+
+### Inline Validation
+- **JSONPath Validation**: Ensure JSONPath expressions are valid using `jsonpath-plus`. Invalid paths will display an error message.
+- **JSON Validation**: Validate JSON inputs using `ajv`. Invalid JSON will display an error message.
+- **Regex Validation**: Validate regex patterns and flags. Unsupported flags or overly long patterns will display an error message.
+
+### UI Feedback
+- Validation errors are displayed inline in the `ExpectedPanel` and `TestCaseEditor` components.
+- Errors include "Invalid JSONPath", "Invalid JSON", and "Invalid Regex" with specific details.
+
+### Testing
+- Unit tests for validation logic in `ExpectedPanel` and `TestCaseEditor`.
+- Edge cases for invalid inputs are covered.
+

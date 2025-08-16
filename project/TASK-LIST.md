@@ -241,7 +241,7 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
     - toEqual/toContain: JSON/Text editor; when Text + toContain, add “Case-insensitive” checkbox.
   - ✅ 4.2.4.4 Add toolbar actions: Add assertion, Import from last output (basic path/value scaffold), Preview.
   - ✅ 4.2.4.5 Wire client-side Preview using shared `evaluateAssertions`.
-  - [ ] 4.2.4.6 Add inline validation: JSONPath parse, JSON validity, regex flags/length.
+  - ✅ 4.2.4.6 Add inline validation: JSONPath parse, JSON validity, regex flags/length.
   - [ ] 4.2.4.7 Add `data-testid` attributes for all new controls (align with 4.3.8 naming pattern).
   - [ ] 4.2.4.8 Unit tests (RTL/Jest) for adapters/validators and preview rendering.
   - [ ] 4.2.4.9 Ensure `npm run -w frontend test && npm run check` passes.

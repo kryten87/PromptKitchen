@@ -99,7 +99,7 @@ export class TestSuiteRunRepository {
           // If parsing fails, keep as string
         }
       }
-  let details: AssertionResult[] | undefined = undefined;
+      let details: AssertionResult[] | undefined = undefined;
       if (row.details) {
         try {
           details = JSON.parse(row.details) as AssertionResult[];

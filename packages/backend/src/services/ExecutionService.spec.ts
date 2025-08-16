@@ -46,13 +46,13 @@ describe('ExecutionService', () => {
   let service: ExecutionService;
 
   beforeEach(() => {
-      const config = loadPKConfig();
-      service = new ExecutionService({
-        llmService: mockLLMService as LLMService,
-        testCaseRepo: mockTestCaseRepo as TestCaseRepository,
-        db: mockDb as unknown as DatabaseConnector,
-        config,
-      });
+    const config = loadPKConfig();
+    service = new ExecutionService({
+      llmService: mockLLMService as LLMService,
+      testCaseRepo: mockTestCaseRepo as TestCaseRepository,
+      db: mockDb as unknown as DatabaseConnector,
+      config,
+    });
     jest.clearAllMocks();
   });
 

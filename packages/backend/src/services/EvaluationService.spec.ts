@@ -27,7 +27,7 @@ describe('EvaluationService', () => {
 
   it('throws on invalid regex in compileSafeRegex', () => {
     const svc = EvaluationService.factory();
-  // @ts-expect-error: intentionally testing error handling for invalid regex
+    // @ts-expect-error: intentionally testing error handling for invalid regex
     expect(() => svc.matcherContext.compileSafeRegex('[', 'i')).toThrow();
   });
 

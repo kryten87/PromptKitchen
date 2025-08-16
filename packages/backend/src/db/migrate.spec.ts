@@ -53,12 +53,12 @@ describe('Migration 010 & 011: assertions/details columns', () => {
     await expect(runMigrations(db)).resolves.toBeUndefined();
 
     // Rollback all migrations
-  await db.knex.migrate.rollback({ directory: path.resolve(__dirname, '../migrations'), extension: 'ts' });
+    await db.knex.migrate.rollback({ directory: path.resolve(__dirname, '../migrations'), extension: 'ts' });
     // Columns should not exist
     expect(await columnExists(db.knex, 'test_cases', 'assertions')).toBe(false);
     expect(await columnExists(db.knex, 'test_results', 'details')).toBe(false);
 
     // Rollback again (idempotent)
-  await expect(db.knex.migrate.rollback({ directory: path.resolve(__dirname, '../migrations'), extension: 'ts' })).resolves.toBeDefined();
+    await expect(db.knex.migrate.rollback({ directory: path.resolve(__dirname, '../migrations'), extension: 'ts' })).resolves.toBeDefined();
   });
 });

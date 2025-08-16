@@ -1,4 +1,15 @@
+import Ajv from 'ajv';
 import * as yup from 'yup';
+
+const ajv = new Ajv();
+
+export function validateJsonSchema(json: object): boolean {
+  try {
+    return ajv.validateSchema(json);
+  } catch {
+    return false;
+  }
+}
 
 // User validation schema
 defineUserSchema();

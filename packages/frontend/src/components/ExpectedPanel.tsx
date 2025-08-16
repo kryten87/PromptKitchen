@@ -1,3 +1,4 @@
+import Ajv from 'ajv';
 import { useState } from 'react';
 
 interface ExpectedPanelProps {
@@ -14,6 +15,9 @@ export function ExpectedPanel({ matcher, expected, onChange }: ExpectedPanelProp
     typeof expected === 'object' ? JSON.stringify(expected, null, 2) : ''
   );
   const [flags, setFlags] = useState({ i: false, m: false, s: false, u: false });
+  const [validationError, setValidationError] = useState<string | null>(null);
+
+  const ajv = new Ajv();
 
   const handleFlagChange = (flag: keyof typeof flags) => {
     setFlags((prev) => ({ ...prev, [flag]: !prev[flag] }));
@@ -21,15 +25,31 @@ export function ExpectedPanel({ matcher, expected, onChange }: ExpectedPanelProp
 
   const handleTextChange = (value: string) => {
     setTextValue(value);
+    try {
+      if (matcher === 'toMatch') {
+        new RegExp(value, Object.keys(flags).filter((f) => flags[f as keyof typeof flags]).join(''));
+      } else if (matcher === 'toEqual' || matcher === 'toContain') {
+        JSON.parse(value);
+      }
+      setValidationError(null);
+    } catch {
+      setValidationError('Invalid input');
+    }
     onChange(value);
   };
 
   const handleJsonChange = (value: string) => {
     setJsonValue(value);
     try {
-      onChange(JSON.parse(value));
+      const parsed = JSON.parse(value);
+      const valid = ajv.validateSchema(parsed);
+      if (!valid) {
+        throw new Error('Invalid JSON');
+      }
+      setValidationError(null);
+      onChange(parsed);
     } catch {
-      // Handle invalid JSON
+      setValidationError('Invalid JSON');
     }
   };
 
@@ -55,19 +75,7 @@ export function ExpectedPanel({ matcher, expected, onChange }: ExpectedPanelProp
             </label>
           ))}
         </div>
-      </div>
-    );
-  }
-
-  if (matcher === 'toBeOneOf') {
-    return (
-      <div className="p-4 border rounded">
-        <textarea
-          value={jsonValue}
-          onChange={(e) => handleJsonChange(e.target.value)}
-          placeholder="Enter JSON array"
-          className="w-full border rounded px-2 py-1"
-        />
+        {validationError && <p className="text-red-500 text-sm">{validationError}</p>}
       </div>
     );
   }
@@ -81,6 +89,7 @@ export function ExpectedPanel({ matcher, expected, onChange }: ExpectedPanelProp
           placeholder="Enter JSON or text"
           className="w-full border rounded px-2 py-1"
         />
+        {validationError && <p className="text-red-500 text-sm">{validationError}</p>}
       </div>
     );
   }

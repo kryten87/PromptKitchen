@@ -34,7 +34,6 @@ export function resolveJsonPath(actual: unknown, path: string): unknown[] {
     }
     return [result];
   } catch {
-    // On error, treat as no results
-    return [undefined];
+    throw new Error('Invalid JSONPath');
   }
 }

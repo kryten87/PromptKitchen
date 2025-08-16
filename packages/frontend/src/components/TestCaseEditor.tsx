@@ -38,23 +38,47 @@ export function TestCaseEditor({
       setInputs(stringInputs);
 
       // Set expected output
-      if (typeof testCase.expectedOutput === 'string') {
-        setExpectedOutput(testCase.expectedOutput);
-        setIsJsonOutput(false);
-      } else {
-        setExpectedOutput(JSON.stringify(testCase.expectedOutput, null, 2));
-        setIsJsonOutput(true);
-      }
+      setExpectedOutput(
+        typeof testCase.expectedOutput === 'string'
+          ? testCase.expectedOutput
+          : JSON.stringify(testCase.expectedOutput, null, 2)
+      );
+      setIsJsonOutput(typeof testCase.expectedOutput === 'object');
 
+      // Set run mode
       setRunMode(testCase.runMode);
-    } else {
-      // Reset for new test case
-      setInputs({});
-      setExpectedOutput('');
-      setIsJsonOutput(false);
-      setRunMode('DEFAULT');
     }
   }, [testCase]);
+
+  const validateInputs = () => {
+    // Validate JSON output if enabled
+    if (isJsonOutput && expectedOutput.trim()) {
+      try {
+        JSON.parse(expectedOutput);
+      } catch {
+        throw new Error('Invalid JSON in expected output');
+      }
+    }
+  };
+
+  // Helper function to convert string values to appropriate types
+  const convertValue = (value: string): JsonValue => {
+    const trimmed = value.trim();
+
+    // Handle special values
+    if (trimmed === 'null') return null;
+    if (trimmed === 'true') return true;
+    if (trimmed === 'false') return false;
+
+    // Try to parse as number
+    if (/^-?\d+(\.\d+)?$/.test(trimmed)) {
+      const num = Number(trimmed);
+      if (!isNaN(num)) return num;
+    }
+
+    // Return as string
+    return value;
+  };
 
   const addInputField = () => {
     const newKey = `input${Object.keys(inputs).length + 1}`;
@@ -92,28 +116,17 @@ export function TestCaseEditor({
     setError(null);
 
     try {
-      // Convert string inputs back to JsonValue
+      validateInputs();
+
+      // Convert string inputs to appropriate JsonValue types
       const jsonInputs: Record<string, JsonValue> = {};
       for (const [key, value] of Object.entries(inputs)) {
-        // Try to parse as JSON first, fall back to string
-        try {
-          jsonInputs[key] = JSON.parse(value);
-        } catch {
-          jsonInputs[key] = value;
-        }
+        jsonInputs[key] = convertValue(value);
       }
 
-      // Parse expected output
-      let parsedExpectedOutput: string | Record<string, JsonValue>;
-      if (isJsonOutput) {
-        try {
-          parsedExpectedOutput = JSON.parse(expectedOutput);
-        } catch {
-          throw new Error('Invalid JSON in expected output');
-        }
-      } else {
-        parsedExpectedOutput = expectedOutput;
-      }
+      const parsedExpectedOutput = isJsonOutput
+        ? JSON.parse(expectedOutput)
+        : expectedOutput;
 
       if (isEditing && testCase) {
         // Update existing test case
@@ -138,9 +151,9 @@ export function TestCaseEditor({
         });
         onTestCaseCreated?.(created);
       }
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to save test case';
-      setError(message);
+    } catch (e) {
+      const error = e as Error;
+      setError(error.message || 'An unknown error occurred');
     } finally {
       setLoading(false);
     }

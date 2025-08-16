@@ -1,7 +1,7 @@
+import type { MatcherName } from '@prompt-kitchen/shared/src/types';
 import { useState } from 'react';
 import type { Assertion } from './AssertionsSection';
 import { ExpectedPanel } from './ExpectedPanel';
-import type { MatcherName } from '@prompt-kitchen/shared/src/types';
 
 interface AssertionRowProps {
   assertion: Assertion;

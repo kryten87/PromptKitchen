@@ -1,6 +1,6 @@
 import { evaluateAssertions } from '@prompt-kitchen/shared/src/evaluation';
 import { defaultMatcherContext } from '@prompt-kitchen/shared/src/evaluation/matcher';
-import type { Assertion as SharedAssertion, AssertionResult } from '@prompt-kitchen/shared/src/types';
+import type { AssertionResult, Assertion as SharedAssertion } from '@prompt-kitchen/shared/src/types';
 import { useCallback, useState } from 'react';
 import { AssertionRow } from './AssertionRow';
 import { ExpectedPanel } from './ExpectedPanel';

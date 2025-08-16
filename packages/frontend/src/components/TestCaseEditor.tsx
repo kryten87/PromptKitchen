@@ -1,6 +1,7 @@
 import type { JsonValue, TestCase, TestCaseRunMode } from '@prompt-kitchen/shared/src/dtos';
 import { useEffect, useState } from 'react';
 import { useApiClient } from '../hooks/useApiClient';
+import { AssertionsSection } from './AssertionsSection';
 
 interface TestCaseEditorProps {
   testSuiteId: string;
@@ -268,6 +269,9 @@ export function TestCaseEditor({
             </div>
           )}
         </div>
+
+        {/* Assertions Section (placeholder) */}
+        <AssertionsSection />
 
         {/* Run Mode Section */}
         <div>

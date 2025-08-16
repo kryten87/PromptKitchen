@@ -102,4 +102,14 @@ After the task is completed, you must delete the task ledger file (`project/task
 - Decision 1: [Choice made, rationale, and alternatives considered]
 - Decision 2: [Choice made, rationale, and alternatives considered]
 
-```
+````
+
+## Task Completion Checklist
+
+1. **Mark the Task as Complete in the Task List**: When completing a numbered task from the task list, ensure you update the corresponding entry in `project/TASK-LIST.md` by replacing `[ ]` with `✅`. Do not skip this step.
+
+2. **Delete the Task Ledger**: After completing the task, delete the task ledger file (`project/tasks/TASK.md`). This is mandatory to maintain a clean repository.
+
+3. **Run Final Checks**: Run `npm run check` to ensure all tests pass, the code is linted, and the build succeeds. Only proceed to mark the task as complete after this step.
+
+4. **Review and Confirm**: Double-check that both `project/TASK-LIST.md` and `project/tasks/TASK.md` are updated or removed as required.

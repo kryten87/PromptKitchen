@@ -56,3 +56,7 @@ If you need to run a migration test, always use a temporary SQLite file in the `
 
 Refer to `project/PRD.md` for further details and best practices.
 
+- **Task List Updates**: When completing a numbered task from the task list, you must update the corresponding entry in `project/TASK-LIST.md` by replacing `[ ]` with `✅`. This step is non-negotiable.
+
+- **Task Ledger Deletion**: After completing a task, delete the task ledger file (`project/tasks/TASK.md`). This is a strict requirement to keep the repository clean.
+

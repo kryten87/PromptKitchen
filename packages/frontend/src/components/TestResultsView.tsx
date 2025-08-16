@@ -1,5 +1,5 @@
-import React from 'react';
 import type { AssertionResult } from '@prompt-kitchen/shared/src/types';
+import React from 'react';
 
 export interface TestResult {
   id: string;

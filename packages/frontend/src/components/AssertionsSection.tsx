@@ -1,14 +1,13 @@
 import { useCallback, useState } from 'react';
 import { AssertionRow } from './AssertionRow';
 import { ExpectedPanel } from './ExpectedPanel';
+import { evaluateAssertions } from '@prompt-kitchen/shared/src/evaluation';
+import { defaultMatcherContext } from '@prompt-kitchen/shared/src/evaluation/matcher';
+import type { Assertion as SharedAssertion } from '@prompt-kitchen/shared/src/types';
 
-export interface Assertion {
-  id: string;
-  path: string;
-  matcher: string;
-  not?: boolean;
-  pathMatch?: 'ANY' | 'ALL';
-  expected?: unknown;
+// Updated Assertion interface to extend SharedAssertion
+export interface Assertion extends SharedAssertion {
+  id: string; // Local ID for UI purposes
 }
 
 interface AssertionsSectionProps {
@@ -38,12 +37,30 @@ export function AssertionsSection({ assertions = [], onChange }: AssertionsSecti
     [items, onChange]
   );
 
+  // Updated genId to include assertionId
   const genId = () => Math.random().toString(36).slice(2, 9);
 
   const handleAdd = () => {
-    const newAssertion = { id: genId(), path: '', matcher: 'toEqual' };
+    const newAssertion: Assertion = { id: genId(), assertionId: genId(), path: '', matcher: 'toEqual' };
     setItems([...items, newAssertion]);
     onChange?.([...items, newAssertion]);
+  };
+
+  const handleImport = () => {
+    // Mock implementation for importing from last output
+    const importedAssertions: Assertion[] = [
+      { id: genId(), assertionId: genId(), path: '$.user.name', matcher: 'toMatch', expected: 'John' },
+      { id: genId(), assertionId: genId(), path: '$.items[*].id', matcher: 'toBeOneOf', expected: [1, 2, 3] },
+    ];
+    setItems([...items, ...importedAssertions]);
+    onChange?.([...items, ...importedAssertions]);
+  };
+
+  // Updated handlePreview to include matcherContext
+  const handlePreview = () => {
+    const sampleOutput = { user: { name: 'John' }, items: [{ id: 1 }, { id: 2 }] }; // Mock sample output
+    const results = evaluateAssertions(sampleOutput, items, { matcherContext: defaultMatcherContext });
+    console.log('Preview Results:', results); // Replace with actual UI rendering logic
   };
 
   return (
@@ -63,9 +80,15 @@ export function AssertionsSection({ assertions = [], onChange }: AssertionsSecti
         </div>
       )}
 
-      <div className="mt-2">
+      <div className="mt-2 flex gap-2">
         <button type="button" onClick={handleAdd} className="text-sm text-blue-600">
           + Add assertion
+        </button>
+        <button type="button" onClick={handleImport} className="text-sm text-green-600">
+          Import from last output
+        </button>
+        <button type="button" onClick={handlePreview} className="text-sm text-purple-600">
+          Preview
         </button>
       </div>
 

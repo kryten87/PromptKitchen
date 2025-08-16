@@ -61,6 +61,7 @@ export function EditProjectModal({ isOpen, onClose, project, onProjectUpdated }:
               onChange={e => setName(e.target.value)}
               required
               disabled={loading}
+              data-testid="edit-project-modal-name-input"
             />
           </div>
           <div className="mb-4">
@@ -71,6 +72,7 @@ export function EditProjectModal({ isOpen, onClose, project, onProjectUpdated }:
               value={description}
               onChange={e => setDescription(e.target.value)}
               disabled={loading}
+              data-testid="edit-project-modal-description-input"
             />
           </div>
           {error && <p className="text-red-500 mb-2">{error}</p>}
@@ -80,6 +82,7 @@ export function EditProjectModal({ isOpen, onClose, project, onProjectUpdated }:
               className="px-4 py-2 rounded bg-btn-subtle hover:bg-btn-subtle-hover text-text-secondary"
               onClick={onClose}
               disabled={loading}
+              data-testid="edit-project-modal-cancel-button"
             >
               Cancel
             </button>
@@ -87,6 +90,7 @@ export function EditProjectModal({ isOpen, onClose, project, onProjectUpdated }:
               type="submit"
               className="px-4 py-2 rounded bg-primary hover:opacity-90 text-white"
               disabled={loading}
+              data-testid="edit-project-modal-submit-button"
             >
               {loading ? 'Saving...' : 'Save'}
             </button>

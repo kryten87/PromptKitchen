@@ -120,6 +120,7 @@ export function PromptEditor({ prompt, onPromptUpdated, onViewHistory }: PromptE
           onClick={onViewHistory}
           className="px-4 py-2 text-sm font-medium text-text-secondary bg-btn-subtle border border-gray-300 rounded-md hover:bg-btn-subtle-hover focus:ring-2 focus:ring-offset-2 focus:ring-primary"
           disabled={loading}
+          data-testid="prompt-editor-view-history-button"
         >
           View History
         </button>
@@ -129,6 +130,7 @@ export function PromptEditor({ prompt, onPromptUpdated, onViewHistory }: PromptE
           onClick={handleSave}
           disabled={!canSave || loading}
           className="px-4 py-2 text-sm font-medium text-white bg-primary border border-transparent rounded-md hover:opacity-90 focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
+          data-testid="prompt-editor-save-button"
         >
           {loading ? 'Saving...' : 'Save'}
         </button>

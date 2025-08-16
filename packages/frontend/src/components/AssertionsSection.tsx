@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import { AssertionRow } from './AssertionRow';
+import { ExpectedPanel } from './ExpectedPanel';
 
 export interface Assertion {
   id: string;
@@ -17,6 +18,7 @@ interface AssertionsSectionProps {
 
 export function AssertionsSection({ assertions = [], onChange }: AssertionsSectionProps) {
   const [items, setItems] = useState<Assertion[]>(assertions);
+  const [selectedAssertion, setSelectedAssertion] = useState<Assertion | null>(null);
 
   const handleChange = useCallback(
     (a: Assertion) => {
@@ -38,19 +40,11 @@ export function AssertionsSection({ assertions = [], onChange }: AssertionsSecti
 
   const genId = () => Math.random().toString(36).slice(2, 9);
 
-  const handleAdd = useCallback(() => {
-    const a: Assertion = {
-      id: genId(),
-      path: '',
-      matcher: 'toEqual',
-      not: false,
-      pathMatch: 'ANY',
-      expected: undefined,
-    };
-    const next = [...items, a];
-    setItems(next);
-    onChange?.(next);
-  }, [items, onChange]);
+  const handleAdd = () => {
+    const newAssertion = { id: genId(), path: '', matcher: 'toEqual' };
+    setItems([...items, newAssertion]);
+    onChange?.([...items, newAssertion]);
+  };
 
   return (
     <div className="mt-4">
@@ -74,6 +68,18 @@ export function AssertionsSection({ assertions = [], onChange }: AssertionsSecti
           + Add assertion
         </button>
       </div>
+
+      {selectedAssertion && (
+        <ExpectedPanel
+          matcher={selectedAssertion.matcher}
+          expected={selectedAssertion.expected}
+          onChange={(expected) => {
+            const updated = { ...selectedAssertion, expected };
+            handleChange(updated);
+            setSelectedAssertion(updated);
+          }}
+        />
+      )}
     </div>
   );
 }

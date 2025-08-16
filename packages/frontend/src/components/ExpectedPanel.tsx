@@ -1,4 +1,3 @@
-import Ajv from 'ajv';
 import { useState } from 'react';
 
 interface ExpectedPanelProps {
@@ -16,8 +15,6 @@ export function ExpectedPanel({ matcher, expected, onChange }: ExpectedPanelProp
   );
   const [flags, setFlags] = useState({ i: false, m: false, s: false, u: false });
   const [validationError, setValidationError] = useState<string | null>(null);
-
-  const ajv = new Ajv();
 
   const handleFlagChange = (flag: keyof typeof flags) => {
     setFlags((prev) => ({ ...prev, [flag]: !prev[flag] }));
@@ -42,10 +39,6 @@ export function ExpectedPanel({ matcher, expected, onChange }: ExpectedPanelProp
     setJsonValue(value);
     try {
       const parsed = JSON.parse(value);
-      const valid = ajv.validateSchema(parsed);
-      if (!valid) {
-        throw new Error('Invalid JSON');
-      }
       setValidationError(null);
       onChange(parsed);
     } catch {

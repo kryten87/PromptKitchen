@@ -1,3 +1,5 @@
+import { loadPKConfig } from '../config';
+
 import type { AssertionResult } from '@prompt-kitchen/shared';
 import { TestCase } from '@prompt-kitchen/shared/src/dtos';
 import { DatabaseConnector } from '../db/db';
@@ -44,11 +46,13 @@ describe('ExecutionService', () => {
   let service: ExecutionService;
 
   beforeEach(() => {
-    service = new ExecutionService({
-      llmService: mockLLMService as LLMService,
-      testCaseRepo: mockTestCaseRepo as TestCaseRepository,
-      db: mockDb as unknown as DatabaseConnector,
-    });
+      const config = loadPKConfig();
+      service = new ExecutionService({
+        llmService: mockLLMService as LLMService,
+        testCaseRepo: mockTestCaseRepo as TestCaseRepository,
+        db: mockDb as unknown as DatabaseConnector,
+        config,
+      });
     jest.clearAllMocks();
   });
 

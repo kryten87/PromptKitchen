@@ -1,3 +1,4 @@
+import type { AssertionResult } from '@prompt-kitchen/shared';
 import { JsonValue, TestResult, TestSuiteRun } from '@prompt-kitchen/shared/src/dtos';
 import { randomUUID } from 'crypto';
 import { Knex } from 'knex';
@@ -98,10 +99,10 @@ export class TestSuiteRunRepository {
           // If parsing fails, keep as string
         }
       }
-      let details: import('@prompt-kitchen/shared').AssertionResult[] | undefined = undefined;
+  let details: AssertionResult[] | undefined = undefined;
       if (row.details) {
         try {
-          details = JSON.parse(row.details) as import('@prompt-kitchen/shared').AssertionResult[];
+          details = JSON.parse(row.details) as AssertionResult[];
         } catch {
           details = undefined;
         }

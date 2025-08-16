@@ -1,9 +1,11 @@
 // ExecutionService.ts
 import type { Assertion, AssertionResult } from '@prompt-kitchen/shared';
 import { TestResult, TestSuiteRun } from '@prompt-kitchen/shared/src/dtos';
+import type { PKConfig } from '../config';
 import { DatabaseConnector } from '../db/db';
 import { TestCaseRepository } from '../repositories/TestCaseRepository';
 import { TestSuiteRunRepository } from '../repositories/TestSuiteRunRepository';
+import { truncateDetails } from '../utils/truncateDetails';
 import { EvaluationService } from './EvaluationService';
 import { LLMService } from './LLMService';
 
@@ -11,16 +13,19 @@ export class ExecutionService {
   private readonly llmService: LLMService;
   private readonly testCaseRepo: TestCaseRepository;
   private readonly testSuiteRunRepo: TestSuiteRunRepository;
+  private readonly config: PKConfig;
 
   constructor(opts: {
     llmService: LLMService;
     testCaseRepo: TestCaseRepository;
     db: DatabaseConnector;
+  config: PKConfig;
     testSuiteRunRepo?: TestSuiteRunRepository;
   }) {
     this.llmService = opts.llmService;
     this.testCaseRepo = opts.testCaseRepo;
     this.testSuiteRunRepo = opts.testSuiteRunRepo || new TestSuiteRunRepository(opts.db);
+    this.config = opts.config;
   }
 
   async startTestSuiteRun(testSuiteId: string, promptText: string, promptHistoryId: string): Promise<string> {
@@ -61,7 +66,12 @@ export class ExecutionService {
         const evaluationService = EvaluationService.factory();
         const evalResult = evaluationService.evaluate(llmResult.output, assertions);
         pass = evalResult.passed;
-        details = evalResult.results;
+        // Enforce details size cap
+        const { details: cappedDetails } = truncateDetails(
+          evalResult.results,
+          this.config.PK_MAX_TEST_RESULT_DETAILS_BYTES
+        );
+        details = cappedDetails;
       } else {
         if (typeof testCase.expectedOutput === 'string') {
           pass = EvaluationService.exactStringMatch(testCase.expectedOutput, llmResult.output);

@@ -221,7 +221,7 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
     - Prefer RE2; if unavailable, reject patterns failing `safe-regex2` check.
     - Return a callable `{ test(str): boolean }` to be used by evaluator.
 
-- [ ] 4.2.3 Backend — Evaluation Integration & Persistence
+- ✅ 4.2.3 Backend — Evaluation Integration & Persistence
   - ✅ 4.2.3.1 Create `EvaluationService` that wraps shared `evaluateAssertions` and injects `compileSafeRegex` via options.
   - ✅ 4.2.3.2 Update execution pipeline: if `testCase.assertions?.length > 0`, use `EvaluationService`; else legacy exact/deep-equal.
   - ✅ 4.2.3.3 Persist `AssertionResult[]` JSON into `test_results.details` (nullable when legacy path used).
@@ -230,7 +230,7 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
     - assertions path end-to-end (pass/fail, ANY/ALL, `not`).
     - regex safety and allowed flags enforcement.
     - details persistence + truncation + hashing.
-  - [ ] 4.2.3.6 Ensure `npm run -w backend test && npm run check` passes.
+  - ✅ 4.2.3.6 Ensure `npm run -w backend test && npm run check` passes.
 
 - [ ] 4.2.4 Frontend (packages/frontend) — Test Case Editor UI
   - [ ] 4.2.4.1 Add `AssertionsSection` inside existing `TestCaseEditor`.

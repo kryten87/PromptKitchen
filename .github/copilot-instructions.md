@@ -21,7 +21,7 @@
 
 ## Implementation Strategy
 - **Autonomy**: You are expected to work autonomously. After receiving a task, proceed with the implementation without asking for permission at each step. If you encounter issues, attempt to resolve them independently. Only ask for clarification if you are blocked or if a decision requires user input.
-- **Tasks**: _IMPORTANT!!!_ a task is not considered complete until all unit tests pass, the code is linted & fixed, and all packages build successfully. This is a critical part of the development process to ensure code quality and maintainability. Use `npm run check` in the root of the repository to check everything.
+- **Tasks**: _IMPORTANT!!!_ a task is not considered complete until `npm run check` has been run and all errors are resolved. This includes ensuring all unit tests pass, the code is linted & fixed, and all packages build successfully. This is a critical part of the development process to ensure code quality and maintainability. Use `npm run check` in the root of the repository to check everything.
 - **Monorepo**: The codebase will be organized into a monorepo with three main packages: `frontend`, `backend`, and `shared`.
 - **Database Abstraction**: All database access will be performed through an abstraction layer to facilitate future migration to other SQL databases like PostgreSQL or MySQL. No ORM will be used.
 - **Database Migrations**: The backend API will be responsible for running database migrations. Migrations will execute automatically upon application startup. If any migration fails, the application must fail to start. The migration system should be idempotent, meaning it will do nothing if no migration scripts need to be run.

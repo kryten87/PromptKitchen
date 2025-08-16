@@ -233,7 +233,7 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
   - ✅ 4.2.3.6 Ensure `npm run -w backend test && npm run check` passes.
 
 - [ ] 4.2.4 Frontend (packages/frontend) — Test Case Editor UI
-  - [ ] 4.2.4.1 Add `AssertionsSection` inside existing `TestCaseEditor`.
+  - ✅ 4.2.4.1 Add `AssertionsSection` inside existing `TestCaseEditor`.
   - [ ] 4.2.4.2 Create `AssertionRow` with: Path input, ANY/ALL segmented toggle, Matcher select, NOT checkbox, Remove button.
   - [ ] 4.2.4.3 Create single contextual `ExpectedPanel` (docked side on wide screens):
     - toMatch: pattern input + flags checkboxes (i, m, s, u) with validation.

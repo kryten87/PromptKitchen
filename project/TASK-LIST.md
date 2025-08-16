@@ -246,10 +246,10 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
   - ✅ 4.2.4.8 Unit tests (RTL/Jest) for adapters/validators and preview rendering.
   - ✅ 4.2.4.9 Ensure `npm run -w frontend test && npm run check` passes.
 
-- [ ] 4.2.5 Frontend — Results View Enhancements
+- ✅ 4.2.5 Frontend — Results View Enhancements
   - ✅ 4.2.5.1 Update `TestResultsView` to render per-assertion chips: Pass/Fail, path, matcher, mode.
   - ✅ 4.2.5.2 Add expandable area to show `actualSamples` (respect truncation marker and show hash if present).
-  - [ ] 4.2.5.3 Unit tests for rendering assertion details and expand/collapse.
+  - ✅ 4.2.5.3 Unit tests for rendering assertion details and expand/collapse.
 
 - [ ] 4.2.6 Documentation & Examples
   - [ ] 4.2.6.1 Link the SVG wireframe in PRD (done); verify path `project/design/editor/testcase-assertions-editor-wireframe.svg` works in repo.

@@ -1,6 +1,5 @@
 ---
 mode: "agent"
-tools: ["githubRepo", "codebase", "fetch"]
 description: "Maintain a structured task ledger for effective task management"
 ---
 

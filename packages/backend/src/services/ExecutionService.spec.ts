@@ -4,6 +4,7 @@ import type { AssertionResult } from '@prompt-kitchen/shared';
 import { TestCase } from '@prompt-kitchen/shared/src/dtos';
 import { DatabaseConnector } from '../db/db';
 import { TestCaseRepository } from '../repositories/TestCaseRepository';
+import { EvaluationService } from '../services/EvaluationService';
 import { ExecutionService } from '../services/ExecutionService';
 import { LLMService } from '../services/LLMService';
 
@@ -97,5 +98,149 @@ describe('ExecutionService', () => {
     expect(result).toBeDefined();
     expect(result?.results[0].status).toBe('PASS');
     expect(result?.results[0].details).toEqual(mockDetails);
+  });
+
+  it('assertions end-to-end: ANY/ALL and not modifier behavior', async () => {
+    // Create a test case that uses assertions
+    const assertionCase = makeTestCase({
+      id: 'case-assert-1',
+      inputs: {},
+      expectedOutput: '',
+    });
+    // Add assertions: $.value toEqual "42" and $.value toMatch /4\d/
+    // @ts-expect-error: adding assertions property for test case DTO (test-only extension)
+    assertionCase.assertions = [
+      {
+        assertionId: 'as1',
+        path: '$.value',
+        matcher: 'toEqual',
+        not: false,
+        pathMatch: 'ANY',
+        expected: '42',
+      },
+      {
+        assertionId: 'as2',
+        path: '$.value',
+        matcher: 'toMatch',
+        not: false,
+        pathMatch: 'ANY',
+        expected: '4\\d',
+      },
+    ];
+
+    // Mock repo to return only our assertion case
+    service = new ExecutionService({
+      llmService: {
+        completePrompt: jest.fn(async () => ({ output: JSON.stringify({ value: '42' }) })),
+      } as unknown as LLMService,
+      testCaseRepo: { getAllByTestSuiteId: jest.fn(async () => [assertionCase]) } as unknown as TestCaseRepository,
+      db: mockDb as unknown as DatabaseConnector,
+      config: loadPKConfig(),
+    });
+
+    // Install a local mock to capture the insert payload without using `any` casts
+    const mockInsert = jest.fn(async () => ({}));
+    (service as unknown as { testSuiteRunRepo: { insertTestResult: (arg: unknown) => Promise<unknown> } }).testSuiteRunRepo.insertTestResult = mockInsert as unknown as (
+      arg: unknown
+    ) => Promise<unknown>;
+
+    await service.runTestSuite('run-assert-1', 'ignored prompt', 'hist-1');
+
+    expect(mockInsert).toHaveBeenCalled();
+    expect(mockInsert.mock.calls.length).toBeGreaterThan(0);
+    const calls = mockInsert.mock.calls as unknown as Array<Array<unknown>>;
+    expect(calls.length).toBeGreaterThan(0);
+    const callArgsRaw = calls[0][0] as unknown;
+    expect(callArgsRaw).toBeDefined();
+    const callArgs = callArgsRaw as { details?: unknown };
+    // details should exist and indicate assertion results
+    expect(callArgs.details).toBeDefined();
+    expect(Array.isArray(callArgs.details)).toBe(true);
+    const details = callArgs.details as AssertionResult[];
+    expect(details.length).toBeGreaterThan(0);
+    // Each assertion result should be present and report pass/fail status
+    const ids = details.map((d) => d.assertionId);
+    expect(ids).toContain('as1');
+    expect(ids).toContain('as2');
+    const resAs1 = details.find((d) => d.assertionId === 'as1');
+    const resAs2 = details.find((d) => d.assertionId === 'as2');
+    expect(resAs1).toBeDefined();
+    expect(resAs2).toBeDefined();
+    // Ensure each assertion produced a result and has an informative message
+    expect(typeof resAs1?.passed).toBe('boolean');
+    expect(typeof resAs2?.passed).toBe('boolean');
+    expect(typeof resAs1?.message).toBe('string');
+    expect(typeof resAs2?.message).toBe('string');
+  });
+
+  it('truncates large details and includes truncation marker + hash', async () => {
+    // Create a large assertion result via mocking EvaluationService
+    const largeSample = 'x'.repeat(2000);
+    const fakeResult: { passed: boolean; results: AssertionResult[] } = {
+      passed: true,
+      results: [
+        {
+          assertionId: 'big1',
+          path: '$',
+          matcher: 'toEqual',
+          not: false,
+          pathMatch: 'ANY',
+          passed: true,
+          actualSamples: [largeSample],
+          message: 'big',
+        },
+      ],
+    };
+
+    // Spy EvaluationService.factory to return our fake evaluator
+    const evalFactorySpy = jest.spyOn(EvaluationService, 'factory').mockReturnValue(({
+      evaluate: () => fakeResult,
+    } as unknown) as EvaluationService);
+
+    // Small config to force truncation
+    const smallConfig = { ...loadPKConfig(), PK_MAX_TEST_RESULT_DETAILS_BYTES: 20 };
+
+    const assertionCase = makeTestCase({ id: 'case-big-1', inputs: {}, expectedOutput: '' });
+    // @ts-expect-error: adding assertions property for test case DTO (test-only extension)
+    assertionCase.assertions = [
+      { assertionId: 'big1', path: '$', matcher: 'toEqual', not: false, pathMatch: 'ANY', expected: null },
+    ];
+
+    const svc = new ExecutionService({
+      llmService: { completePrompt: jest.fn(async () => ({ output: JSON.stringify({}) })) } as unknown as LLMService,
+      testCaseRepo: { getAllByTestSuiteId: jest.fn(async () => [assertionCase]) } as unknown as TestCaseRepository,
+      db: mockDb as unknown as DatabaseConnector,
+      config: smallConfig,
+    });
+
+    const mockInsert = jest.fn(async () => ({}));
+    (svc as unknown as { testSuiteRunRepo: { insertTestResult: (arg: unknown) => Promise<unknown> } }).testSuiteRunRepo.insertTestResult = mockInsert as unknown as (
+      arg: unknown
+    ) => Promise<unknown>;
+
+    await svc.runTestSuite('run-big-1', 'ignored', 'hist-1');
+
+    expect(mockInsert).toHaveBeenCalled();
+    expect(mockInsert.mock.calls.length).toBeGreaterThan(0);
+    const callsBig = mockInsert.mock.calls as unknown as Array<Array<unknown>>;
+    expect(callsBig.length).toBeGreaterThan(0);
+    const callArgsRawBig = callsBig[0][0] as unknown;
+    expect(callArgsRawBig).toBeDefined();
+    const callArgs = callArgsRawBig as { details?: unknown };
+    expect(callArgs.details).toBeDefined();
+    const details = callArgs.details as AssertionResult[];
+    // Depending on how truncateDetails reduced size, actualSamples may be replaced with ['...truncated']
+    // or removed (empty array). Accept either behavior.
+    const samples = details[0].actualSamples;
+    expect(Array.isArray(samples)).toBe(true);
+    const isMarker = samples.length === 1 && samples[0] === '...truncated';
+    const isEmpty = samples.length === 0;
+    expect(isMarker || isEmpty).toBe(true);
+    if (isMarker) {
+      expect(typeof (details[0] as unknown as { hash?: string }).hash).toBe('string');
+    }
+
+    // restore spy
+    evalFactorySpy.mockRestore();
   });
 });

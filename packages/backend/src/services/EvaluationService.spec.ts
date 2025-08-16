@@ -48,4 +48,10 @@ describe('EvaluationService', () => {
     expect(result.passed).toBe(true);
     expect(result.results[0].passed).toBe(true);
   });
+
+  it('enforces allowed regex flags (throws on disallowed flags)', () => {
+    const svc = EvaluationService.factory();
+    // @ts-expect-error: intentionally testing runtime behavior for compileSafeRegex
+    expect(() => svc.matcherContext.compileSafeRegex('abc', 'x')).toThrow();
+  });
 });

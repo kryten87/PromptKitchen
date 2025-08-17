@@ -108,7 +108,6 @@ describe('ExecutionService', () => {
       expectedOutput: '',
     });
     // Add assertions: $.value toEqual "42" and $.value toMatch /4\d/
-    // @ts-expect-error: adding assertions property for test case DTO (test-only extension)
     assertionCase.assertions = [
       {
         assertionId: 'as1',
@@ -201,7 +200,6 @@ describe('ExecutionService', () => {
     const smallConfig = { ...loadPKConfig(), PK_MAX_TEST_RESULT_DETAILS_BYTES: 20 };
 
     const assertionCase = makeTestCase({ id: 'case-big-1', inputs: {}, expectedOutput: '' });
-    // @ts-expect-error: adding assertions property for test case DTO (test-only extension)
     assertionCase.assertions = [
       { assertionId: 'big1', path: '$', matcher: 'toEqual', not: false, pathMatch: 'ANY', expected: null },
     ];

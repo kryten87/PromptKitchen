@@ -1,7 +1,7 @@
 import type { JsonValue, TestCase, TestCaseRunMode } from '@prompt-kitchen/shared/src/dtos';
 import { useEffect, useState } from 'react';
 import { useApiClient } from '../hooks/useApiClient';
-import { AssertionsSection } from './AssertionsSection';
+import { Assertion, AssertionsSection } from './AssertionsSection';
 
 interface TestCaseEditorProps {
   testSuiteId: string;
@@ -20,6 +20,7 @@ export function TestCaseEditor({
 }: TestCaseEditorProps) {
   const [inputs, setInputs] = useState<Record<string, string>>({});
   const [expectedOutput, setExpectedOutput] = useState('');
+  const [assertions, setAssertions] = useState<Assertion[]>([]);
   const [isJsonOutput, setIsJsonOutput] = useState(false);
   const [runMode, setRunMode] = useState<TestCaseRunMode>('DEFAULT');
   const [loading, setLoading] = useState(false);
@@ -42,6 +43,12 @@ export function TestCaseEditor({
         typeof testCase.expectedOutput === 'string'
           ? testCase.expectedOutput
           : JSON.stringify(testCase.expectedOutput, null, 2)
+      );
+      setAssertions(
+        (testCase.assertions || []).map((a) => ({
+          ...a,
+          id: Math.random().toString(36).slice(2, 9),
+        }))
       );
       setIsJsonOutput(typeof testCase.expectedOutput === 'object');
 
@@ -135,6 +142,13 @@ export function TestCaseEditor({
           body: JSON.stringify({
             inputs: jsonInputs,
             expectedOutput: parsedExpectedOutput,
+            assertions: assertions.map(a => ({
+              path: a.path,
+              matcher: a.matcher,
+              expected: a.expected,
+              not: a.not,
+              pathMatch: a.pathMatch,
+            })),
             runMode,
           }),
         });
@@ -146,6 +160,13 @@ export function TestCaseEditor({
           body: JSON.stringify({
             inputs: jsonInputs,
             expectedOutput: parsedExpectedOutput,
+            assertions: assertions.map(a => ({
+              path: a.path,
+              matcher: a.matcher,
+              expected: a.expected,
+              not: a.not,
+              pathMatch: a.pathMatch,
+            })),
             runMode,
           }),
         });
@@ -159,9 +180,9 @@ export function TestCaseEditor({
     }
   };
 
-  const isValid = Object.keys(inputs).length > 0 &&
-                  Object.keys(inputs).every(key => key.trim() !== '') &&
-                  expectedOutput.trim() !== '';
+  const isValid = (Object.keys(inputs).length > 0 &&
+                  Object.keys(inputs).every(key => key.trim() !== '')) &&
+                  (expectedOutput.trim() !== '' || assertions.length > 0);
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-6">
@@ -284,7 +305,7 @@ export function TestCaseEditor({
         </div>
 
         {/* Assertions Section (placeholder) */}
-        <AssertionsSection />
+        <AssertionsSection assertions={assertions} onChange={setAssertions} />
 
         {/* Run Mode Section */}
         <div>

@@ -60,7 +60,6 @@ export class ExecutionService {
       // Evaluate assertions if present
       let pass = false;
       let details: AssertionResult[] | undefined = undefined;
-      // @ts-expect-error: assertions property may exist on testCase
       const assertions: Assertion[] | undefined = testCase.assertions;
       if (assertions && assertions.length > 0) {
         const evaluationService = EvaluationService.factory();

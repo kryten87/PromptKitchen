@@ -8,6 +8,7 @@ interface TestCaseRow {
   test_suite_id: string;
   inputs: string;
   expected_output: string;
+  assertions?: string;
   run_mode: string;
   output_type?: string;
   created_at: string | Date;
@@ -31,6 +32,7 @@ export class TestCaseRepository {
       testSuiteId: row.test_suite_id,
       inputs: typeof row.inputs === 'string' ? JSON.parse(row.inputs) : row.inputs,
       expectedOutput: typeof row.expected_output === 'string' && row.output_type === 'json' ? JSON.parse(row.expected_output) : row.expected_output,
+      assertions: row.assertions ? JSON.parse(row.assertions) : undefined,
       runMode: row.run_mode as TestCaseRunMode,
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at),
@@ -44,6 +46,7 @@ export class TestCaseRepository {
       testSuiteId: row.test_suite_id,
       inputs: typeof row.inputs === 'string' ? JSON.parse(row.inputs) : row.inputs,
       expectedOutput: typeof row.expected_output === 'string' && row.output_type === 'json' ? JSON.parse(row.expected_output) : row.expected_output,
+      assertions: row.assertions ? JSON.parse(row.assertions) : undefined,
       runMode: row.run_mode as TestCaseRunMode,
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at),
@@ -58,6 +61,7 @@ export class TestCaseRepository {
       test_suite_id: testCase.testSuiteId,
       inputs: JSON.stringify(testCase.inputs),
       expected_output: typeof testCase.expectedOutput === 'string' ? testCase.expectedOutput : JSON.stringify(testCase.expectedOutput),
+      assertions: testCase.assertions ? JSON.stringify(testCase.assertions) : undefined,
       run_mode: testCase.runMode,
       output_type: typeof testCase.expectedOutput === 'string' ? 'string' : 'json',
       created_at: now,
@@ -82,6 +86,9 @@ export class TestCaseRepository {
     if (updatesTyped.expectedOutput !== undefined) {
       dbUpdates.expected_output = typeof updatesTyped.expectedOutput === 'string' ? updatesTyped.expectedOutput : JSON.stringify(updatesTyped.expectedOutput);
       dbUpdates.output_type = typeof updatesTyped.expectedOutput === 'string' ? 'string' : 'json';
+    }
+    if (updatesTyped.assertions) {
+      dbUpdates.assertions = JSON.stringify(updatesTyped.assertions);
     }
     if (updatesTyped.runMode) {
       dbUpdates.run_mode = updatesTyped.runMode;

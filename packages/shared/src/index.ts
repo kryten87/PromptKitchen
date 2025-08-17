@@ -5,3 +5,5 @@ export * from './evaluation/matcher';
 export * from './types';
 export * from './validation';
 
+export * from './db/db';
+

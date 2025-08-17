@@ -1,7 +1,7 @@
+import { DatabaseConnector } from '@prompt-kitchen/shared';
 import fs from 'fs';
 import { Knex } from 'knex';
 import path from 'path';
-import { DatabaseConnector } from './db';
 import { runMigrations } from './migrate';
 
 const TMP_DB = '/tmp/test-migrate.sqlite3';

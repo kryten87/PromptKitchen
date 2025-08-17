@@ -1,4 +1,4 @@
-import { DatabaseConnector } from '../db/db';
+import { DatabaseConnector } from '@prompt-kitchen/shared';
 import { runMigrations } from '../db/migrate';
 import { ProjectRepository } from '../repositories/ProjectRepository';
 

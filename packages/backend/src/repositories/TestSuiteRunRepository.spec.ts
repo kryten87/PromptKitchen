@@ -1,5 +1,5 @@
+import { DatabaseConnector } from '@prompt-kitchen/shared';
 import path from 'path';
-import { DatabaseConnector } from '../db/db';
 import { TestSuiteRunRepository } from '../repositories/TestSuiteRunRepository';
 
 // Use a real DatabaseConnector with an in-memory SQLite DB for testing

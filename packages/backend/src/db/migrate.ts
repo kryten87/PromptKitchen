@@ -1,5 +1,5 @@
+import type { DatabaseConnector } from '@prompt-kitchen/shared';
 import path from 'path';
-import type { DatabaseConnector } from './db';
 
 export async function runMigrations(db: DatabaseConnector): Promise<void> {
   try {

@@ -7,11 +7,22 @@
 - ensure that access control is working -- person A can only see projects for person A
 - playwright e2e tests
 
+# Bugs
+- added a project, prompt, test suite, and two test cases. Then added a second project -- first project gone
+
+# UX Problems
+- Create Test Case: "Create" button disabled if no variable entered
+
+# Tweaks
+- after creating project, jump directly to project/:id page
+- after creating prompt, jump directly to view prompt page
 
 # New Features
 - close button for prompt view
 - view last tests results when looking at a test suite
 - need a way to match results similar to jest matchers
+- test run history
+
 
 # DONE --------------------------
 

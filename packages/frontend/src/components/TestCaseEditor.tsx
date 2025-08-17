@@ -294,7 +294,7 @@ export function TestCaseEditor({
           )}
         </div>
 
-        {/* Assertions Section (placeholder) */}
+        {/* Assertions Section */}
         <AssertionsSection assertions={assertions} onChange={setAssertions} />
 
         {/* Run Mode Section */}

@@ -17,12 +17,15 @@ interface AssertionsSectionProps {
 
 export function AssertionsSection({ assertions = [], onChange }: AssertionsSectionProps) {
   const [items, setItems] = useState<Assertion[]>(assertions);
-  const [selectedAssertion, setSelectedAssertion] = useState<Assertion | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [previewResults, setPreviewResults] = useState<AssertionResult[]>([]);
 
   useEffect(() => {
     setItems(assertions);
-  }, [assertions]);
+    if (assertions.length > 0 && !selectedId) {
+      setSelectedId(assertions[0].id);
+    }
+  }, [assertions, selectedId]);
 
   const handleChange = useCallback(
     (a: Assertion) => {
@@ -38,8 +41,11 @@ export function AssertionsSection({ assertions = [], onChange }: AssertionsSecti
       const next = items.filter((it) => it.id !== id);
       setItems(next);
       onChange?.(next);
+      if (selectedId === id) {
+        setSelectedId(next.length > 0 ? next[0].id : null);
+      }
     },
-    [items, onChange]
+    [items, onChange, selectedId]
   );
 
   // Updated genId to include assertionId
@@ -47,8 +53,10 @@ export function AssertionsSection({ assertions = [], onChange }: AssertionsSecti
 
   const handleAdd = () => {
     const newAssertion: Assertion = { id: genId(), assertionId: genId(), path: '', matcher: 'toEqual' };
-    setItems([...items, newAssertion]);
-    onChange?.([...items, newAssertion]);
+    const next = [...items, newAssertion];
+    setItems(next);
+    onChange?.(next);
+    setSelectedId(newAssertion.id);
   };
 
   const handleImport = () => {
@@ -57,8 +65,9 @@ export function AssertionsSection({ assertions = [], onChange }: AssertionsSecti
       { id: genId(), assertionId: genId(), path: '$.user.name', matcher: 'toMatch', expected: 'John' },
       { id: genId(), assertionId: genId(), path: '$.items[*].id', matcher: 'toBeOneOf', expected: [1, 2, 3] },
     ];
-    setItems([...items, ...importedAssertions]);
-    onChange?.([...items, ...importedAssertions]);
+    const next = [...items, ...importedAssertions];
+    setItems(next);
+    onChange?.(next);
   };
 
   // Updated handlePreview to include matcherContext
@@ -70,6 +79,8 @@ export function AssertionsSection({ assertions = [], onChange }: AssertionsSecti
     setPreviewResults(results.results);
   };
 
+  const selectedAssertion = items.find((a) => a.id === selectedId);
+
   return (
     <div className="mt-4">
       <div className="flex justify-between items-center mb-2">
@@ -80,11 +91,18 @@ export function AssertionsSection({ assertions = [], onChange }: AssertionsSecti
       {items.length === 0 ? (
         <div className="text-gray-500 text-sm py-2">No assertions defined</div>
       ) : (
-        <div className="space-y-2">
+        <ul className="space-y-2">
           {items.map((a) => (
-            <AssertionRow key={a.id} assertion={a} onChange={handleChange} onRemove={handleRemove} />
+            <AssertionRow
+              key={a.id}
+              assertion={a}
+              onChange={handleChange}
+              onRemove={handleRemove}
+              onSelect={setSelectedId}
+              isSelected={a.id === selectedId}
+            />
           ))}
-        </div>
+        </ul>
       )}
 
       <div className="mt-2 flex gap-2">
@@ -113,18 +131,18 @@ export function AssertionsSection({ assertions = [], onChange }: AssertionsSecti
       )}
 
       {selectedAssertion && (
-        <ExpectedPanel
-          matcher={selectedAssertion.matcher}
-          expected={selectedAssertion.expected}
-          onChange={(expected) => {
-            const updated = { ...selectedAssertion, expected };
-            handleChange(updated);
-            setSelectedAssertion(updated);
-          }}
-        />
+        <div className="mt-4">
+          <h3 className="text-sm font-medium text-gray-700">Expected Value for Selected Assertion</h3>
+          <ExpectedPanel
+            matcher={selectedAssertion.matcher}
+            expected={selectedAssertion.expected}
+            onChange={(expected) => {
+              const updated = { ...selectedAssertion, expected };
+              handleChange(updated);
+            }}
+          />
+        </div>
       )}
     </div>
   );
 }
-
-export default AssertionsSection;

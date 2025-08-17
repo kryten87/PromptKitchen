@@ -1,3 +1,4 @@
+import { registry } from '@prompt-kitchen/shared/src/evaluation/matcher';
 import { useEffect, useState } from 'react';
 
 interface ExpectedPanelProps {
@@ -11,6 +12,9 @@ export function ExpectedPanel({ matcher, expected, onChange }: ExpectedPanelProp
   const [jsonValue, setJsonValue] = useState<string>('');
   const [flags, setFlags] = useState({ i: false, m: false, s: false, u: false });
   const [validationError, setValidationError] = useState<string | null>(null);
+
+  const matcherDef = registry[matcher];
+  const arity = matcherDef ? matcherDef.arity : 'one';
 
   useEffect(() => {
     if (expected === null || expected === undefined) {
@@ -69,6 +73,10 @@ export function ExpectedPanel({ matcher, expected, onChange }: ExpectedPanelProp
     }
   };
 
+  if (arity === 'none') {
+    return <div className="p-4 border rounded text-sm text-gray-500">This matcher does not require an expected value.</div>;
+  }
+
   if (matcher === 'toMatch') {
     return (
       <div className="p-4 border rounded">
@@ -96,13 +104,13 @@ export function ExpectedPanel({ matcher, expected, onChange }: ExpectedPanelProp
     );
   }
 
-  if (matcher === 'toEqual' || matcher === 'toContain') {
+  if (matcher === 'toEqual' || matcher === 'toContain' || matcher === 'toBeOneOf') {
     return (
       <div className="p-4 border rounded">
         <textarea
           value={jsonValue}
           onChange={(e) => handleJsonChange(e.target.value)}
-          placeholder="Enter JSON or text"
+          placeholder={matcher === 'toBeOneOf' ? 'Enter JSON array of options' : 'Enter JSON or text'}
           className="w-full border rounded px-2 py-1"
         />
         {validationError && <p className="text-red-500 text-sm">{validationError}</p>}

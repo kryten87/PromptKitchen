@@ -1,3 +1,27 @@
+# UX Review
+
+## Plan
+
+1. Dashboard
+  - Project edit button & dialog
+  - Project delete functionality
+  - Project edit
+    - opens dialog
+    - edit name
+    - edit description
+    - cancel button works
+    - create button works
+  - new project
+    - opens dialog
+    - edit name
+    - edit description
+    - cancel button works
+    - create button works
+
+
+
+
+
 # Code Issues/Questions
 - skipped tests
 - refactor functions into small, pure helpers

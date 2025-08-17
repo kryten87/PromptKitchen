@@ -23,6 +23,7 @@
 - need a way to match results similar to jest matchers
 - test run history
 - model selection
+- JSON editing where appropriate
 
 
 # DONE --------------------------

@@ -11,6 +11,16 @@ export function evaluateAssertions(
   assertions: Assertion[],
   opts: EvaluateAssertionsOptions
 ): { passed: boolean; results: AssertionResult[] } {
+  let actualJson: unknown;
+  if (typeof actual === 'string') {
+    try {
+      actualJson = JSON.parse(actual);
+    } catch {
+      actualJson = actual;
+    }
+  } else {
+    actualJson = actual;
+  }
   const results: AssertionResult[] = assertions.map((assertion) => {
     const path = assertion.path;
     const matcher = registry[assertion.matcher];
@@ -18,7 +28,7 @@ export function evaluateAssertions(
     const pathMatch: PathMatchMode = assertion.pathMatch || 'ANY';
     const expected = assertion.expected;
     // Resolve values at path
-    let values = resolveJsonPath(actual, path);
+    let values = resolveJsonPath(actualJson, path);
     if (!values || values.length === 0) {
       values = [undefined];
     }

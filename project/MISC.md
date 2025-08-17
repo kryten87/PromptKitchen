@@ -22,6 +22,7 @@
 - view last tests results when looking at a test suite
 - need a way to match results similar to jest matchers
 - test run history
+- model selection
 
 
 # DONE --------------------------

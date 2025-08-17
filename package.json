@@ -7,9 +7,11 @@
   "scripts": {
     "build": "npm run build --workspaces",
     "check": "npm run build && npm run lint:fix && npm run test",
+    "check:task": "npm run build && npm run lint:fix && npm run test && npm run validate:tasklist",
     "lint": "npm run lint --workspaces",
-    "lint:fix": "npm run lint --fix --workspaces",
-    "test": "npm run test --workspaces"
+    "lint:fix": "npm run lint:fix --workspaces",
+    "test": "npm run test --workspaces",
+    "validate:tasklist": "git diff --exit-code ./project/TASK-LIST.md && echo 'TASK-LIST.md has not been updated.'"
   },
   "keywords": [],
   "author": "",

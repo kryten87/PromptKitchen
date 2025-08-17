@@ -47,7 +47,9 @@ Enable flexible, matcher-based evaluation of LLM outputs. Users can define one o
   - Strict check for `value === null`.
 - `toContain(expected: any)`
   - If value is an array: pass if any element deep-equals expected.
-  - If value is a string: pass if substring (case-sensitive) contains expected (string only; regex not supported — use `toMatch`).
+  - If value is a string: pass if substring contains expected.
+    - Case sensitivity: UI offers a “Case-insensitive” option. When enabled, perform case-insensitive substring match. Represented as either a plain string (case-sensitive default) or an object `{ value: string; caseInsensitive?: boolean }` in `expected`.
+  - Regex is not supported — use `toMatch` for regex.
 - `toMatch(pattern: string | { source: string; flags?: string })`
   - For strings only. Compile `RegExp` from pattern; pass if it matches. Regex flags are allowed (e.g., `i`, `m`, `s`, `u`).
 - `toBeOneOf(options: any[])`
@@ -156,10 +158,10 @@ export const registry: Record<string, Matcher> = { /* toEqual, ... */ };
   - Import shared evaluator for local preview in editor.
 
 ## UI/UX
-- Location: enhance `TestCaseEditor` within the Test Suite UI.
+- Location: enhance the existing `TestCaseEditor` within the Test Suite UI (no new page).
 - Sections:
   1) Expected Output (legacy/simple) — unchanged.
-  2) Assertions (Advanced) — new, optional.
+  2) Assertions (Advanced) — new, optional, integrated into the existing editor.
 - Assertions Editor (per row):
   - Path input with JSONPath hint and quick-pick of last run’s keys.
   - Path multi-match mode: toggle between ANY / ALL (default ANY).
@@ -167,7 +169,6 @@ export const registry: Record<string, Matcher> = { /* toEqual, ... */ };
   - Expected value editor:
     - Auto-adapts: hidden for `toBeNull`; string input for `toMatch` (with optional flags); string/JSON toggle for others; for `toBeOneOf`, list editor.
   - Not toggle.
-  - Description (optional).
   - Remove row.
 - Toolbar actions:
   - Add assertion.
@@ -177,77 +178,141 @@ export const registry: Record<string, Matcher> = { /* toEqual, ... */ };
   - In test run results, show per-assertion chips: Pass/Fail, path, matcher, path mode (ANY/ALL), and message.
   - Offer expand to show actual samples when path returns multiple values.
 
-## Validation
-- Path must be non-empty, valid JSONPath (basic parse check).
-- `pathMatch` must be either `ANY` or `ALL`; default to `ANY`.
-- `toMatch` pattern must compile; allowed flags limited to `i`, `m`, `s`, `u`. Pattern length capped (see Safety).
-- `toBeOneOf` requires non-empty array.
-- `toContain` on strings only accepts substring (no regex) and on arrays requires deep-equality.
-- Size limits: cap stored assertion JSON to 64KB per test case (configurable).
+### Assertions Editor — Detailed UI Design (Wireframe, Components, Interactions)
 
-## Performance
-- JSONPath is O(n) per path on JSON size; typical payloads are small (<100KB). For large payloads, cap samples and short-circuit on first pass/fail per mode.
-- Evaluator is pure and portable; reused on both client and server.
+#### Visual Wireframe (SVG)
+- Inline view:
 
-## Security & Safety
-- Regular expressions:
-  - Backend: use RE2-based engine via `node-re2` to prevent catastrophic backtracking. If RE2 is unavailable, reject patterns flagged unsafe by `safe-regex2` and enforce limits below (no fallback to native for unsafe patterns).
-  - Limits: max regex source length 1024 chars; max tested string length 100,000 chars (truncate with indicator in UI); evaluation time budget ~50ms per assertion (best-effort); allowed flags whitelist (`i`, `m`, `s`, `u`).
-- Do not execute arbitrary code. Only compile RegExp from provided strings with safe limits.
-- Escape messages and UI outputs. Protect against ReDoS by limiting regex and input sizes as above.
+![Test Case Assertions Editor Wireframe](design/editor/testcase-assertions-editor-wireframe.svg)
 
-## Configuration
-- Backend env vars (with defaults):
-  - `PK_MAX_ASSERTION_JSON_BYTES` (default: 65536) — max size of `test_cases.assertions` JSON payload.
-  - `PK_MAX_TEST_RESULT_DETAILS_BYTES` (default: 524288) — max size of `test_results.details` payload per row. Truncate `actualSamples` with `...truncated` marker and include a SHA-256 hash of the full value when exceeded.
-  - `PK_REGEX_MAX_SOURCE_LEN` (default: 1024)
-  - `PK_REGEX_MAX_TEST_STR_LEN` (default: 100000)
-  - `PK_REGEX_ALLOWED_FLAGS` (default: `imsu`)
+- Direct link: design/editor/testcase-assertions-editor-wireframe.svg
 
-## Telemetry (Optional)
-- Count matcher usage to guide future matcher additions.
+#### Wireframe (ASCII)
+```
+Test Case Editor
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ Expected Output (Legacy)                                                     │
+│ ┌──────────────────────────────────────────────────────────────────────────┐ │
+│ │ [ textarea/json editor ... ]                                             │ │
+│ └──────────────────────────────────────────────────────────────────────────┘ │
+│                                                                              │
+│ Assertions (Advanced)                               [Add] [Import] [Preview] │
+│ ┌──────────────────────────────────────────────────────────────────────────┐ │
+│ │ #1 ▣ drag  Path: [ $.items[*].status       ]  Mode: (● ANY ○ ALL)        │ │
+│ │            Matcher: [ toBeOneOf ▾ ]  NOT: [ ]  ▸ Expected (3)            │ │
+│ │            (🗑)                                                             │ │
+│ ├──────────────────────────────────────────────────────────────────────────┤ │
+│ │ #2 ▣ drag  Path: [ $.user.name             ]  Mode: (● ANY ○ ALL)        │ │
+│ │            Matcher: [ toMatch   ▾ ]  NOT: [ ]  ▸ Expected (pattern)       │ │
+│ │            (🗑)                                                             │ │
+│ ├──────────────────────────────────────────────────────────────────────────┤ │
+│ │ #3 ▣ drag  Path: [ $.items                 ]  Mode: (● ANY ○ ALL)        │ │
+│ │            Matcher: [ toContain ▾ ]  NOT: [ ]  ▸ Expected (object/text)   │ │
+│ │            (🗑)                                                             │ │
+│ └──────────────────────────────────────────────────────────────────────────┘ │
+│                                                                              │
+│ ▾ Expected Editor (contextual side panel for the selected row)               │
+│ ┌──────────────────────────────────────────────────────────────────────────┐ │
+│ │ when toMatch:                                                             │ │
+│ │   Pattern: / ^[A-Z][a-z]+$ /      Flags: [ i ] [ m ] [ s ] [ u ]         │ │
+│ │   (validate: length, allowed flags, RE2 safety)                           │ │
+│ │ when toBeOneOf:                                                           │ │
+│ │   Values:  [ Add value ]  ▸ ["READY"]  ▸ ["PENDING"]  (drag to reorder) │ │
+│ │ when toEqual/toContain:                                                   │ │
+│ │   Editor: (• JSON ◦ Text)                                                 │ │
+│ │   [ { "id": 123, "qty": 1 } ]                                          │ │
+│ │   If toContain + Text: [ Case-insensitive ]                               │ │
+│ └──────────────────────────────────────────────────────────────────────────┘ │
+│                                                                              │
+│ Preview (client-side)                                                        │
+│ ┌──────────────────────────────────────────────────────────────────────────┐ │
+│ │ Actual sample: { ... }      Run ▶                                         │ │
+│ │ Results: [PASS] $.items[*].status toBeOneOf (ANY)                         │ │
+│ │          [FAIL] $.user.name toMatch — expected match, got "bob"           │ │
+│ │          Expand ▾ samples: ["bob", "alice"]                               │ │
+│ └──────────────────────────────────────────────────────────────────────────┘ │
+└──────────────────────────────────────────────────────────────────────────────┘
+```
 
-## Migration & Backward Compatibility
-- Existing tests continue to work. If `assertions` present and non-empty, use assertion engine; otherwise use legacy expected_output logic.
-- Optional one-click migration: generate a single `toEqual` assertion at path `$` from existing expected_output.
+#### Component Structure
+- TestCaseEditor (existing)
+  - ExpectedOutputSection (legacy)
+  - AssertionsSection (new)
+    - Toolbar: Add, Import, Preview
+    - AssertionList (sortable via drag handle)
+      - AssertionRow (selectable; opens side ExpectedPanel)
+        - PathInput with JSONPath hints/quick-pick
+        - PathMatchToggle (segmented control ANY/ALL)
+        - MatcherSelect (registry-driven)
+        - NotToggle
+        - RemoveButton
+    - ExpectedPanel (single contextual side panel; docks right on wide screens, stacks on narrow)
+  - PreviewPanel (optional, collapsible)
 
-## Acceptance Criteria
-- Users can add, edit, and remove assertions for a test case.
-- Supported matchers behave as specified with and without `not`.
-- Per-assertion ANY/ALL mode is supported and respected by the evaluator.
-- Paths resolve into arrays or single values; aggregation semantics produce expected results.
-- Test results display per-assertion outcomes with helpful messages, including path mode.
-- Detailed per-assertion results are persisted in `test_results.details` and returned by the API. Large payloads are truncated according to configuration, with hashes recorded.
-- Adding a new matcher requires only registering it in the shared registry and minor UI metadata.
-- No regressions in legacy tests.
+#### Form Behavior & Validation
+- PathInput
+  - Basic JSONPath validation on blur; normalize sugar (e.g., `user.name` -> `$.user.name`).
+  - Autocomplete/quick-pick from last run’s keys (lightweight heuristic key discovery on last payload).
+- PathMatchToggle
+  - Defaults to ANY; stores per-assertion value.
+- MatcherSelect
+  - Options from shared `registry`. Disabling of incompatible choices when value is known (optional enhancement).
+- Expected editor adapts to matcher:
+  - toBeNull: hidden (no input).
+  - toMatch: two inputs — pattern (string) and flags (checkboxes for i, m, s, u). Validate: length, allowed flags, RE2/safe-regex checks client-side mirror.
+  - toEqual/toContain: JSON editor (with format/validate) or plain text. For arrays, show JSON by default. For toContain+Text, include a Case-insensitive checkbox.
+  - toBeOneOf: list builder. Each item uses same value editor as toEqual. Enforce non-empty.
+- Inline validation badges per row (e.g., “Invalid JSONPath”, “Pattern too long”).
+- Size limits surfaced early (warn when approaching configured caps).
 
-## Milestones
-1) Shared: matcher registry + evaluator + unit tests.
-2) Backend: integrate evaluator in run pipeline; add migrations for `assertions` and `test_results.details`.
-3) Frontend: Assertions Editor UI + local preview; results rendering.
-4) Docs: examples and tips for JSONPath; migration guide.
+#### Interactions
+- Add assertion: appends a new row with sensible defaults (path `$`, ANY, toEqual, NOT=false).
+- Import from last output: proposes assertions based on sampled paths/values (user selects which to add).
+- Select row: opens the ExpectedPanel focused on that assertion.
+- Reorder: drag handle; order preserved.
+- Delete: trash icon with confirm UX that avoids `window.confirm` (inline undo snackbar consistent with project’s guidance).
+- Preview run: executes shared evaluator client-side against provided sample actual; renders pass/fail chips and failure messages.
 
-## Examples
-- Any-of values (user example):
-  - Path: `$` matcher: `toBeOneOf` expected: `["A", "B", "C"]`.
-- Deep property regex with flags:
-  - Path: `$.user.name` matcher: `toMatch` expected: `{ source: "^[A-Z][a-z]+$", flags: "u" }`.
-- Array contains object:
-  - Path: `$.items` matcher: `toContain` expected: `{ id: 123, qty: 1 }`.
-- Not null nested:
-  - Path: `$.profile.avatarUrl` matcher: `toBeNull` with `not: true`.
-- ALL mode across wildcard:
-  - Path: `$.items[*].status` pathMatch: `ALL` matcher: `toBeOneOf` expected: `["READY", "PENDING"]`.
+#### Keyboard & Accessibility
+- Full keyboard support: Tab order across fields; Space toggles ANY/ALL; Enter adds list items; Del removes focused assertion.
+- ARIA labels/roles for controls; visible focus states; high-contrast safe.
+- Announce validation errors via aria-live region in the ExpectedPanel.
 
-## Future Enhancements (Post-MVP)
-- Additional matchers: `toBeUndefined`, `toBeTruthy`, `toBeGreaterThan`, schema validators, etc.
-- Redaction controls for sensitive values in persisted details.
-- JSON import/export of assertions for sharing across projects.
-- Optional normalization options (e.g., trim/whitespace-insensitive comparisons) if demanded later.
+#### Empty States & Error Handling
+- Empty state copy with CTA: “No assertions yet — add one or import from last output.”
+- Row-level error summaries; aggregate errors shown above toolbar when Preview is pressed with invalid rows.
 
-## Open Questions / Clarifications
-1) Global default for `pathMatch`: keep per-assertion only, or allow suite/project-level default?
-2) If `node-re2` is not available at runtime (unexpected), should regex assertions fail closed, or fall back to native RegExp with strict `safe-regex2` checks?
-3) Is the default `PK_MAX_TEST_RESULT_DETAILS_BYTES=524288` (512KB) acceptable, or do you prefer a different default (e.g., 256KB or 1MB)?
-4) Should the UI surface a visible “truncated” warning on assertion results when details exceed the cap?
+#### Results Rendering (Runs View)
+- Per-assertion chips: [PASS]/[FAIL], path, matcher, mode, with tooltip message.
+- Expand to reveal `actualSamples` (truncated with “...truncated” marker and hash as per backend policy).
+
+#### Responsive & Theming
+- Layout uses a responsive grid: side panel on wide screens; stacked on narrow.
+- Tailwind utility classes with design tokens consistent with dashboard updates.
+
+#### Implementation Notes
+- Shared evaluator and registry power both Preview and server integration to avoid drift.
+- Keep state as an array of `Assertion` DTOs; serialize to JSON for persistence. `Assertion.description` remains optional in the DTO but is not surfaced in the MVP UI.
+- Unit tests for UI logic (adapters/validators) with Jest and React Testing Library.
+
+#### UI-Specific Open Questions (Resolved)
+1) Docking: Use a single contextual side panel integrated into the existing TestCaseEditor. ✅
+2) Description field: Not shown in the MVP UI; keep property optional for future use. ✅
+3) toContain on strings: Include a Case-insensitive option (UI checkbox). ✅
+4) JSON copy/paste import/export: Deferred to post-MVP. ✅
+
+## Updated Features
+
+### Inline Validation
+- **JSONPath Validation**: Ensure JSONPath expressions are valid using `jsonpath-plus`. Invalid paths will display an error message.
+- **JSON Validation**: Validate JSON inputs using `ajv`. Invalid JSON will display an error message.
+- **Regex Validation**: Validate regex patterns and flags. Unsupported flags or overly long patterns will display an error message.
+
+### UI Feedback
+- Validation errors are displayed inline in the `ExpectedPanel` and `TestCaseEditor` components.
+- Errors include "Invalid JSONPath", "Invalid JSON", and "Invalid Regex" with specific details.
+
+### Testing
+- Unit tests for validation logic in `ExpectedPanel` and `TestCaseEditor`.
+- Edge cases for invalid inputs are covered.
 

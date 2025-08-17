@@ -16,7 +16,7 @@ export function DashboardPage() {
     open: boolean;
     message: string;
     onConfirm: () => void;
-  } | null>(null);
+      } | null>(null);
   const [errorAlert, setErrorAlert] = useState<string | null>(null);
   const apiClient = useApiClient();
 

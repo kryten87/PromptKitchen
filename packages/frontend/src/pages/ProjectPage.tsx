@@ -23,7 +23,7 @@ export function ProjectPage() {
     open: boolean;
     message: string;
     onConfirm: () => void;
-  } | null>(null);
+      } | null>(null);
   const [errorAlert, setErrorAlert] = useState<string | null>(null);
 
   const loadProjectAndPrompts = useCallback(async () => {

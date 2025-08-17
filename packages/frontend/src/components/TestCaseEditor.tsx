@@ -1,6 +1,7 @@
 import type { JsonValue, TestCase, TestCaseRunMode } from '@prompt-kitchen/shared/src/dtos';
 import { useEffect, useState } from 'react';
 import { useApiClient } from '../hooks/useApiClient';
+import { Assertion, AssertionsSection } from './AssertionsSection';
 
 interface TestCaseEditorProps {
   testSuiteId: string;
@@ -19,6 +20,7 @@ export function TestCaseEditor({
 }: TestCaseEditorProps) {
   const [inputs, setInputs] = useState<Record<string, string>>({});
   const [expectedOutput, setExpectedOutput] = useState('');
+  const [assertions, setAssertions] = useState<Assertion[]>([]);
   const [isJsonOutput, setIsJsonOutput] = useState(false);
   const [runMode, setRunMode] = useState<TestCaseRunMode>('DEFAULT');
   const [loading, setLoading] = useState(false);
@@ -37,23 +39,53 @@ export function TestCaseEditor({
       setInputs(stringInputs);
 
       // Set expected output
-      if (typeof testCase.expectedOutput === 'string') {
-        setExpectedOutput(testCase.expectedOutput);
-        setIsJsonOutput(false);
-      } else {
-        setExpectedOutput(JSON.stringify(testCase.expectedOutput, null, 2));
-        setIsJsonOutput(true);
-      }
+      setExpectedOutput(
+        typeof testCase.expectedOutput === 'string'
+          ? testCase.expectedOutput
+          : JSON.stringify(testCase.expectedOutput, null, 2)
+      );
+      setAssertions(
+        (testCase.assertions || []).map((a) => ({
+          ...a,
+          id: Math.random().toString(36).slice(2, 9),
+        }))
+      );
+      setIsJsonOutput(typeof testCase.expectedOutput === 'object');
 
+      // Set run mode
       setRunMode(testCase.runMode);
-    } else {
-      // Reset for new test case
-      setInputs({});
-      setExpectedOutput('');
-      setIsJsonOutput(false);
-      setRunMode('DEFAULT');
     }
   }, [testCase]);
+
+  const validateInputs = () => {
+    // Validate JSON output if enabled
+    if (isJsonOutput && expectedOutput.trim()) {
+      try {
+        JSON.parse(expectedOutput);
+      } catch {
+        throw new Error('Invalid JSON in expected output');
+      }
+    }
+  };
+
+  // Helper function to convert string values to appropriate types
+  const convertValue = (value: string): JsonValue => {
+    const trimmed = value.trim();
+
+    // Handle special values
+    if (trimmed === 'null') return null;
+    if (trimmed === 'true') return true;
+    if (trimmed === 'false') return false;
+
+    // Try to parse as number
+    if (/^-?\d+(\.\d+)?$/.test(trimmed)) {
+      const num = Number(trimmed);
+      if (!isNaN(num)) return num;
+    }
+
+    // Return as string
+    return value;
+  };
 
   const addInputField = () => {
     const newKey = `input${Object.keys(inputs).length + 1}`;
@@ -91,28 +123,17 @@ export function TestCaseEditor({
     setError(null);
 
     try {
-      // Convert string inputs back to JsonValue
+      validateInputs();
+
+      // Convert string inputs to appropriate JsonValue types
       const jsonInputs: Record<string, JsonValue> = {};
       for (const [key, value] of Object.entries(inputs)) {
-        // Try to parse as JSON first, fall back to string
-        try {
-          jsonInputs[key] = JSON.parse(value);
-        } catch {
-          jsonInputs[key] = value;
-        }
+        jsonInputs[key] = convertValue(value);
       }
 
-      // Parse expected output
-      let parsedExpectedOutput: string | Record<string, JsonValue>;
-      if (isJsonOutput) {
-        try {
-          parsedExpectedOutput = JSON.parse(expectedOutput);
-        } catch {
-          throw new Error('Invalid JSON in expected output');
-        }
-      } else {
-        parsedExpectedOutput = expectedOutput;
-      }
+      const parsedExpectedOutput = isJsonOutput
+        ? JSON.parse(expectedOutput)
+        : expectedOutput;
 
       if (isEditing && testCase) {
         // Update existing test case
@@ -121,6 +142,8 @@ export function TestCaseEditor({
           body: JSON.stringify({
             inputs: jsonInputs,
             expectedOutput: parsedExpectedOutput,
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            assertions: assertions.map(({ id, ...rest }) => rest),
             runMode,
           }),
         });
@@ -132,22 +155,24 @@ export function TestCaseEditor({
           body: JSON.stringify({
             inputs: jsonInputs,
             expectedOutput: parsedExpectedOutput,
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            assertions: assertions.map(({ id, ...rest }) => rest),
             runMode,
           }),
         });
         onTestCaseCreated?.(created);
       }
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to save test case';
-      setError(message);
+    } catch (e) {
+      const error = e as Error;
+      setError(error.message || 'An unknown error occurred');
     } finally {
       setLoading(false);
     }
   };
 
-  const isValid = Object.keys(inputs).length > 0 &&
-                  Object.keys(inputs).every(key => key.trim() !== '') &&
-                  expectedOutput.trim() !== '';
+  const isValid = (Object.keys(inputs).length > 0 &&
+                  Object.keys(inputs).every(key => key.trim() !== '')) &&
+                  (expectedOutput.trim() !== '' || assertions.length > 0);
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-6">
@@ -268,6 +293,9 @@ export function TestCaseEditor({
             </div>
           )}
         </div>
+
+        {/* Assertions Section */}
+        <AssertionsSection assertions={assertions} onChange={setAssertions} />
 
         {/* Run Mode Section */}
         <div>

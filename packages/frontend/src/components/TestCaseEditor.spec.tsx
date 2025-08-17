@@ -25,6 +25,7 @@ const mockTestCase: TestCase = {
   testSuiteId: 'suite-1',
   inputs: { name: 'Alice', age: '25' },
   expectedOutput: 'Hello Alice, you are 25 years old',
+  assertions: [],
   runMode: 'DEFAULT',
   createdAt: new Date('2023-01-01'),
   updatedAt: new Date('2023-01-01'),
@@ -35,6 +36,7 @@ const mockJsonTestCase: TestCase = {
   testSuiteId: 'suite-1',
   inputs: { userId: '123' },
   expectedOutput: { message: 'User found', userId: 123 },
+  assertions: [],
   runMode: 'ONLY',
   createdAt: new Date('2023-01-01'),
   updatedAt: new Date('2023-01-01'),
@@ -257,6 +259,7 @@ describe('TestCaseEditor', () => {
       testSuiteId: 'suite-1',
       inputs: { input1: 'value' },
       expectedOutput: 'Expected result',
+      assertions: [],
       runMode: 'DEFAULT',
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -296,6 +299,7 @@ describe('TestCaseEditor', () => {
         body: JSON.stringify({
           inputs: { input1: 'value' },
           expectedOutput: 'Expected result',
+          assertions: [],
           runMode: 'DEFAULT',
         }),
       });
@@ -309,6 +313,7 @@ describe('TestCaseEditor', () => {
       ...mockTestCase,
       inputs: { name: 'Charlie' },
       expectedOutput: 'Hello Charlie',
+      assertions: [],
     };
 
     mockApiClient.request.mockResolvedValue(updatedTestCase);
@@ -339,6 +344,7 @@ describe('TestCaseEditor', () => {
         body: JSON.stringify({
           inputs: { name: 'Charlie', age: 25 },
           expectedOutput: 'Hello Charlie',
+          assertions: [],
           runMode: 'DEFAULT',
         }),
       });
@@ -353,6 +359,7 @@ describe('TestCaseEditor', () => {
       testSuiteId: 'suite-1',
       inputs: { input1: '123' },
       expectedOutput: { status: 'success' },
+      assertions: [],
       runMode: 'DEFAULT',
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -395,6 +402,7 @@ describe('TestCaseEditor', () => {
         body: JSON.stringify({
           inputs: { input1: 123 },
           expectedOutput: { status: 'success' },
+          assertions: [],
           runMode: 'DEFAULT',
         }),
       });
@@ -480,6 +488,7 @@ describe('TestCaseEditor', () => {
         input4: null
       },
       expectedOutput: 'Expected result',
+      assertions: [],
       runMode: 'DEFAULT',
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -534,6 +543,7 @@ describe('TestCaseEditor', () => {
             input4: null
           },
           expectedOutput: 'Expected result',
+          assertions: [],
           runMode: 'DEFAULT',
         }),
       });

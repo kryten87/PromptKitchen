@@ -2,6 +2,8 @@
 
 import type { JsonValue } from './JsonValue';
 
+import type { AssertionResult } from '../types';
+
 export interface TestResult {
   id: string;
   testSuiteRunId: string;
@@ -9,4 +11,5 @@ export interface TestResult {
   status: 'PASS' | 'FAIL';
   output: string | Record<string, JsonValue>;
   createdAt: Date;
+  details?: AssertionResult[];
 }

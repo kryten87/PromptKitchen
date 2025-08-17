@@ -1,3 +1,5 @@
+import { loadPKConfig } from '../config';
+
 import type { JsonValue, TestCaseRunMode } from '@prompt-kitchen/shared/src/dtos';
 import { FastifyInstance, FastifyRequest } from 'fastify';
 import { DatabaseConnector } from '../db/db';
@@ -75,10 +77,12 @@ export async function registerTestSuiteRoutes(fastify: FastifyInstance, db: Data
 
   // --- Test Suite Execution Endpoints ---
   const llmService = new LLMService({ apiKey: process.env.OPENAI_API_KEY || 'sk-test' });
+  const config = loadPKConfig();
   const executionService = new ExecutionService({
     llmService,
     testCaseRepo: service['testCaseRepo'],
     db,
+    config,
   });
 
   fastify.post('/api/test-suites/:id/run', async (request: FastifyRequest<{ Params: TestSuiteIdParams }>, reply) => {

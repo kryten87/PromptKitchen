@@ -1,12 +1,17 @@
 ---
 mode: "agent"
-tools: ["githubRepo", "codebase", "fetch"]
 description: "Maintain a structured task ledger for effective task management"
 ---
 
 # Task Ledger Instructions
 
 **Create** and **maintain** a comprehensive task ledger at `project/tasks/TASK.md`. This file serves as your memory repository and task planning system, helping you track progress, record important information, and maintain context throughout the task lifecycle. The task ledger is for your reference and can be removed once the task is complete. You are expected to manage this ledger autonomously without asking for permission.
+
+## Critical Requirement: Task Completion Validation
+
+Before considering a task complete, you **MUST** **MUST** **MUST** **MUST** run `npm run check:task`. If this script reports that the `TASK-LIST.md` file has not been updated, you **MUST** **MUST** **MUST** **MUST** update it before marking the task as complete. This step is non-negotiable and must be followed without exception.
+
+If you are asked to complete a numbered section in `project/TASK-LIST.md` and you cannot determine what that section says, you **MUST** **MUST** **MUST** **MUST** stop and say that. **DO NOT UNDER ANY CIRCUMSTANCES MAKE UP INSTRUCTIONS!!!**
 
 ## Importance of Task Ledger Maintenance
 
@@ -20,7 +25,7 @@ description: "Maintain a structured task ledger for effective task management"
 
 1. **Initialization**: Create the task ledger at the beginning of a new task
 2. **Regular Updates**:
-   - **After completing a task item**: First, verify the task is truly complete by running `npm run check`. Only after all checks pass should you mark the task as complete in the ledger.
+   - **After completing a task item**: First, verify the task is truly complete by running `npm run check:task`. Only after all checks pass should you mark the task as complete in the ledger.
    - Update after discovering new tasks or dependencies
    - Update after making important decisions
    - Update after researching and learning new information
@@ -35,6 +40,10 @@ description: "Maintain a structured task ledger for effective task management"
    - Record completion criteria for each milestone
 
 Maintain this task ledger diligently throughout the task execution to ensure maximum effectiveness and continuity.
+
+## Task Ledger Deletion Reminder
+
+After the task is completed, you must delete the task ledger file (`project/tasks/TASK.md`). Do not leave ledger files in the repository after their purpose is fulfilled.
 
 ## Required Structure
 
@@ -97,4 +106,14 @@ Maintain this task ledger diligently throughout the task execution to ensure max
 - Decision 1: [Choice made, rationale, and alternatives considered]
 - Decision 2: [Choice made, rationale, and alternatives considered]
 
-```
+````
+
+## Task Completion Checklist
+
+1. **Run Final Checks**: Run `npm run check:task` to ensure all tests pass, the code is linted, and the build succeeds. A task is **not** complete until `npm run check:task` has been run and all errors are resolved. If the script reports that the `TASK-LIST.md` file has not been updated, you **MUST** **MUST** **MUST** **MUST** update it before considering the task complete.
+
+2. **Mark the Task as Complete in the Task List**: When completing a numbered task from the task list, ensure you update the corresponding entry in `project/TASK-LIST.md` by replacing `[ ]` with `✅`. Do not skip this step.
+
+3. **Delete the Task Ledger**: After completing the task, delete the task ledger file (`project/tasks/TASK.md`). This is mandatory to maintain a clean repository.
+
+4. **Review and Confirm**: Double-check that both `project/TASK-LIST.md` and `project/tasks/TASK.md` are updated or removed as required.

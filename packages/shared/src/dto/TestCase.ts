@@ -1,6 +1,6 @@
 // packages/shared/src/dtos.ts
 
-import type { TestCaseRunMode } from '../types';
+import type { Assertion, TestCaseRunMode } from '../types';
 import type { JsonValue } from './JsonValue';
 
 export interface TestCase {
@@ -8,6 +8,7 @@ export interface TestCase {
   testSuiteId: string;
   inputs: Record<string, JsonValue>;
   expectedOutput: string | Record<string, JsonValue>;
+  assertions?: Assertion[];
   runMode: TestCaseRunMode;
   createdAt: Date;
   updatedAt: Date;

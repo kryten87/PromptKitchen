@@ -1,3 +1,4 @@
+import type { AssertionResult } from '@prompt-kitchen/shared';
 import { JsonValue, TestResult, TestSuiteRun } from '@prompt-kitchen/shared/src/dtos';
 import { randomUUID } from 'crypto';
 import { Knex } from 'knex';
@@ -19,6 +20,7 @@ interface TestResultRow {
   status: string;
   actual_output: string;
   created_at: string | Date;
+  details?: string;
 }
 
 export class TestSuiteRunRepository {
@@ -49,7 +51,7 @@ export class TestSuiteRunRepository {
     await this.knex('test_suite_runs').where({ id: runId }).update(update);
   }
 
-  async insertTestResult(data: Omit<TestResult, 'id' | 'createdAt' | 'output'> & { id?: string; actualOutput: string; createdAt: Date }): Promise<void> {
+  async insertTestResult(data: Omit<TestResult, 'id' | 'createdAt' | 'output'> & { id?: string; actualOutput: string; createdAt: Date; details?: unknown }): Promise<void> {
     const id = data.id || randomUUID();
     await this.knex('test_results').insert({
       id,
@@ -58,6 +60,7 @@ export class TestSuiteRunRepository {
       actual_output: data.actualOutput,
       status: data.status,
       created_at: data.createdAt,
+      details: data.details ? JSON.stringify(data.details) : null,
     });
   }
 
@@ -96,6 +99,14 @@ export class TestSuiteRunRepository {
           // If parsing fails, keep as string
         }
       }
+      let details: AssertionResult[] | undefined = undefined;
+      if (row.details) {
+        try {
+          details = JSON.parse(row.details) as AssertionResult[];
+        } catch {
+          details = undefined;
+        }
+      }
       return {
         id: row.id,
         testSuiteRunId: row.test_suite_run_id,
@@ -103,6 +114,7 @@ export class TestSuiteRunRepository {
         status: row.status === 'PASS' ? 'PASS' : 'FAIL',
         output,
         createdAt: row.created_at ? new Date(row.created_at) : new Date(),
+        details,
       };
     });
     return { ...testSuiteRun, results };

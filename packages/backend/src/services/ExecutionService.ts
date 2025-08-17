@@ -1,8 +1,11 @@
 // ExecutionService.ts
+import type { Assertion, AssertionResult } from '@prompt-kitchen/shared';
 import { TestResult, TestSuiteRun } from '@prompt-kitchen/shared/src/dtos';
+import type { PKConfig } from '../config';
 import { DatabaseConnector } from '../db/db';
 import { TestCaseRepository } from '../repositories/TestCaseRepository';
 import { TestSuiteRunRepository } from '../repositories/TestSuiteRunRepository';
+import { truncateDetails } from '../utils/truncateDetails';
 import { EvaluationService } from './EvaluationService';
 import { LLMService } from './LLMService';
 
@@ -10,16 +13,19 @@ export class ExecutionService {
   private readonly llmService: LLMService;
   private readonly testCaseRepo: TestCaseRepository;
   private readonly testSuiteRunRepo: TestSuiteRunRepository;
+  private readonly config: PKConfig;
 
   constructor(opts: {
     llmService: LLMService;
     testCaseRepo: TestCaseRepository;
     db: DatabaseConnector;
+  config: PKConfig;
     testSuiteRunRepo?: TestSuiteRunRepository;
   }) {
     this.llmService = opts.llmService;
     this.testCaseRepo = opts.testCaseRepo;
     this.testSuiteRunRepo = opts.testSuiteRunRepo || new TestSuiteRunRepository(opts.db);
+    this.config = opts.config;
   }
 
   async startTestSuiteRun(testSuiteId: string, promptText: string, promptHistoryId: string): Promise<string> {
@@ -51,15 +57,30 @@ export class ExecutionService {
         prompt = prompt.replace(new RegExp(`{{${key}}}`, 'g'), String(value));
       }
       const llmResult = await this.llmService.completePrompt({ prompt });
+      // Evaluate assertions if present
       let pass = false;
-      if (typeof testCase.expectedOutput === 'string') {
-        pass = EvaluationService.exactStringMatch(testCase.expectedOutput, llmResult.output);
+      let details: AssertionResult[] | undefined = undefined;
+      const assertions: Assertion[] | undefined = testCase.assertions;
+      if (assertions && assertions.length > 0) {
+        const evaluationService = EvaluationService.factory();
+        const evalResult = evaluationService.evaluate(llmResult.output, assertions);
+        pass = evalResult.passed;
+        // Enforce details size cap
+        const { details: cappedDetails } = truncateDetails(
+          evalResult.results,
+          this.config.PK_MAX_TEST_RESULT_DETAILS_BYTES
+        );
+        details = cappedDetails;
       } else {
-        try {
-          const actualJson = JSON.parse(llmResult.output);
-          pass = EvaluationService.deepJsonEqual(testCase.expectedOutput, actualJson);
-        } catch {
-          pass = false;
+        if (typeof testCase.expectedOutput === 'string') {
+          pass = EvaluationService.exactStringMatch(testCase.expectedOutput, llmResult.output);
+        } else {
+          try {
+            const actualJson = JSON.parse(llmResult.output);
+            pass = EvaluationService.deepJsonEqual(testCase.expectedOutput, actualJson);
+          } catch {
+            pass = false;
+          }
         }
       }
       if (pass) passCount++;
@@ -69,6 +90,7 @@ export class ExecutionService {
         actualOutput: llmResult.output,
         status: pass ? 'PASS' : 'FAIL',
         createdAt: new Date(),
+        details,
       });
     }
     await this.testSuiteRunRepo.updateTestSuiteRunStatus(

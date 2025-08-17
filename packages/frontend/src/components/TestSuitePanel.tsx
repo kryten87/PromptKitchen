@@ -43,7 +43,7 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
     open: boolean;
     message: string;
     onConfirm: () => Promise<void> | void;
-  } | null>(null);
+      } | null>(null);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [errorAlert, setErrorAlert] = useState<string | null>(null);
 
@@ -385,8 +385,8 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
                     const testCase = resultsTestCases.find(tc => tc.id === r.testCaseId);
                     const expectedOutput = testCase
                       ? (typeof testCase.expectedOutput === 'string'
-                          ? testCase.expectedOutput
-                          : JSON.stringify(testCase.expectedOutput))
+                        ? testCase.expectedOutput
+                        : JSON.stringify(testCase.expectedOutput))
                       : 'Expected output not available';
 
                     return {

@@ -6,7 +6,16 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 import rootConfig from '../../eslint.config.js';
 
-export default tseslint.config(...rootConfig, {
+export default tseslint.config(
+  ...rootConfig,
+  {
+  ignores: [
+    'dist/**',
+    'babel.config.cjs',
+    'jest.config.cjs',
+  ],
+},
+{
   files: ['**/*.{ts,tsx}'],
   plugins: {
     'react-hooks': reactHooks,
@@ -25,5 +34,6 @@ export default tseslint.config(...rootConfig, {
   rules: {
     ...reactHooks.configs.recommended.rules,
     'react-refresh/only-export-components': 'warn',
+  'indent': ['error', 2, { SwitchCase: 1 }],
   },
 });

@@ -8,7 +8,9 @@
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "test:watch": "jest --watch",
     "lint": "eslint src/**/*.ts",
-    "lint:fix": "eslint --fix src/**/*.ts"
+    "lint:fix": "eslint --fix src/**/*.ts",
+  "migrate:up": "ts-node scripts/cli-migrate.ts up",
+  "migrate:down": "ts-node scripts/cli-migrate.ts down"
   },
   "keywords": [],
   "author": "",

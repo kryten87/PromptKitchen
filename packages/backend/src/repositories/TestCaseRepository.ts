@@ -1,5 +1,5 @@
 import type { TestCaseRunMode } from '@prompt-kitchen/shared/src/dtos';
-import { TestCase } from '@prompt-kitchen/shared/src/dtos';
+import { TestCase, type JsonValue } from '@prompt-kitchen/shared/src/dtos';
 import { Knex } from 'knex';
 import { DatabaseConnector } from '../db/db';
 
@@ -8,6 +8,7 @@ interface TestCaseRow {
   test_suite_id: string;
   inputs: string;
   expected_output: string;
+  assertions?: string;
   run_mode: string;
   output_type?: string;
   created_at: string | Date;
@@ -26,11 +27,19 @@ export class TestCaseRepository {
     if (!row) {
       return null;
     }
+    let expectedOutput: string | Record<string, JsonValue>;
+    try {
+      expectedOutput = JSON.parse(row.expected_output) as Record<string, JsonValue>;
+    } catch {
+      expectedOutput = row.expected_output;
+    }
+
     return {
       id: row.id,
       testSuiteId: row.test_suite_id,
       inputs: typeof row.inputs === 'string' ? JSON.parse(row.inputs) : row.inputs,
-      expectedOutput: typeof row.expected_output === 'string' && row.output_type === 'json' ? JSON.parse(row.expected_output) : row.expected_output,
+      expectedOutput,
+      assertions: row.assertions ? JSON.parse(row.assertions) : undefined,
       runMode: row.run_mode as TestCaseRunMode,
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at),
@@ -39,15 +48,24 @@ export class TestCaseRepository {
 
   async getAllByTestSuiteId(testSuiteId: string): Promise<TestCase[]> {
     const rows = await this.knex('test_cases').where({ test_suite_id: testSuiteId });
-    return rows.map((row: TestCaseRow) => ({
-      id: row.id,
-      testSuiteId: row.test_suite_id,
-      inputs: typeof row.inputs === 'string' ? JSON.parse(row.inputs) : row.inputs,
-      expectedOutput: typeof row.expected_output === 'string' && row.output_type === 'json' ? JSON.parse(row.expected_output) : row.expected_output,
-      runMode: row.run_mode as TestCaseRunMode,
-      createdAt: new Date(row.created_at),
-      updatedAt: new Date(row.updated_at),
-    }));
+    return rows.map((row: TestCaseRow) => {
+      let expectedOutput: string | Record<string, JsonValue>;
+      try {
+        expectedOutput = JSON.parse(row.expected_output) as Record<string, JsonValue>;
+      } catch {
+        expectedOutput = row.expected_output;
+      }
+      return {
+        id: row.id,
+        testSuiteId: row.test_suite_id,
+        inputs: typeof row.inputs === 'string' ? JSON.parse(row.inputs) : row.inputs,
+        expectedOutput,
+        assertions: row.assertions ? JSON.parse(row.assertions) : undefined,
+        runMode: row.run_mode as TestCaseRunMode,
+        createdAt: new Date(row.created_at),
+        updatedAt: new Date(row.updated_at),
+      };
+    });
   }
 
   async create(testCase: Omit<TestCase, 'id' | 'createdAt' | 'updatedAt'>): Promise<TestCase> {
@@ -58,6 +76,7 @@ export class TestCaseRepository {
       test_suite_id: testCase.testSuiteId,
       inputs: JSON.stringify(testCase.inputs),
       expected_output: typeof testCase.expectedOutput === 'string' ? testCase.expectedOutput : JSON.stringify(testCase.expectedOutput),
+      assertions: testCase.assertions ? JSON.stringify(testCase.assertions) : undefined,
       run_mode: testCase.runMode,
       output_type: typeof testCase.expectedOutput === 'string' ? 'string' : 'json',
       created_at: now,
@@ -82,6 +101,9 @@ export class TestCaseRepository {
     if (updatesTyped.expectedOutput !== undefined) {
       dbUpdates.expected_output = typeof updatesTyped.expectedOutput === 'string' ? updatesTyped.expectedOutput : JSON.stringify(updatesTyped.expectedOutput);
       dbUpdates.output_type = typeof updatesTyped.expectedOutput === 'string' ? 'string' : 'json';
+    }
+    if (updatesTyped.assertions) {
+      dbUpdates.assertions = JSON.stringify(updatesTyped.assertions);
     }
     if (updatesTyped.runMode) {
       dbUpdates.run_mode = updatesTyped.runMode;

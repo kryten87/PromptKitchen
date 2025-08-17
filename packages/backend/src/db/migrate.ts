@@ -12,6 +12,3 @@ export async function runMigrations(db: DatabaseConnector): Promise<void> {
     throw err;
   }
 }
-
-export { };
-

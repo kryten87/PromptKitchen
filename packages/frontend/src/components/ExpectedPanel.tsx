@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface ExpectedPanelProps {
   matcher: string;
@@ -7,14 +7,22 @@ interface ExpectedPanelProps {
 }
 
 export function ExpectedPanel({ matcher, expected, onChange }: ExpectedPanelProps) {
-  const [textValue, setTextValue] = useState<string>(
-    typeof expected === 'string' ? expected : ''
-  );
-  const [jsonValue, setJsonValue] = useState<string>(
-    typeof expected === 'object' ? JSON.stringify(expected, null, 2) : ''
-  );
+  const [textValue, setTextValue] = useState<string>('');
+  const [jsonValue, setJsonValue] = useState<string>('');
   const [flags, setFlags] = useState({ i: false, m: false, s: false, u: false });
   const [validationError, setValidationError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof expected === 'string') {
+      setTextValue(expected);
+      setJsonValue(expected);
+    } else if (typeof expected === 'object' && expected !== null) {
+      setJsonValue(JSON.stringify(expected, null, 2));
+    } else {
+      setTextValue('');
+      setJsonValue('');
+    }
+  }, [expected]);
 
   const handleFlagChange = (flag: keyof typeof flags) => {
     setFlags((prev) => ({ ...prev, [flag]: !prev[flag] }));

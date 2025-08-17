@@ -142,13 +142,8 @@ export function TestCaseEditor({
           body: JSON.stringify({
             inputs: jsonInputs,
             expectedOutput: parsedExpectedOutput,
-            assertions: assertions.map(a => ({
-              path: a.path,
-              matcher: a.matcher,
-              expected: a.expected,
-              not: a.not,
-              pathMatch: a.pathMatch,
-            })),
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            assertions: assertions.map(({ id, ...rest }) => rest),
             runMode,
           }),
         });
@@ -160,13 +155,8 @@ export function TestCaseEditor({
           body: JSON.stringify({
             inputs: jsonInputs,
             expectedOutput: parsedExpectedOutput,
-            assertions: assertions.map(a => ({
-              path: a.path,
-              matcher: a.matcher,
-              expected: a.expected,
-              not: a.not,
-              pathMatch: a.pathMatch,
-            })),
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            assertions: assertions.map(({ id, ...rest }) => rest),
             runMode,
           }),
         });

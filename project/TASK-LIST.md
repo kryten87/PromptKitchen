@@ -232,7 +232,7 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
     - details persistence + truncation + hashing.
   - ✅ 4.2.3.6 Ensure `npm run -w backend test && npm run check` passes.
 
-- [ ] 4.2.4 Frontend (packages/frontend) — Test Case Editor UI
+- ✅ 4.2.4 Frontend (packages/frontend) — Test Case Editor UI
   - ✅ 4.2.4.1 Add `AssertionsSection` inside existing `TestCaseEditor`.
   - ✅ 4.2.4.2 Create `AssertionRow` with: Path input, ANY/ALL segmented toggle, Matcher select, NOT checkbox, Remove button.
   - ✅ 4.2.4.3 Create single contextual `ExpectedPanel` (docked side on wide screens):
@@ -250,15 +250,6 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
   - ✅ 4.2.5.1 Update `TestResultsView` to render per-assertion chips: Pass/Fail, path, matcher, mode.
   - ✅ 4.2.5.2 Add expandable area to show `actualSamples` (respect truncation marker and show hash if present).
   - ✅ 4.2.5.3 Unit tests for rendering assertion details and expand/collapse.
-
-- [ ] 4.2.6 Documentation & Examples
-  - [ ] 4.2.6.1 Link the SVG wireframe in PRD (done); verify path `project/design/editor/testcase-assertions-editor-wireframe.svg` works in repo.
-  - [ ] 4.2.6.2 Add a short “Migration (legacy -> assertions)” note: one-click create `toEqual` at `$` from `expected_output`.
-  - [ ] 4.2.6.3 Add JSONPath tips/examples to project docs.
-
-- [ ] 4.2.7 Finalization
-  - [ ] 4.2.7.1 Run `npm run check` at repo root; fix lint/build/test failures.
-  - [ ] 4.2.7.2 Mark section 4.2 tasks complete only after checks pass.
 
 ### 4.3. End-to-End Testing
 

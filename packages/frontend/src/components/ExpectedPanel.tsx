@@ -13,14 +13,29 @@ export function ExpectedPanel({ matcher, expected, onChange }: ExpectedPanelProp
   const [validationError, setValidationError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (typeof expected === 'string') {
-      setTextValue(expected);
-      setJsonValue(expected);
-    } else if (typeof expected === 'object' && expected !== null) {
-      setJsonValue(JSON.stringify(expected, null, 2));
-    } else {
+    if (expected === null || expected === undefined) {
       setTextValue('');
       setJsonValue('');
+      return;
+    }
+
+    if (typeof expected === 'object') {
+      setJsonValue(JSON.stringify(expected, null, 2));
+      return;
+    }
+
+    const valueAsString = String(expected);
+    setTextValue(valueAsString);
+
+    try {
+      const parsed = JSON.parse(valueAsString);
+      if (typeof parsed === 'object' && parsed !== null) {
+        setJsonValue(JSON.stringify(parsed, null, 2));
+      } else {
+        setJsonValue(valueAsString);
+      }
+    } catch {
+      setJsonValue(valueAsString);
     }
   }, [expected]);
 

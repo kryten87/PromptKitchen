@@ -1,7 +1,7 @@
 import { evaluateAssertions } from '@prompt-kitchen/shared/src/evaluation/evaluateAssertions';
 import { defaultMatcherContext } from '@prompt-kitchen/shared/src/evaluation/matcher';
 import type { AssertionResult, Assertion as SharedAssertion } from '@prompt-kitchen/shared/src/types';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { AssertionRow } from './AssertionRow';
 import { ExpectedPanel } from './ExpectedPanel';
 
@@ -19,6 +19,10 @@ export function AssertionsSection({ assertions = [], onChange }: AssertionsSecti
   const [items, setItems] = useState<Assertion[]>(assertions);
   const [selectedAssertion, setSelectedAssertion] = useState<Assertion | null>(null);
   const [previewResults, setPreviewResults] = useState<AssertionResult[]>([]);
+
+  useEffect(() => {
+    setItems(assertions);
+  }, [assertions]);
 
   const handleChange = useCallback(
     (a: Assertion) => {

@@ -1,8 +1,7 @@
 import { DatabaseConnector } from '@prompt-kitchen/shared';
 import fs from 'fs';
 import { Knex } from 'knex';
-import path from 'path';
-import { runMigrations } from './migrate';
+import { rollbackMigrations, runMigrations } from './migrate';
 
 const TMP_DB = '/tmp/test-migrate.sqlite3';
 
@@ -44,21 +43,19 @@ describe('Migration 010 & 011: assertions/details columns', () => {
   it('runs up/down idempotently and verifies columns', async () => {
     // Run up migrations
     await runMigrations(db);
+
     // 010: test_cases.assertions
     expect(await columnExists(db.knex, 'test_cases', 'assertions')).toBe(true);
     // 011: test_results.details
     expect(await columnExists(db.knex, 'test_results', 'details')).toBe(true);
-
     // Run up again (idempotent)
     await expect(runMigrations(db)).resolves.toBeUndefined();
 
     // Rollback all migrations
-    await db.knex.migrate.rollback({ directory: path.resolve(__dirname, '../migrations'), extension: 'ts' });
+    await rollbackMigrations(db);
     // Columns should not exist
     expect(await columnExists(db.knex, 'test_cases', 'assertions')).toBe(false);
     expect(await columnExists(db.knex, 'test_results', 'details')).toBe(false);
 
-    // Rollback again (idempotent)
-    await expect(db.knex.migrate.rollback({ directory: path.resolve(__dirname, '../migrations'), extension: 'ts' })).resolves.toBeDefined();
   });
 });

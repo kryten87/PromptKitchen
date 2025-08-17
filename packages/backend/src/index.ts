@@ -3,14 +3,13 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import fastifyOauth2 from '@fastify/oauth2';
-import { DatabaseConnector } from '@prompt-kitchen/shared';
+import { DatabaseConnector, runMigrations } from '@prompt-kitchen/shared';
 import Fastify from 'fastify';
 import { loadPKConfig } from './config';
 import { registerAuthController } from './controllers/AuthController';
 import { registerProjectRoutes } from './controllers/ProjectController';
 import { registerPromptRoutes } from './controllers/PromptController';
 import { registerTestSuiteRoutes } from './controllers/TestSuiteController';
-import { runMigrations } from './db/migrate';
 import { ProjectRepository } from './repositories/ProjectRepository';
 import { UserRepository } from './repositories/UserRepository';
 import { ProjectService } from './services/ProjectService';

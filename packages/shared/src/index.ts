@@ -11,5 +11,5 @@ export * from './validation';
 
 export * from './db/db';
 export { DatabaseConnector, DatabaseConnectorConfig } from './db/db';
-export * from './db/migrate';
+export { rollbackMigrations, runMigrations } from './db/migrate';
 

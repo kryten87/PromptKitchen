@@ -1,0 +1,14 @@
+{
+  "name": "@prompt-kitchen/e2e",
+  "version": "0.0.1",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.44.0",
+    "typescript": "^5.3.3",
+    "eslint": "^8.56.0"
+  }
+}

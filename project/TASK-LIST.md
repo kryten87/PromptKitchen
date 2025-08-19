@@ -259,7 +259,7 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 - ✅ 4.3.2. Move database migration code to shared package so it can be shared with playwright tests
 - ✅ 4.3.3. Move JWT generation code to shared package so it can be shared with playwright tests
 - ✅ 4.3.4. Create `packages/e2e` workspace (package.json with Playwright, TypeScript, tsconfig, eslint config inherit root).
-- [ ] 4.3.5. Install Playwright (`@playwright/test`) and browsers (`npx playwright install --with-deps`).
+  - ✅ 4.3.5. Install Playwright (`@playwright/test`) and browsers (`npx playwright install --with-deps`).
 - [ ] 4.3.6. Add root script `e2e` => `npm run -w e2e test` and ensure workspace registration in root `package.json`.
 - [ ] 4.3.7. Create `.env.e2e` (frontend & backend vars; include `E2E=1`, disable real OpenAI calls, set dummy API key).
 - [ ] 4.3.8. Backend enhancement: allow DB filename override via env (e.g., `DB_FILE`); if unset default existing behavior.

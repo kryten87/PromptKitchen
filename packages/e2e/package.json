@@ -4,7 +4,9 @@
   "private": true,
   "main": "index.ts",
   "scripts": {
-    "test": "playwright test"
+    "test": "playwright test",
+    "build": "echo 'No build step for e2e workspace'",
+    "lint:fix": "echo 'No lint:fix step for e2e workspace'"
   },
   "devDependencies": {
     "@playwright/test": "^1.44.0",

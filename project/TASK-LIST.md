@@ -259,47 +259,13 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 - ✅ 4.3.2. Move database migration code to shared package so it can be shared with playwright tests
 - ✅ 4.3.3. Move JWT generation code to shared package so it can be shared with playwright tests
 - ✅ 4.3.4. Create `packages/e2e` workspace (package.json with Playwright, TypeScript, tsconfig, eslint config inherit root).
-  - ✅ 4.3.5. Install Playwright (`@playwright/test`) and browsers (`npx playwright install --with-deps`).
-- [ ] 4.3.6. Add root script `e2e` => `npm run -w e2e test` and ensure workspace registration in root `package.json`.
-- [ ] 4.3.7. Create `.env.e2e` (frontend & backend vars; include `E2E=1`, disable real OpenAI calls, set dummy API key).
+- ✅ 4.3.5. Install Playwright (`@playwright/test`) and browsers (`npx playwright install --with-deps`).
+- ✅ 4.3.6. Add root script `e2e` => `npm run -w e2e test` and ensure workspace registration in root `package.json`.
+- ✅ 4.3.7. Create `.env.e2e` (frontend & backend vars; include `E2E=1`, disable real OpenAI calls, set dummy API key).
 - [ ] 4.3.8. Backend enhancement: allow DB filename override via env (e.g., `DB_FILE`); if unset default existing behavior.
 - [ ] 4.3.9. Create Playwright config (`playwright.config.ts`): multiple projects (chromium, firefox, webkit); global setup & teardown; retries=0; workers=default.
 - [ ] 4.3.10. Add `data-testid` attributes (follow the naming scheme in the copilot instructions file)
-
-
-
-- [ ] 4.3.6. Add helper to generate per-worker temp SQLite file path (e.g., in global setup) and export to backend process env.
-- [ ] 4.3.7. Add backend test-mode behavior when `E2E=1`:
-  - [ ] 4.3.7.1. Mock LLM route responses deterministically (e.g., echo prompt + suffix).
-  - [ ] 4.3.7.2. Short-circuit execution queue to synchronous in-process run with predictable output.
-  - [ ] 4.3.7.3. Disable external network calls.
-- [ ] 4.3.9. Export a shared selector utility in e2e package (e.g., `getTestId(id)` returning `[data-testid="id"]`).
-- [ ] 4.3.11. Implement global setup script:
-  - [ ] 4.3.11.1. Allocate temp dir per run.
-  - [ ] 4.3.11.2. Start backend (spawn) with `DB_FILE` pointing to worker template DB (migrations auto-run).
-  - [ ] 4.3.11.3. Wait for backend health endpoint.
-  - [ ] 4.3.11.4. Start frontend dev server (vite) on fixed port.
-  - [ ] 4.3.11.5. Produce a ready file with base URLs for tests.
-- [ ] 4.3.12. Implement global teardown to kill backend & frontend processes.
-- [ ] 4.3.13. Implement per-worker fixture to clone pristine migrated DB file into a fresh copy before each test (faster than down/up migrations).
-- [ ] 4.3.14. Implement auth helper:
-  - [ ] 4.3.14.1. Generate deterministic JWT for seeded test user (document secret usage) OR call backend test endpoint if added.
-  - [ ] 4.3.14.2. Inject token + user object into `localStorage` before first navigation.
-- [ ] 4.3.15. Seeding utility (beforeEach): create base user via API if not present, else reuse.
-- [ ] 4.3.16. Test spec: login (token injection verifies redirect to dashboard).
-- [ ] 4.3.17. Test spec: create project (assert project appears in list).
-- [ ] 4.3.18. Test spec: create prompt under project (assert prompt appears; open editor; save).
-- [ ] 4.3.19. Test spec: create test suite + test case (assert in list).
-- [ ] 4.3.20. Test spec: run test suite -> poll status -> view deterministic pass result row(s).
-- [ ] 4.3.21. Test spec: update prompt -> create new version -> restore prior version (assert restored text & new history entry).
-- [ ] 4.3.22. Utility: polling helper for test run status with timeout.
-- [ ] 4.3.23. Linting integration: add e2e package to root eslint & `npm run check` pipeline.
-- [ ] 4.3.24. Documentation: add `project/tasks/e2e-README.md` explaining strategy & how to run.
-- [ ] 4.3.25. Ensure `npm run check` includes building frontend & backend before e2e (or adjust e2e to use source directly).
-- [ ] 4.3.26. Add scripts to clean temp DB artifacts (`npm run e2e:clean`).
-- [ ] 4.3.27. Verify parallel run stability (no cross-test DB contamination).
-- [ ] 4.3.28. Final pass: confirm all added `data-testid` exist & used in specs only (avoid text selectors).
-- [ ] 4.3.29. Update TASK list marking subtasks complete only after `npm run check` passes.
+- [ ] 4.3.11. Create a single dummy test to ensure playwright works correctly
 
 ### 4.4. Finalization
 - [ ] 4.4.1. Add comprehensive error handling and user feedback messages.

@@ -11,3 +11,4 @@ packages/**/dist
 .vscode
 
 **/test-results/*
+packages/e2e/logs

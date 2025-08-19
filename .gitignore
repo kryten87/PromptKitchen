@@ -9,3 +9,5 @@ packages/**/dist
 **/*.png
 
 .vscode
+
+**/test-results/*

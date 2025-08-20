@@ -266,6 +266,15 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 - ✅ 4.3.9. Create Playwright config (`playwright.config.ts`): multiple projects (chromium, firefox, webkit); global setup & teardown; retries=0; workers=default.
 - ✅ 4.3.10. Add `data-testid` attributes (follow the naming scheme in the copilot instructions file)
 - ✅ 4.3.11. Create a single dummy test (load application page and check the title) to ensure playwright works correctly
+- ✅ 4.3.12. Write Playwright tests without authentication - visit / route, redirect to /login
+- [ ] 4.3.13. Write Playwright tests without authentication for /login page - should have "Login with Google" button
+- [ ] 4.3.14. Write Playwright tests with authentication for /login page -- should redirect to /
+- [ ] 4.3.15. Write Playwright tests with authentication for / page
+  - [ ] 4.3.15.1 ...should have "Prompt Kitchen" title in the upper left corner
+  - [ ] 4.3.15.2 ...should have "Home" link in the sidebar
+  - [ ] 4.3.15.2 ...should have "Log Out" button in the sidebar
+  - [ ] 4.3.15.2 ...should have "New Project" button in the body of the page
+  - [ ] 4.3.15.2 ...should have "Dashboard" title in the body of the page
 
 ### 4.4. Finalization
 - [ ] 4.4.1. Add comprehensive error handling and user feedback messages.

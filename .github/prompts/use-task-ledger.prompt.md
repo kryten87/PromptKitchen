@@ -13,6 +13,8 @@ Before considering a task complete, you **MUST** **MUST** **MUST** **MUST** run 
 
 If you are asked to complete a numbered section in `project/TASK-LIST.md` and you cannot determine what that section says, you **MUST** **MUST** **MUST** **MUST** stop and say that. **DO NOT UNDER ANY CIRCUMSTANCES MAKE UP INSTRUCTIONS!!!**
 
+**IMPORTANT:** Under no circumstances should you commit changes to the git repository. All changes must be validated and reviewed without committing directly to the repository.
+
 ## Importance of Task Ledger Maintenance
 
 - **Context Preservation**: Update the ledger frequently as context compaction may cause information loss

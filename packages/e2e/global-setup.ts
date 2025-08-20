@@ -16,7 +16,6 @@ if (!fs.existsSync(LOG_DIR)) {
 const backendLogStream = fs.createWriteStream(path.join(LOG_DIR, 'backend.log'));
 const frontendLogStream = fs.createWriteStream(path.join(LOG_DIR, 'frontend.log'));
 
-
 async function globalSetup(config: FullConfig) {
   console.log('Global setup: starting E2E tests');
 
@@ -25,8 +24,8 @@ async function globalSetup(config: FullConfig) {
   if (port === PORT) {
     console.log(`Port ${PORT} is free, starting servers...`);
 
-    const backendPath = path.resolve(__dirname, '../../../packages/backend');
-    const frontendPath = path.resolve(__dirname, '../../../packages/frontend');
+    const backendPath = path.resolve(__dirname, '../../packages/backend');
+    const frontendPath = path.resolve(__dirname, '../../packages/frontend');
 
     const npmPath = '/home/dave/.nvm/versions/node/v22.17.1/bin/npm';
 

@@ -1,6 +1,6 @@
+import { DatabaseConnector } from '@prompt-kitchen/shared';
 import { TestSuite } from '@prompt-kitchen/shared/src/dtos';
 import { Knex } from 'knex';
-import { DatabaseConnector } from '../db/db';
 
 interface TestSuiteRow {
   id: string;

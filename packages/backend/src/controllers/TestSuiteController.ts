@@ -1,8 +1,8 @@
 import { loadPKConfig } from '../config';
 
+import { DatabaseConnector } from '@prompt-kitchen/shared';
 import type { JsonValue, TestCaseRunMode } from '@prompt-kitchen/shared/src/dtos';
 import { FastifyInstance, FastifyRequest } from 'fastify';
-import { DatabaseConnector } from '../db/db';
 import { ExecutionService } from '../services/ExecutionService';
 import { LLMService } from '../services/LLMService';
 import { TestSuiteService } from '../services/TestSuiteService';

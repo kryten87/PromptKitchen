@@ -1,6 +1,5 @@
+import { DatabaseConnector, runMigrations } from '@prompt-kitchen/shared';
 import { Prompt } from '@prompt-kitchen/shared/src/dtos';
-import { DatabaseConnector } from '../db/db';
-import { runMigrations } from '../db/migrate';
 import { PromptRepository } from '../repositories/PromptRepository';
 
 describe('PromptRepository', () => {

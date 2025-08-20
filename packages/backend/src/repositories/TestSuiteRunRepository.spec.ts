@@ -1,5 +1,4 @@
-import path from 'path';
-import { DatabaseConnector } from '../db/db';
+import { DatabaseConnector, runMigrations } from '@prompt-kitchen/shared';
 import { TestSuiteRunRepository } from '../repositories/TestSuiteRunRepository';
 
 // Use a real DatabaseConnector with an in-memory SQLite DB for testing
@@ -9,9 +8,7 @@ describe('TestSuiteRunRepository', () => {
   let repo: TestSuiteRunRepository;
 
   beforeAll(async () => {
-    // Run all migrations instead of manually creating tables
-    const migrationsDir = path.resolve(__dirname, '../migrations');
-    await db.knex.migrate.latest({ directory: migrationsDir, extension: 'ts' });
+    await runMigrations(db);
   });
 
   beforeEach(() => {

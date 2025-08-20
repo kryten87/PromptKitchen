@@ -9,3 +9,6 @@ packages/**/dist
 **/*.png
 
 .vscode
+
+**/test-results/*
+packages/e2e/logs

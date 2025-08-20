@@ -1,5 +1,5 @@
+import type { DatabaseConnector } from '@prompt-kitchen/shared';
 import { Prompt, PromptHistory } from '@prompt-kitchen/shared/src/dtos';
-import type { DatabaseConnector } from '../db/db';
 import type { PromptHistoryRepository, PromptRepository } from '../repositories/PromptRepository';
 import { PromptService } from '../services/PromptService';
 

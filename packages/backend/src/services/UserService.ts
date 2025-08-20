@@ -1,5 +1,5 @@
+import { JwtService } from '@prompt-kitchen/shared';
 import type { User } from '@prompt-kitchen/shared/src/dtos';
-import jwt from 'jsonwebtoken';
 import { UserRepository } from '../repositories/UserRepository';
 
 export interface UserServiceDeps {
@@ -19,10 +19,12 @@ export interface JwtPayload {
 export class UserService {
   private userRepository: UserRepository;
   private jwtSecret: string;
+  private jwtService: JwtService;
 
   constructor(deps: UserServiceDeps) {
     this.userRepository = deps.userRepository;
     this.jwtSecret = deps.jwtSecret;
+    this.jwtService = new JwtService(this.jwtSecret);
   }
 
   /**
@@ -55,15 +57,14 @@ export class UserService {
       name: user.name,
       avatarUrl: user.avatarUrl,
     };
-    const token = jwt.sign(payload, this.jwtSecret, { expiresIn: '7d' });
-    return token;
+    return this.jwtService.generateJwt(payload);
   }
 
   /**
    * Verifies a JWT and returns the decoded payload.
    */
   verifyJwt(token: string): JwtPayload {
-    return jwt.verify(token, this.jwtSecret) as JwtPayload;
+    return this.jwtService.verifyJwt(token);
   }
 
   /**

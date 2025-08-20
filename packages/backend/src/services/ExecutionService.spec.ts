@@ -1,8 +1,8 @@
 import { loadPKConfig } from '../config';
 
 import type { AssertionResult } from '@prompt-kitchen/shared';
+import { DatabaseConnector } from '@prompt-kitchen/shared';
 import { TestCase } from '@prompt-kitchen/shared/src/dtos';
-import { DatabaseConnector } from '../db/db';
 import { TestCaseRepository } from '../repositories/TestCaseRepository';
 import { EvaluationService } from '../services/EvaluationService';
 import { ExecutionService } from '../services/ExecutionService';

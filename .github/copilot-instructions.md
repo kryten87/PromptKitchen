@@ -38,6 +38,8 @@
 
 - **Task Ledger Deletion Reminder**: If a task ledger is used (see `project/tasks/TASK.md`), it must be deleted after the task is completed. Do not leave ledger files in the repository after their purpose is fulfilled.
 
+- **Prohibition on Git Commits**: Under no circumstances should you commit changes to the git repository. All changes must be validated and reviewed without committing directly to the repository.
+
 ## Frontend Testing Attributes
 
 - **Data TestID Naming Scheme**: All frontend components must use `data-testid` attributes following a strict naming convention for automated testing. The naming scheme is:

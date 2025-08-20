@@ -1,7 +1,6 @@
+import { DatabaseConnector, runMigrations } from '@prompt-kitchen/shared';
 import fs from 'fs';
 import path from 'path';
-import { DatabaseConnector } from '../db/db';
-import { runMigrations } from '../db/migrate';
 import { TestCaseRepository } from '../repositories/TestCaseRepository';
 import { TestSuiteRepository } from '../repositories/TestSuiteRepository';
 

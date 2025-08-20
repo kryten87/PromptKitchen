@@ -1,0 +1,21 @@
+{
+  "name": "@prompt-kitchen/e2e",
+  "version": "0.0.1",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "test": "playwright test",
+    "build": "echo 'No build step for e2e workspace'",
+    "lint:fix": "echo 'No lint:fix step for e2e workspace'"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.44.0",
+    "@types/detect-port": "^1.3.5",
+    "@types/wait-on": "^5.3.4",
+    "detect-port": "^2.1.0",
+    "eslint": "^8.56.0",
+    "tree-kill": "^1.2.2",
+    "typescript": "^5.3.3",
+    "wait-on": "^8.0.4"
+  }
+}

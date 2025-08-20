@@ -1,4 +1,4 @@
-import { DatabaseConnector } from '../db/db';
+import { DatabaseConnector, runMigrations } from '@prompt-kitchen/shared';
 import { ProjectRepository } from '../repositories/ProjectRepository';
 import { ProjectService } from '../services/ProjectService';
 
@@ -9,14 +9,7 @@ describe('ProjectService', () => {
 
   beforeAll(async () => {
     db = new DatabaseConnector({ filename: ':memory:' });
-    await db.knex.schema.createTable('projects', (table) => {
-      table.string('id').primary();
-      table.string('user_id').notNullable();
-      table.string('name').notNullable();
-      table.string('description');
-      table.timestamp('created_at').notNullable();
-      table.timestamp('updated_at').notNullable();
-    });
+    await runMigrations(db);
     repo = new ProjectRepository(db);
     service = new ProjectService(repo);
   });

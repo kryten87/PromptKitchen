@@ -8,6 +8,7 @@
     "build": "npm run build --workspaces",
     "check": "npm run build && npm run lint:fix && npm run test",
     "check:task": "npm run build && npm run lint:fix && npm run test && npm run validate:tasklist",
+    "e2e": "npm run --workspace=packages/e2e test",
     "lint": "npm run lint --workspaces",
     "lint:fix": "npm run lint:fix --workspaces",
     "test": "npm run test --workspaces",
@@ -19,7 +20,8 @@
   "workspaces": [
     "packages/shared",
     "packages/backend",
-    "packages/frontend"
+    "packages/frontend",
+    "packages/e2e"
   ],
   "devDependencies": {
     "@eslint/js": "^9.8.0",

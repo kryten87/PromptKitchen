@@ -276,7 +276,7 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
   - ✅ 4.3.15.4 ...should have "New Project" button in the body of the page
   - ✅ 4.3.15.5 ...should have "Dashboard" title in the body of the page
 - ✅ 4.3.16. Write Playwright tests: when authenticated and on /, clicking "Log Out" should clear local storage & redirect to /login
-- [ ] 4.3.17. Update the backend server to allow the Playwright tests to create and delete an empty SQLite database file on test setup/teardown so that we can run the e2e tests against a clean environment
+- ✅ 4.3.17. Update the backend server to allow the Playwright tests to create and delete an empty SQLite database file on test setup/teardown so that we can run the e2e tests against a clean environment
 - [ ] 4.3.18. Write Playwright tests: when authenticated and on /, clicking "New Project" should
     - open the "Create New Project" modal -- check for existence of "Create New Project" title, "Project Name" input element, "Description" input element, "Create" button, "Cancel" button
 

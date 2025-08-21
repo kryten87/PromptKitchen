@@ -5,6 +5,7 @@ dotenv.config();
 import fastifyOauth2 from '@fastify/oauth2';
 import { DatabaseConnector, runMigrations } from '@prompt-kitchen/shared';
 import Fastify from 'fastify';
+import fs from 'fs';
 import { loadPKConfig } from './config';
 import { registerAuthController } from './controllers/AuthController';
 import { registerProjectRoutes } from './controllers/ProjectController';
@@ -18,7 +19,6 @@ import { UserService } from './services/UserService';
 
 // Patch FastifyInstance type to include googleOAuth2
 import type { OAuth2Namespace } from '@fastify/oauth2';
-import type { FastifyInstance } from 'fastify';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -32,9 +32,30 @@ const server = Fastify({
   logger: true,
 });
 
+// Test database file path
+const TEST_DB_FILE = '/tmp/test-migrate.sqlite3';
+
+// Update the dbConnector to use the test database file in test mode
+const dbFile = process.env.NODE_ENV === 'test' ? TEST_DB_FILE : (process.env.DB_FILE || './dev.sqlite3');
+
+// Defer dbConnector initialization to ensure the database file exists and migrations are applied
+let dbConnector: DatabaseConnector;
+
+server.addHook('onRequest', async (request, reply) => {
+  if (process.env.NODE_ENV === 'test') {
+    if (!fs.existsSync(TEST_DB_FILE)) {
+      fs.writeFileSync(TEST_DB_FILE, '');
+      server.log.info('Test database created.');
+      await runMigrations(new DatabaseConnector({ filename: TEST_DB_FILE }));
+      server.log.info('Migrations applied to test database.');
+    }
+    dbConnector = new DatabaseConnector({ filename: TEST_DB_FILE });
+  } else if (!dbConnector) {
+    dbConnector = new DatabaseConnector({ filename: dbFile });
+  }
+});
+
 // Dependency injection setup
-const dbFile = process.env.DB_FILE || './dev.sqlite3';
-const dbConnector = new DatabaseConnector({ filename: dbFile });
 const userRepository = new UserRepository(dbConnector);
 const projectRepository = new ProjectRepository(dbConnector);
 const userService = new UserService({
@@ -113,6 +134,18 @@ server.get('/auth/google/callback', async function (request, reply) {
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
   server.log.info({ frontendUrl, jwt }, 'Redirecting to frontend OAuth callback');
   reply.redirect(`${frontendUrl}/oauth/callback?token=${jwt}`);
+});
+
+// Cleanup test database on server close
+server.addHook('onClose', async (instance) => {
+  if (process.env.NODE_ENV === 'test' && fs.existsSync(TEST_DB_FILE)) {
+    if (dbConnector) {
+      await dbConnector.close(); // Close the database connection before deleting the file
+      server.log.info('Database connection closed.');
+    }
+    fs.unlinkSync(TEST_DB_FILE);
+    server.log.info('Test database deleted.');
+  }
 });
 
 server.get('/', async () => {

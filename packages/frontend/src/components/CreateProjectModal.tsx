@@ -41,7 +41,7 @@ export function CreateProjectModal({ isOpen, onClose, onProjectCreated }: Create
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" data-testid="create-project-modal">
       <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
         <h2 className="text-xl font-bold mb-4">Create New Project</h2>
         <form onSubmit={handleSubmit}>

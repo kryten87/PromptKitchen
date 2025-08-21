@@ -78,6 +78,7 @@ export function DashboardPage() {
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         onProjectCreated={(project: Project) => setProjects([project, ...projects])}
+        data-testid="create-project-modal"
       />
 
       <EditProjectModal

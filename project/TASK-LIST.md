@@ -279,6 +279,7 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 - ✅ 4.3.17. Update the backend server to allow the Playwright tests to create and delete an empty SQLite database file on test setup/teardown so that we can run the e2e tests against a clean environment
 - ✅ 4.3.18. Write Playwright tests: when authenticated and on /, clicking "New Project" should
     - open the "Create New Project" modal -- check for existence of "Create New Project" title, "Project Name" input element, "Description" input element, "Create" button, "Cancel" button
+- [ ] 4.3.19. Update the backend server to allow the Playwright tests to create and delete an empty SQLite database file on test setup/teardown so that we can run the e2e tests against a clean environment
 
 ### 4.4. Finalization
 - [ ] 4.4.1. Add comprehensive error handling and user feedback messages.

@@ -4,13 +4,14 @@ import { FullConfig } from '@playwright/test';
 import { ChildProcess, spawn } from 'child_process';
 import detectPort from 'detect-port';
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
 import waitOn from 'wait-on';
 import { sqliteTempPath } from './src/sqliteTempPath';
 
 const PORT = 5173;
-const PID_FILE = path.join(__dirname, '.server-pids');
-const DB_PATH_FILE = path.join(__dirname, '.db-path');
+const PID_FILE = path.join(os.tmpdir(), '.server-pids');
+const DB_PATH_FILE = path.join(os.tmpdir(), '.db-path');
 const LOG_DIR = path.join(__dirname, 'logs');
 
 if (!fs.existsSync(LOG_DIR)) {

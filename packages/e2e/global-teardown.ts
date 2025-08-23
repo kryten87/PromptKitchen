@@ -1,10 +1,11 @@
 import { FullConfig } from '@playwright/test';
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
 import kill from 'tree-kill';
 
-const PID_FILE = path.join(__dirname, '.server-pids');
-const DB_PATH_FILE = path.join(__dirname, '.db-path');
+const PID_FILE = path.join(os.tmpdir(), '.server-pids');
+const DB_PATH_FILE = path.join(os.tmpdir(), '.db-path');
 
 async function globalTeardown(_config: FullConfig) {
   console.log('Global teardown: finished E2E tests');

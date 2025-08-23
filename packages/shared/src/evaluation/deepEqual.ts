@@ -1,4 +1,4 @@
-import deepEqualLib from 'fast-deep-equal';
+import * as deepEqualLib from 'fast-deep-equal';
 
 /**
  * Performs a deep equality check between two values using fast-deep-equal.
@@ -7,5 +7,5 @@ import deepEqualLib from 'fast-deep-equal';
  * @returns true if values are deeply equal, false otherwise
  */
 export function deepEqual(a: unknown, b: unknown): boolean {
-  return deepEqualLib(a, b);
+  return deepEqualLib.default(a, b);
 }

@@ -1,5 +1,4 @@
 export * from './dtos';
-export type { Project } from './dtos';
 export * from './evaluation/evaluateAssertions';
 export { evaluateAssertions } from './evaluation/evaluateAssertions';
 export * from './evaluation/jsonpath';

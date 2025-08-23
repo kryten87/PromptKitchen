@@ -1,4 +1,5 @@
-import type { Project } from '@prompt-kitchen/shared/src/dtos';
+import type { Project } from '@prompt-kitchen/shared';
+import { toKebabCase } from '@prompt-kitchen/shared/src/helpers/toKebabCase';
 import { useEffect, useState } from 'react';
 import { ConfirmModal } from '../components/ConfirmModal';
 import { CreateProjectModal } from '../components/CreateProjectModal';
@@ -101,7 +102,7 @@ export function DashboardPage() {
               onClick={() => window.location.assign(`/projects/${project.id}`)}
               tabIndex={0}
               aria-label={`Go to project ${project.name}`}
-              data-testid={`project-card-${project.name}`}
+              data-testid={`project-card-${toKebabCase(project.name)}`}
             >
               <div>
                 <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900">{project.name}</h5>

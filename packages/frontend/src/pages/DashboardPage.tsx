@@ -101,6 +101,7 @@ export function DashboardPage() {
               onClick={() => window.location.assign(`/projects/${project.id}`)}
               tabIndex={0}
               aria-label={`Go to project ${project.name}`}
+              data-testid={`project-card-${project.name}`}
             >
               <div>
                 <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900">{project.name}</h5>

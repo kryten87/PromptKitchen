@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "rm -rf dist && rm -rf tsconfig.tsbuildinfo && tsc -p tsconfig.json && rm -rf dist/migrations/*.d.ts* && rm -rf dist/migrations/*.js.map",
     "test": "jest",
     "test:watch": "jest --watch",
     "lint": "eslint src/**/*.ts",

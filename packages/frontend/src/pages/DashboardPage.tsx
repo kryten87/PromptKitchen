@@ -95,12 +95,13 @@ export function DashboardPage() {
       {!loading && !error && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {projects.map((project) => (
-            <button
+             <div
               key={project.id}
-              type="button"
-              className="relative group block p-6 w-full text-left bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400"
-              onClick={() => window.location.assign(`/projects/${project.id}`)}
+              role="button"
               tabIndex={0}
+              className="relative group block p-6 w-full text-left bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400 cursor-pointer"
+              onClick={() => window.location.assign(`/projects/${project.id}`)}
+              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') window.location.assign(`/projects/${project.id}`); }}
               aria-label={`Go to project ${project.name}`}
               data-testid={`project-card-${toKebabCase(project.name)}`}
             >
@@ -109,14 +110,14 @@ export function DashboardPage() {
                 <p className="font-normal text-gray-700">{project.description || 'No description'}</p>
               </div>
               <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button
+                 <button
                   className="bg-btn-subtle hover:bg-btn-subtle-hover text-text-secondary py-1 px-2 rounded text-xs z-10"
                   onClick={e => { e.stopPropagation(); handleEditClick(project); }}
                   aria-label={`Edit ${project.name}`}
                 >
                   Edit
                 </button>
-                <button
+                 <button
                   className="bg-warning hover:opacity-90 text-white py-1 px-2 rounded text-xs z-10"
                   onClick={e => { e.stopPropagation(); handleDelete(project.id); }}
                   aria-label={`Delete ${project.name}`}
@@ -124,7 +125,7 @@ export function DashboardPage() {
                   Delete
                 </button>
               </div>
-            </button>
+            </div>
           ))}
         </div>
       )}

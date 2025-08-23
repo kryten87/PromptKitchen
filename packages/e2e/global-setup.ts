@@ -1,12 +1,16 @@
+import { DatabaseConnector } from '@prompt-kitchen/shared/src/db/db';
+import { runMigrations } from '@prompt-kitchen/shared/src/db/migrate';
 import { FullConfig } from '@playwright/test';
 import { ChildProcess, spawn } from 'child_process';
 import detectPort from 'detect-port';
 import fs from 'fs';
 import path from 'path';
 import waitOn from 'wait-on';
+import { sqliteTempPath } from './src/sqliteTempPath';
 
 const PORT = 5173;
 const PID_FILE = path.join(__dirname, '.server-pids');
+const DB_PATH_FILE = path.join(__dirname, '.db-path');
 const LOG_DIR = path.join(__dirname, 'logs');
 
 if (!fs.existsSync(LOG_DIR)) {
@@ -14,15 +18,24 @@ if (!fs.existsSync(LOG_DIR)) {
 }
 
 const backendLogStream = fs.createWriteStream(path.join(LOG_DIR, 'backend.log'));
-const frontendLogStream = fs.createWriteStream(path.join(LOG_DIR, 'frontend.log'));
+const frontendLogStream = fs.createWriteStream(
+  path.join(LOG_DIR, 'frontend.log'),
+);
 
-async function globalSetup(config: FullConfig) {
+async function globalSetup(_config: FullConfig) {
   console.log('Global setup: starting E2E tests');
 
   const port = await detectPort(PORT);
 
   if (port === PORT) {
     console.log(`Port ${PORT} is free, starting servers...`);
+
+    const dbPath = sqliteTempPath();
+    console.log(`Creating temporary database at: ${dbPath}`);
+    const db = new DatabaseConnector({ filename: dbPath });
+    await runMigrations(db);
+    await db.destroy();
+    fs.writeFileSync(DB_PATH_FILE, dbPath);
 
     const backendPath = path.resolve(__dirname, '../../packages/backend');
     const frontendPath = path.resolve(__dirname, '../../packages/frontend');
@@ -34,6 +47,7 @@ async function globalSetup(config: FullConfig) {
       detached: true,
       shell: false,
       stdio: ['ignore', backendLogStream, backendLogStream],
+      env: { ...process.env, DB_FILE: dbPath },
     });
 
     const frontend: ChildProcess = spawn(npmPath, ['run', 'dev'], {
@@ -49,7 +63,9 @@ async function globalSetup(config: FullConfig) {
     if (!backend.pid || !frontend.pid) {
       console.error('Backend PID:', backend.pid);
       console.error('Frontend PID:', frontend.pid);
-      throw new Error('Failed to start servers. Check logs in packages/e2e/logs.');
+      throw new Error(
+        'Failed to start servers. Check logs in packages/e2e/logs.',
+      );
     }
 
     console.log(`Backend server started with PID: ${backend.pid}`);
@@ -67,11 +83,16 @@ async function globalSetup(config: FullConfig) {
       });
       console.log('Frontend server is ready.');
     } catch (err) {
-      console.error('Server did not start in time. Check logs in packages/e2e/logs.', err);
+      console.error(
+        'Server did not start in time. Check logs in packages/e2e/logs.',
+        err,
+      );
       throw err;
     }
   } else {
-    console.log(`Port ${PORT} is in use, assuming servers are already running.`);
+    console.log(
+      `Port ${PORT} is in use, assuming servers are already running.`,
+    );
   }
 }
 

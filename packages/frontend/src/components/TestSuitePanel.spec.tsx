@@ -507,7 +507,9 @@ describe('TestSuitePanel', () => {
 
     // Instead of checking for 'Running...', check for the results modal
     await waitFor(() => {
-      expect(screen.getByText('Test suite execution started. Run ID: run-123')).toBeInTheDocument();
+      expect(
+        screen.getByText('Test suite execution started. Run ID: run-123'),
+      ).toBeInTheDocument();
     });
 
     // Check that the button is no longer in running state
@@ -534,7 +536,9 @@ describe('TestSuitePanel', () => {
 
     // Instead of checking for 'Running...', check for the error message
     await waitFor(() => {
-      expect(screen.getByText('Failed to start test suite execution: API Error')).toBeInTheDocument();
+      expect(
+        screen.getByText('Failed to start test suite execution: API Error'),
+      ).toBeInTheDocument();
     });
 
     // Check that the button is no longer in running state
@@ -545,7 +549,9 @@ describe('TestSuitePanel', () => {
   it('disables run button during execution', async () => {
     mockApiClient.request
       .mockResolvedValueOnce(mockTestSuites) // Initial test suites load
-      .mockImplementation(() => new Promise(() => {})); // Never resolves for run
+      .mockImplementation(
+        () => new Promise(() => {}),
+      ); // Never resolves for run
 
     render(<TestSuitePanel promptId="prompt-1" />);
 

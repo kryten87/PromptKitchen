@@ -3,7 +3,7 @@ import { JwtService } from '@prompt-kitchen/shared/src/services/JwtService';
 
 test.beforeEach(async ({ page }) => {
   // Initialize JwtService with a dummy secret
-  const jwtService = new JwtService('dummy-secret');
+  const jwtService = new JwtService('dev-secret');
 
   // Generate a token for a mock user
   const token = jwtService.generateJwt({

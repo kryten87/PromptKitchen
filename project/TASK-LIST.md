@@ -298,6 +298,10 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 - ✅ 4.3.18. Write Playwright tests: when authenticated and on /, clicking "New Project" should
   - open the "Create New Project" modal -- check for existence of "Create New Project" title, "Project Name" input element, "Description" input element, "Create" button, "Cancel" button
 - ✅ 4.3.19. Update the backend server to allow the Playwright tests to create and delete an empty SQLite database file on test setup/teardown so that we can run the e2e tests against a clean environment
+- ✅ 4.3.20 Write Playwright tests: when authenticated and on /, click the "New Project" button
+  - enter a Project Name and Description and click "Cancel" --> The project name should not appear on the screen
+- [ ] 4.3.21 Write Playwright tests: when authenticated and on /, click the "New Project" button
+  - enter a Project Name and Description amd click "Continue" --> the project name should appear in a card on the screen (aria-label="Go to project <project name>"; add a data-testid to find this element)
 
 ### 4.4. Finalization
 

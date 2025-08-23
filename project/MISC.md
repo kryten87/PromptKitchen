@@ -49,6 +49,7 @@
 - test run history
 - model selection
 - JSON editing where appropriate
+- auth middleware should check user in database; caching might be necessary
 
 
 # DONE --------------------------

@@ -1,5 +1,8 @@
 import { expect, test } from '@playwright/test';
+import { toKebabCase } from '@prompt-kitchen/shared/src/helpers/toKebabCase';
 import { JwtService } from '@prompt-kitchen/shared/src/services/JwtService';
+
+const randomSuffix = () => Math.floor(Math.random() * 10000);
 
 test.beforeEach(async ({ page }) => {
   // Initialize JwtService with a dummy secret
@@ -63,7 +66,7 @@ test('home page - clicking "New Project" opens the Create New Project modal', as
 });
 
 test('home page - creating a new project and cancelling', async ({ page }) => {
-  const projectName = 'Test Project';
+  const projectName = `Test Project - ${Date.now()} - ${randomSuffix()}`;
   const description = 'Test Description';
 
   // Click the "New Project" button using data-testid
@@ -90,8 +93,8 @@ test('home page - creating a new project and cancelling', async ({ page }) => {
   await expect(page.getByTestId(`project-card-${toKebabCase(projectName)}`)).not.toBeVisible();
 });
 
-test.only('home page - creating a new project and submitting', async ({ page }) => {
-  const projectName = 'Test Project';
+test('home page - creating a new project and submitting', async ({ page }) => {
+  const projectName = `Test Project - ${Date.now()} - ${randomSuffix()}`;
   const description = 'Test Description';
 
   // Click the "New Project" button using data-testid

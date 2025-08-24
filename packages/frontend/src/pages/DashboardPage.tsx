@@ -95,7 +95,7 @@ export function DashboardPage() {
       {!loading && !error && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {projects.map((project) => (
-             <div
+            <div
               key={project.id}
               role="button"
               tabIndex={0}
@@ -110,14 +110,14 @@ export function DashboardPage() {
                 <p className="font-normal text-gray-700">{project.description || 'No description'}</p>
               </div>
               <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                 <button
+                <button
                   className="bg-btn-subtle hover:bg-btn-subtle-hover text-text-secondary py-1 px-2 rounded text-xs z-10"
                   onClick={e => { e.stopPropagation(); handleEditClick(project); }}
                   aria-label={`Edit ${project.name}`}
                 >
                   Edit
                 </button>
-                 <button
+                <button
                   className="bg-warning hover:opacity-90 text-white py-1 px-2 rounded text-xs z-10"
                   onClick={e => { e.stopPropagation(); handleDelete(project.id); }}
                   aria-label={`Delete ${project.name}`}

@@ -1,6 +1,5 @@
-import { DatabaseConnector } from '@prompt-kitchen/shared/src/db/db';
-import { runMigrations } from '@prompt-kitchen/shared/src/db/migrate';
 import { FullConfig } from '@playwright/test';
+import { DatabaseConnector } from '@prompt-kitchen/shared/src/db/db';
 import { ChildProcess, spawn } from 'child_process';
 import detectPort from 'detect-port';
 import fs from 'fs';
@@ -34,7 +33,6 @@ async function globalSetup(_config: FullConfig) {
     const dbPath = sqliteTempPath();
     console.log(`Creating temporary database at: ${dbPath}`);
     const db = new DatabaseConnector({ filename: dbPath });
-    await runMigrations(db);
     await db.destroy();
     fs.writeFileSync(DB_PATH_FILE, dbPath);
 
@@ -79,10 +77,13 @@ async function globalSetup(_config: FullConfig) {
 
     try {
       await waitOn({
-        resources: [`http://localhost:${PORT}`],
-        timeout: 120000, // 120 seconds
+        resources: [
+          `http://localhost:3000`, // Backend
+          `http://localhost:${PORT}`, // Frontend
+        ],
+        timeout: 180000, // 180 seconds
       });
-      console.log('Frontend server is ready.');
+      console.log('Frontend and backend servers are ready.');
     } catch (err) {
       console.error(
         'Server did not start in time. Check logs in packages/e2e/logs.',

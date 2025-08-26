@@ -114,6 +114,7 @@ export function DashboardPage() {
                   className="bg-btn-subtle hover:bg-btn-subtle-hover text-text-secondary py-1 px-2 rounded text-xs z-10"
                   onClick={e => { e.stopPropagation(); handleEditClick(project); }}
                   aria-label={`Edit ${project.name}`}
+                  data-testid={`project-card-edit-button-${toKebabCase(project.name)}`}
                 >
                   Edit
                 </button>
@@ -121,6 +122,7 @@ export function DashboardPage() {
                   className="bg-warning hover:opacity-90 text-white py-1 px-2 rounded text-xs z-10"
                   onClick={e => { e.stopPropagation(); handleDelete(project.id); }}
                   aria-label={`Delete ${project.name}`}
+                  data-testid={`project-card-delete-button-${toKebabCase(project.name)}`}
                 >
                   Delete
                 </button>

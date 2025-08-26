@@ -302,16 +302,14 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
   - enter a Project Name and Description and click "Cancel" --> The project name should not appear on the screen
 - ✅ 4.3.21 Write Playwright tests: when authenticated and on /, click the "New Project" button
   - enter a Project Name and Description amd click "Continue" --> the project name should appear in a card on the screen (aria-label="Go to project <project name>"; add a data-testid to find this element)
-- [ ] 4.3.22 Write Playwright tests for project management --> insert new project into database with mock values; set up authenticated session; go to /
-  - [ ] 4.3.22.1 hover over card --> Edit and Delete buttons should appear
-  - [ ] 4.3.22.2 hover over card, click Delete button --> "Are you sure you want to delete this project?" modal appears with "Yes" and "No" buttons
-  - [ ] 4.3.22.3 hover over card, click Delete button --> "Are you sure you want to delete this project?" modal appears --> click "No" --> modal disappears
-  - [ ] 4.3.22.4 hover over card, click Delete button --> "Are you sure you want to delete this project?" modal appears --> click "Yes" --> modal disappears, project card is no longer on dashboard
-  - [ ] 4.3.22.5 hover over card, click Edit button --> "Edit Project" modal appears with "Project Name" & "Description" input elements populated with values for project; "Save" & "Cancel" buttons are present
-  - [ ] 4.3.22.6 hover over card, click Edit button --> "Edit Project" modal appears; click "Cancel" --> "Edit Project" modal disappears; project card is present on dashboard
-  - [ ] 4.3.22.7 hover over card, click Edit button --> "Edit Project" modal appears; change "Project Name" and "Description"; click "Save" --> "Edit Project" modal disappears; project card is updated to show new project name & description
-
-
+- ✅ 4.3.22 Write Playwright tests for project management --> insert new project into database with mock values; set up authenticated session; go to /
+  - ✅ 4.3.22.1 hover over card --> Edit and Delete buttons should appear
+  - ✅ 4.3.22.2 hover over card, click Delete button --> "Are you sure you want to delete this project?" modal appears with "Yes" and "No" buttons
+  - ✅ 4.3.22.3 hover over card, click Delete button --> "Are you sure you want to delete this project?" modal appears --> click "No" --> modal disappears
+  - ✅ 4.3.22.4 hover over card, click Delete button --> "Are you sure you want to delete this project?" modal appears --> click "Yes" --> modal disappears, project card is no longer on dashboard
+  - ✅ 4.3.22.5 hover over card, click Edit button --> "Edit Project" modal appears with "Project Name" & "Description" input elements populated with values for project; "Save" & "Cancel" buttons are present
+  - ✅ 4.3.22.6 hover over card, click Edit button --> "Edit Project" modal appears; click "Cancel" --> "Edit Project" modal disappears; project card is present on dashboard
+  - ✅ 4.3.22.7 hover over card, click Edit button --> "Edit Project" modal appears; change "Project Name" and "Description"; click "Save" --> "Edit Project" modal disappears; project card is updated to show new project name & description
 
 ### 4.4. Finalization
 

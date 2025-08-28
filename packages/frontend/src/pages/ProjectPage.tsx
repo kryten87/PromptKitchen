@@ -230,7 +230,7 @@ export function ProjectPage() {
             {!showEditor && selectedPrompt && (
               <div>
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-semibold">Selected Prompt: {selectedPrompt.name}</h3>
+                  <h3 data-testid="selected-prompt-header" className="text-lg font-semibold">Selected Prompt: {selectedPrompt.name}</h3>
                   <button
                     onClick={() => setSelectedPrompt(null)}
                     className="px-3 py-1 text-sm bg-btn-subtle text-text-secondary rounded hover:bg-btn-subtle-hover"

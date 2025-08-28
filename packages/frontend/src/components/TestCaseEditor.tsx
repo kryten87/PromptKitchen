@@ -175,7 +175,7 @@ export function TestCaseEditor({
                   (expectedOutput.trim() !== '' || assertions.length > 0);
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-6">
+    <div className="bg-white border border-gray-200 rounded-lg p-6" data-testid="create-test-case-panel">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold">
           {isEditing ? 'Edit Test Case' : 'Create New Test Case'}

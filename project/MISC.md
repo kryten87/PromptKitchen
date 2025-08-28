@@ -66,6 +66,7 @@
 # UX Problems
 - Create Test Case: "Create" button disabled if no variable entered
 - when I have a prompt open and I click "view" for another prompt, all other panels should close (currently showing incorrect info because it keeps the old data)
+- create test case: add expected output with no variables --> enable create button
 
 # Tweaks
 - after creating project, jump directly to project/:id page

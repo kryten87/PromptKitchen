@@ -12,7 +12,7 @@
 
 ### Test Cases
 
-1.  **Initial Page Load**
+[done] 1.  **Initial Page Load**
     - **Action**: None (initial navigation).
     - **Expected Result**:
       - The project name should be visible
@@ -21,7 +21,7 @@
       - A "Create New Prompt" button should be visible.
       - A "No prompts found for this project." message should be visible.
 
-2.  **Create New Prompt Panel**
+[done] 2.  **Create New Prompt Panel**
     - **Action**: Click the "Create New Prompt" button.
     - **Expected Result**:
       - The "Create New Prompt" panel should appear.
@@ -31,14 +31,14 @@
         - A "Cancel" button.
         - A "Create Prompt" button, which should be disabled.
 
-3.  **Enable Create Prompt Button**
+[done] 3.  **Enable Create Prompt Button**
     - **Action**:
       1. Click "Create New Prompt".
       2. Enter text into the "Prompt Name" input.
       3. Enter text into the "Prompt Text" input.
     - **Expected Result**: The "Create Prompt" button should become enabled.
 
-4.  **Cancel Creating a Prompt**
+[done] 4.  **Cancel Creating a Prompt**
     - **Action**:
       1. Click "Create New Prompt".
       2. Click the "Cancel" button.
@@ -46,7 +46,7 @@
       - The "Create New Prompt" panel should disappear.
       - The "No prompts found for this project." message should be visible.
 
-5.  **Create a New Prompt**
+[done] 5.  **Create a New Prompt**
     - **Action**:
       1. Click "Create New Prompt".
       2. Fill in "Prompt Name" and "Prompt Text".
@@ -57,7 +57,7 @@
       - The prompt entry should have "View", "Edit", and "Delete" buttons.
       - The "No prompts found for this project." message should no longer be visible.
 
-6.  **Delete a Prompt (and cancel)**
+[done] 6.  **Delete a Prompt (and cancel)**
     - **Action**:
       1. Create a new prompt.
       2. Click the "Delete" button for that prompt.
@@ -67,7 +67,7 @@
       - The confirmation modal should disappear.
       - The prompt should still be listed on the page.
 
-7.  **Delete a Prompt (and confirm)**
+[done] 7.  **Delete a Prompt (and confirm)**
     - **Action**:
       1. Create a new prompt.
       2. Click the "Delete" button for that prompt.
@@ -78,7 +78,7 @@
       - The prompt should be removed from the list.
       - The "No prompts found for this project." message should appear.
 
-8.  **Edit a Prompt (and cancel)**
+[done] 8.  **Edit a Prompt (and cancel)**
     - **Action**:
       1. Create a new prompt.
       2. Click the "Edit" button for that prompt.
@@ -88,7 +88,7 @@
       - The "Edit Prompt" panel should disappear.
       - The prompt's content on the screen should not have changed.
 
-9.  **Edit a Prompt (and save)**
+[done] 9.  **Edit a Prompt (and save)**
     - **Action**:
       1. Create a new prompt.
       2. Click the "Edit" button.

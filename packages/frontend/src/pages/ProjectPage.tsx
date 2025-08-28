@@ -93,14 +93,15 @@ export function ProjectPage() {
       return;
     }
     try {
-      const created = await apiClient.request<Prompt>(`/projects/${projectId}/prompts`, {
+      await apiClient.request<Prompt>(`/projects/${projectId}/prompts`, {
         method: 'POST',
         body: JSON.stringify(newPrompt),
         headers: { 'Content-Type': 'application/json' },
       });
       await loadProjectAndPrompts();
-      setSelectedPrompt(created);
+      setSelectedPrompt(null);
       setIsCreating(false);
+      setShowEditor(false);
     } catch {
       setErrorAlert('Failed to create prompt');
     }

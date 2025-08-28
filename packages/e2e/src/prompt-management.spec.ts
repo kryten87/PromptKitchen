@@ -162,6 +162,9 @@ test('Create a New Prompt', async ({ page }) => {
     
     await expect(page.getByTestId('no-prompts-message')).not.toBeVisible();
     
+    const editPromptPanel = page.getByTestId('edit-prompt-panel');
+    await expect(editPromptPanel).not.toBeVisible();
+    
     // Can't get by ID since we don't know it, so we'll check for the name
     const promptListItem = page.locator(`[data-testid^="prompt-list-item-"]`);
     await expect(promptListItem).toBeVisible();

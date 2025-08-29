@@ -297,7 +297,7 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
           {selectedTestSuiteForCases && (
             <div className="bg-gray-50 rounded-lg p-4" data-testid="test-cases-panel">
               <div className="flex justify-between items-center mb-4">
-                <h4 className="text-md font-semibold">
+                <h4 className="text-md font-semibold" data-testid="test-cases-header">
                   Test Cases for "{selectedTestSuiteForCases.name}"
                 </h4>
                 <div className="flex gap-2">
@@ -333,21 +333,23 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
               ) : testCasesError ? (
                 <div className="text-red-500 text-sm">{testCasesError}</div>
               ) : testCases.length === 0 ? (
-                <div className="text-gray-500 text-sm">No test cases found for this test suite.</div>
+                <div className="text-gray-500 text-sm" data-testid="no-test-cases-message">No test cases found for this test suite.</div>
               ) : (
                 <ul className="divide-y divide-gray-200 bg-white rounded shadow">
                   {testCases.map((testCase) => (
-                    <li key={testCase.id} className="p-3 hover:bg-gray-50 relative">
+                    <li key={testCase.id} className="p-3 hover:bg-gray-50 relative" data-testid={`test-case-item-${testCase.id}`}>
                       <div className="absolute top-3 right-3 flex space-x-2">
                         <button
                           onClick={() => handleEditTestCase(testCase)}
                           className="px-2 py-1 text-xs bg-btn-subtle text-text-primary rounded hover:bg-btn-subtle-hover"
+                          data-testid="edit-test-case-button"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDeleteTestCase(testCase.id)}
                           className="px-2 py-1 text-xs bg-warning text-white rounded hover:opacity-90"
+                          data-testid="delete-test-case-button"
                         >
                           Delete
                         </button>

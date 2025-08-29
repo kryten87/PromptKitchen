@@ -1,4 +1,4 @@
-import { expect, test, Page } from '@playwright/test';
+import { expect, Page, test } from '@playwright/test';
 import { DatabaseConnector } from '@prompt-kitchen/shared/src/db/db';
 import { Project } from '@prompt-kitchen/shared/src/dto/Project';
 import { JwtService } from '@prompt-kitchen/shared/src/services/JwtService';
@@ -14,17 +14,17 @@ const randomSuffix = () => Math.floor(Math.random() * 10000);
 let project: Project;
 
 async function createPrompt(page: Page, name: string, text: string) {
-    await page.getByTestId('create-new-prompt-button').click();
-    
-    const createPromptPanel = page.getByTestId('create-prompt-panel');
-    await expect(createPromptPanel).toBeVisible();
-    
-    await createPromptPanel.getByTestId('create-prompt-name-input').fill(name);
-    await createPromptPanel.getByTestId('create-prompt-text-input').fill(text);
-    
-    await createPromptPanel.getByTestId('create-prompt-submit-button').click();
-    
-    await expect(createPromptPanel).not.toBeVisible();
+  await page.getByTestId('create-new-prompt-button').click();
+
+  const createPromptPanel = page.getByTestId('create-prompt-panel');
+  await expect(createPromptPanel).toBeVisible();
+
+  await createPromptPanel.getByTestId('create-prompt-name-input').fill(name);
+  await createPromptPanel.getByTestId('create-prompt-text-input').fill(text);
+
+  await createPromptPanel.getByTestId('create-prompt-submit-button').click();
+
+  await expect(createPromptPanel).not.toBeVisible();
 }
 
 test.beforeEach(async ({ page }) => {
@@ -115,149 +115,149 @@ test('Initial Page Load', async ({ page }) => {
 });
 
 test('Create New Prompt Panel', async ({ page }) => {
-    await page.getByTestId('create-new-prompt-button').click();
-    
-    const createPromptPanel = page.getByTestId('create-prompt-panel');
-    await expect(createPromptPanel).toBeVisible();
-    
-    await expect(createPromptPanel.getByTestId('create-prompt-header')).toBeVisible();
-    await expect(createPromptPanel.getByTestId('create-prompt-name-input')).toBeVisible();
-    await expect(createPromptPanel.getByTestId('create-prompt-text-input')).toBeVisible();
-    await expect(createPromptPanel.getByTestId('create-prompt-cancel-button')).toBeVisible();
-    
-    const createButton = createPromptPanel.getByTestId('create-prompt-submit-button');
-    await expect(createButton).toBeVisible();
-    await expect(createButton).toBeDisabled();
+  await page.getByTestId('create-new-prompt-button').click();
+
+  const createPromptPanel = page.getByTestId('create-prompt-panel');
+  await expect(createPromptPanel).toBeVisible();
+
+  await expect(createPromptPanel.getByTestId('create-prompt-header')).toBeVisible();
+  await expect(createPromptPanel.getByTestId('create-prompt-name-input')).toBeVisible();
+  await expect(createPromptPanel.getByTestId('create-prompt-text-input')).toBeVisible();
+  await expect(createPromptPanel.getByTestId('create-prompt-cancel-button')).toBeVisible();
+
+  const createButton = createPromptPanel.getByTestId('create-prompt-submit-button');
+  await expect(createButton).toBeVisible();
+  await expect(createButton).toBeDisabled();
 });
 
 test('Enable Create Prompt Button', async ({ page }) => {
-    await page.getByTestId('create-new-prompt-button').click();
-    
-    const createPromptPanel = page.getByTestId('create-prompt-panel');
-    await expect(createPromptPanel).toBeVisible();
-    
-    await createPromptPanel.getByTestId('create-prompt-name-input').fill('Test Prompt Name');
-    await createPromptPanel.getByTestId('create-prompt-text-input').fill('Test Prompt Text');
-    
-    const createButton = createPromptPanel.getByTestId('create-prompt-submit-button');
-    await expect(createButton).toBeEnabled();
+  await page.getByTestId('create-new-prompt-button').click();
+
+  const createPromptPanel = page.getByTestId('create-prompt-panel');
+  await expect(createPromptPanel).toBeVisible();
+
+  await createPromptPanel.getByTestId('create-prompt-name-input').fill('Test Prompt Name');
+  await createPromptPanel.getByTestId('create-prompt-text-input').fill('Test Prompt Text');
+
+  const createButton = createPromptPanel.getByTestId('create-prompt-submit-button');
+  await expect(createButton).toBeEnabled();
 });
 
 test('Cancel Creating a Prompt', async ({ page }) => {
-    await page.getByTestId('create-new-prompt-button').click();
-    
-    const createPromptPanel = page.getByTestId('create-prompt-panel');
-    await expect(createPromptPanel).toBeVisible();
-    
-    await createPromptPanel.getByTestId('create-prompt-cancel-button').click();
-    
-    await expect(createPromptPanel).not.toBeVisible();
-    await expect(page.getByTestId('no-prompts-message')).toBeVisible();
+  await page.getByTestId('create-new-prompt-button').click();
+
+  const createPromptPanel = page.getByTestId('create-prompt-panel');
+  await expect(createPromptPanel).toBeVisible();
+
+  await createPromptPanel.getByTestId('create-prompt-cancel-button').click();
+
+  await expect(createPromptPanel).not.toBeVisible();
+  await expect(page.getByTestId('no-prompts-message')).toBeVisible();
 });
 
 test('Create a New Prompt', async ({ page }) => {
-    const promptName = 'Test Prompt Name';
-    const promptText = 'Test Prompt Text';
-    await createPrompt(page, promptName, promptText);
-    
-    await expect(page.getByTestId('no-prompts-message')).not.toBeVisible();
-    
-    const editPromptPanel = page.getByTestId('edit-prompt-panel');
-    await expect(editPromptPanel).not.toBeVisible();
-    
-    // Can't get by ID since we don't know it, so we'll check for the name
-    const promptListItem = page.locator(`[data-testid^="prompt-list-item-"]`);
-    await expect(promptListItem).toBeVisible();
-    await expect(promptListItem.getByText(promptName)).toBeVisible();
+  const promptName = 'Test Prompt Name';
+  const promptText = 'Test Prompt Text';
+  await createPrompt(page, promptName, promptText);
 
-    const promptId = (await promptListItem.getAttribute('data-testid'))!.replace('prompt-list-item-', '');
+  await expect(page.getByTestId('no-prompts-message')).not.toBeVisible();
 
-    await expect(page.getByTestId(`view-prompt-button-${promptId}`)).toBeVisible();
-    await expect(page.getByTestId(`edit-prompt-button-${promptId}`)).toBeVisible();
-    await expect(page.getByTestId(`delete-prompt-button-${promptId}`)).toBeVisible();
+  const editPromptPanel = page.getByTestId('edit-prompt-panel');
+  await expect(editPromptPanel).not.toBeVisible();
+
+  // Can't get by ID since we don't know it, so we'll check for the name
+  const promptListItem = page.locator(`[data-testid^="prompt-list-item-"]`);
+  await expect(promptListItem).toBeVisible();
+  await expect(promptListItem.getByText(promptName)).toBeVisible();
+
+  const promptId = (await promptListItem.getAttribute('data-testid'))!.replace('prompt-list-item-', '');
+
+  await expect(page.getByTestId(`view-prompt-button-${promptId}`)).toBeVisible();
+  await expect(page.getByTestId(`edit-prompt-button-${promptId}`)).toBeVisible();
+  await expect(page.getByTestId(`delete-prompt-button-${promptId}`)).toBeVisible();
 });
 
 test('Delete a Prompt (and cancel)', async ({ page }) => {
-    const promptName = 'Test Prompt to Delete';
-    const promptText = 'Test Prompt Text';
-    await createPrompt(page, promptName, promptText);
+  const promptName = 'Test Prompt to Delete';
+  const promptText = 'Test Prompt Text';
+  await createPrompt(page, promptName, promptText);
 
-    const promptListItem = page.locator(`[data-testid^="prompt-list-item-"]`);
-    const promptId = (await promptListItem.getAttribute('data-testid'))!.replace('prompt-list-item-', '');
+  const promptListItem = page.locator(`[data-testid^="prompt-list-item-"]`);
+  const promptId = (await promptListItem.getAttribute('data-testid'))!.replace('prompt-list-item-', '');
 
-    await page.getByTestId(`delete-prompt-button-${promptId}`).click();
+  await page.getByTestId(`delete-prompt-button-${promptId}`).click();
 
-    const confirmModal = page.getByTestId('confirm-modal');
-    await expect(confirmModal).toBeVisible();
+  const confirmModal = page.getByTestId('confirm-modal');
+  await expect(confirmModal).toBeVisible();
 
-    await confirmModal.getByTestId('confirm-no').click();
+  await confirmModal.getByTestId('confirm-no').click();
 
-    await expect(confirmModal).not.toBeVisible();
-    await expect(promptListItem).toBeVisible();
+  await expect(confirmModal).not.toBeVisible();
+  await expect(promptListItem).toBeVisible();
 });
 
 test('Delete a Prompt (and confirm)', async ({ page }) => {
-    const promptName = 'Test Prompt to Delete';
-    const promptText = 'Test Prompt Text';
-    await createPrompt(page, promptName, promptText);
+  const promptName = 'Test Prompt to Delete';
+  const promptText = 'Test Prompt Text';
+  await createPrompt(page, promptName, promptText);
 
-    const promptListItem = page.locator(`[data-testid^="prompt-list-item-"]`);
-    const promptId = (await promptListItem.getAttribute('data-testid'))!.replace('prompt-list-item-', '');
+  const promptListItem = page.locator(`[data-testid^="prompt-list-item-"]`);
+  const promptId = (await promptListItem.getAttribute('data-testid'))!.replace('prompt-list-item-', '');
 
-    await page.getByTestId(`delete-prompt-button-${promptId}`).click();
+  await page.getByTestId(`delete-prompt-button-${promptId}`).click();
 
-    const confirmModal = page.getByTestId('confirm-modal');
-    await expect(confirmModal).toBeVisible();
+  const confirmModal = page.getByTestId('confirm-modal');
+  await expect(confirmModal).toBeVisible();
 
-    await confirmModal.getByTestId('confirm-yes').click();
+  await confirmModal.getByTestId('confirm-yes').click();
 
-    await expect(confirmModal).not.toBeVisible();
-    await expect(promptListItem).not.toBeVisible();
-    await expect(page.getByTestId('no-prompts-message')).toBeVisible();
+  await expect(confirmModal).not.toBeVisible();
+  await expect(promptListItem).not.toBeVisible();
+  await expect(page.getByTestId('no-prompts-message')).toBeVisible();
 });
 
 test('Edit a Prompt (and cancel)', async ({ page }) => {
-    const promptName = 'Test Prompt to Edit';
-    const promptText = 'Test Prompt Text';
-    await createPrompt(page, promptName, promptText);
+  const promptName = 'Test Prompt to Edit';
+  const promptText = 'Test Prompt Text';
+  await createPrompt(page, promptName, promptText);
 
-    const promptListItem = page.locator(`[data-testid^="prompt-list-item-"]`);
-    const promptId = (await promptListItem.getAttribute('data-testid'))!.replace('prompt-list-item-', '');
+  const promptListItem = page.locator(`[data-testid^="prompt-list-item-"]`);
+  const promptId = (await promptListItem.getAttribute('data-testid'))!.replace('prompt-list-item-', '');
 
-    await page.getByTestId(`edit-prompt-button-${promptId}`).click();
+  await page.getByTestId(`edit-prompt-button-${promptId}`).click();
 
-    const editPromptPanel = page.getByTestId('edit-prompt-panel');
-    await expect(editPromptPanel).toBeVisible();
+  const editPromptPanel = page.getByTestId('edit-prompt-panel');
+  await expect(editPromptPanel).toBeVisible();
 
-    await editPromptPanel.getByTestId('edit-prompt-cancel-button').click();
+  await editPromptPanel.getByTestId('edit-prompt-cancel-button').click();
 
-    await expect(editPromptPanel).not.toBeVisible();
-    await expect(promptListItem.getByText(promptName)).toBeVisible();
+  await expect(editPromptPanel).not.toBeVisible();
+  await expect(promptListItem.getByText(promptName)).toBeVisible();
 });
 
 test('Edit a Prompt (and save)', async ({ page }) => {
-    const promptName = 'Test Prompt to Edit';
-    const promptText = 'Test Prompt Text';
-    await createPrompt(page, promptName, promptText);
+  const promptName = 'Test Prompt to Edit';
+  const promptText = 'Test Prompt Text';
+  await createPrompt(page, promptName, promptText);
 
-    const promptListItem = page.locator(`[data-testid^="prompt-list-item-"]`);
-    const promptId = (await promptListItem.getAttribute('data-testid'))!.replace('prompt-list-item-', '');
+  const promptListItem = page.locator(`[data-testid^="prompt-list-item-"]`);
+  const promptId = (await promptListItem.getAttribute('data-testid'))!.replace('prompt-list-item-', '');
 
-    await page.getByTestId(`edit-prompt-button-${promptId}`).click();
+  await page.getByTestId(`edit-prompt-button-${promptId}`).click();
 
-    const editPromptPanel = page.getByTestId('edit-prompt-panel');
-    await expect(editPromptPanel).toBeVisible();
+  const editPromptPanel = page.getByTestId('edit-prompt-panel');
+  await expect(editPromptPanel).toBeVisible();
 
-    const newName = 'Updated Prompt Name';
-    const newText = 'Updated Prompt Text';
+  const newName = 'Updated Prompt Name';
+  const newText = 'Updated Prompt Text';
 
-    await editPromptPanel.locator('input[type="text"]').fill(newName);
-    await editPromptPanel.locator('textarea').fill(newText);
+  await editPromptPanel.locator('input[type="text"]').fill(newName);
+  await editPromptPanel.locator('textarea').fill(newText);
 
-    await editPromptPanel.getByText('Save').click();
+  await editPromptPanel.getByText('Save').click();
 
-    await expect(editPromptPanel).not.toBeVisible();
-    
-    const newPromptListItem = page.locator(`[data-testid^="prompt-list-item-"]`);
-    await expect(newPromptListItem.getByText(newName)).toBeVisible();
+  await expect(editPromptPanel).not.toBeVisible();
+
+  const newPromptListItem = page.locator(`[data-testid^="prompt-list-item-"]`);
+  await expect(newPromptListItem.getByText(newName)).toBeVisible();
 });

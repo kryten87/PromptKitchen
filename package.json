@@ -8,6 +8,8 @@
     "build": "npm run build --workspaces",
     "check": "npm run build && npm run lint:fix && npm run test",
     "check:task": "npm run build && npm run lint:fix && npm run test && npm run validate:tasklist",
+    "dev:backend": "npm run dev --workspace=packages/backend",
+    "dev:frontend": "npm run dev --workspace=packages/frontend",
     "e2e": "npm run --workspace=packages/e2e test",
     "lint": "npm run lint --workspaces",
     "lint:fix": "npm run lint:fix --workspaces",

@@ -175,9 +175,9 @@ export function TestCaseEditor({
                   (expectedOutput.trim() !== '' || assertions.length > 0);
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-6">
+    <div className="bg-white border border-gray-200 rounded-lg p-6" data-testid={isEditing ? "edit-test-case-panel" : "create-test-case-panel"}>
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold">
+        <h3 className="text-lg font-semibold" data-testid={isEditing ? "edit-test-case-header" : "create-test-case-header"}>
           {isEditing ? 'Edit Test Case' : 'Create New Test Case'}
         </h3>
         <div className="flex gap-2">
@@ -186,6 +186,7 @@ export function TestCaseEditor({
             onClick={onCancel}
             className="px-4 py-2 bg-btn-subtle text-text-primary rounded hover:bg-btn-subtle-hover disabled:opacity-50"
             disabled={loading}
+            data-testid={isEditing ? "edit-test-case-cancel-button" : "create-test-case-cancel-button"}
           >
             Cancel
           </button>
@@ -194,6 +195,7 @@ export function TestCaseEditor({
             form="test-case-form"
             className="px-4 py-2 bg-primary text-white rounded hover:opacity-90 disabled:opacity-50"
             disabled={!isValid || loading}
+            data-testid={isEditing ? "edit-test-case-update-button" : "create-test-case-submit-button"}
           >
             {loading ? 'Saving...' : (isEditing ? 'Update' : 'Create')}
           </button>
@@ -212,6 +214,7 @@ export function TestCaseEditor({
               onClick={addInputField}
               className="text-sm bg-btn-subtle text-text-primary px-2 py-1 rounded hover:bg-btn-subtle-hover"
               disabled={loading}
+              data-testid="add-input-button"
             >
               Add Input
             </button>
@@ -219,7 +222,7 @@ export function TestCaseEditor({
 
           <div className="space-y-2">
             {Object.entries(inputs).map(([key, value], index) => (
-              <div key={`input-${index}`} className="flex gap-2 items-center">
+              <div key={`input-${index}`} className="flex gap-2 items-center" data-testid={`input-row-${index}`}>
                 <input
                   type="text"
                   placeholder="Key"
@@ -227,6 +230,7 @@ export function TestCaseEditor({
                   onChange={(e) => updateInputKey(key, e.target.value)}
                   className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm"
                   disabled={loading}
+                  data-testid="input-variable-input"
                 />
                 <span className="text-gray-500">=</span>
                 <input
@@ -236,12 +240,14 @@ export function TestCaseEditor({
                   onChange={(e) => updateInputValue(key, e.target.value)}
                   className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm"
                   disabled={loading}
+                  data-testid="input-value-input"
                 />
                 <button
                   type="button"
                   onClick={() => removeInput(key)}
                   className="text-warning hover:opacity-80 px-2"
                   disabled={loading}
+                  data-testid="remove-input-button"
                 >
                   ✕
                 </button>
@@ -285,6 +291,7 @@ export function TestCaseEditor({
             rows={isJsonOutput ? 6 : 3}
             placeholder={isJsonOutput ? 'Enter expected JSON output...' : 'Enter expected string output...'}
             disabled={loading}
+            data-testid="expected-output-input"
           />
 
           {isJsonOutput && (

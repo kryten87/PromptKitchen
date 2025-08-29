@@ -1,7 +1,7 @@
-import Ajv from 'ajv';
+import * as Ajv from 'ajv';
 import * as yup from 'yup';
 
-const ajv = new Ajv();
+const ajv = new Ajv.default();
 
 export function validateJsonSchema(json: object): boolean {
   try {

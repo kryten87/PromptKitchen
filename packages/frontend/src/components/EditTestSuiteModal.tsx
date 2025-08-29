@@ -50,7 +50,7 @@ export function EditTestSuiteModal({ isOpen, onClose, testSuite, onTestSuiteUpda
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" data-testid="edit-test-suite-modal">
       <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
         <h2 className="text-xl font-bold mb-4">Edit Test Suite</h2>
         <form onSubmit={handleSubmit}>
@@ -58,6 +58,7 @@ export function EditTestSuiteModal({ isOpen, onClose, testSuite, onTestSuiteUpda
             <label htmlFor="edit-test-suite-name" className="block text-gray-700 mb-2">Test Suite Name</label>
             <input
               id="edit-test-suite-name"
+              data-testid="edit-test-suite-name-input"
               type="text"
               className="w-full border border-gray-300 rounded px-3 py-2"
               value={name}
@@ -71,6 +72,7 @@ export function EditTestSuiteModal({ isOpen, onClose, testSuite, onTestSuiteUpda
           <div className="flex justify-end gap-2">
             <button
               type="button"
+              data-testid="edit-test-suite-cancel-button"
               className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
               onClick={onClose}
               disabled={loading}
@@ -79,6 +81,7 @@ export function EditTestSuiteModal({ isOpen, onClose, testSuite, onTestSuiteUpda
             </button>
             <button
               type="submit"
+              data-testid="edit-test-suite-submit-button"
               className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
               disabled={!name.trim() || loading}
             >

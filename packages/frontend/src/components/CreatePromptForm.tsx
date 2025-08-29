@@ -54,6 +54,7 @@ export function CreatePromptForm({ projectId, onPromptCreated }: CreatePromptFor
           </label>
           <input
             id="create-prompt-name"
+            data-testid="create-prompt-name-input"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -70,6 +71,7 @@ export function CreatePromptForm({ projectId, onPromptCreated }: CreatePromptFor
           </label>
           <textarea
             id="create-prompt-text"
+            data-testid="create-prompt-text-input"
             value={promptText}
             onChange={(e) => setPromptText(e.target.value)}
             rows={12}
@@ -86,6 +88,7 @@ export function CreatePromptForm({ projectId, onPromptCreated }: CreatePromptFor
         <div className="flex justify-end">
           <button
             type="submit"
+            data-testid="create-prompt-submit-button"
             disabled={!canSave || loading}
             className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >

@@ -1,4 +1,4 @@
-import path from 'path';
+import * as path from 'path';
 import type { DatabaseConnector } from '../db/db';
 
 const migrationsConfig = {

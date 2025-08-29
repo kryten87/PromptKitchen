@@ -93,14 +93,15 @@ export function ProjectPage() {
       return;
     }
     try {
-      const created = await apiClient.request<Prompt>(`/projects/${projectId}/prompts`, {
+      await apiClient.request<Prompt>(`/projects/${projectId}/prompts`, {
         method: 'POST',
         body: JSON.stringify(newPrompt),
         headers: { 'Content-Type': 'application/json' },
       });
       await loadProjectAndPrompts();
-      setSelectedPrompt(created);
+      setSelectedPrompt(null);
       setIsCreating(false);
+      setShowEditor(false);
     } catch {
       setErrorAlert('Failed to create prompt');
     }
@@ -109,6 +110,7 @@ export function ProjectPage() {
   const handlePromptUpdated = async (updatedPrompt: Prompt) => {
     await loadProjectAndPrompts();
     setSelectedPrompt(updatedPrompt);
+    setShowEditor(false);
   };
 
   const handlePromptRestored = async (restoredPrompt: Prompt) => {
@@ -128,15 +130,16 @@ export function ProjectPage() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-2">{project.name}</h1>
-      <p className="mb-4 text-gray-700">{project.description || 'No description'}</p>
+      <h1 data-testid="project-name" className="text-2xl font-bold mb-2">{project.name}</h1>
+      <p data-testid="project-description" className="mb-4 text-gray-700">{project.description || 'No description'}</p>
       <div className="text-gray-500">Project ID: {project.id}</div>
       <div className="text-gray-500">Created: {new Date(project.createdAt).toLocaleString()}</div>
       <div className="text-gray-500 mb-6">Last Updated: {new Date(project.updatedAt).toLocaleString()}</div>
 
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Prompts</h2>
+        <h2 data-testid="prompts-header" className="text-xl font-semibold">Prompts</h2>
         <button
+          data-testid="create-new-prompt-button"
           onClick={handleCreateNewPrompt}
           className="bg-primary hover:opacity-90 text-white py-2 px-4 rounded"
         >
@@ -147,27 +150,30 @@ export function ProjectPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div>
           {prompts.length === 0 ? (
-            <div className="text-gray-500">No prompts found for this project.</div>
+            <div data-testid="no-prompts-message" className="text-gray-500">No prompts found for this project.</div>
           ) : (
             <ul className="divide-y divide-gray-200 bg-white rounded shadow">
               {prompts.map((prompt) => (
-                <li key={prompt.id} className="p-4 hover:bg-gray-50 flex flex-col h-full">
+                <li key={prompt.id} data-testid={`prompt-list-item-${prompt.id}`} className="p-4 hover:bg-gray-50 flex flex-col h-full">
                   <div className="flex justify-between items-start mb-3">
                     <div></div>
                     <div className="flex space-x-2">
                       <button
+                        data-testid={`view-prompt-button-${prompt.id}`}
                         onClick={() => handleViewPrompt(prompt)}
                         className="px-3 py-1 text-sm bg-btn-subtle text-text-secondary rounded hover:bg-btn-subtle-hover"
                       >
                         View
                       </button>
                       <button
+                        data-testid={`edit-prompt-button-${prompt.id}`}
                         onClick={() => handleEditPrompt(prompt)}
                         className="px-3 py-1 text-sm bg-btn-subtle text-text-secondary rounded hover:bg-btn-subtle-hover"
                       >
                         Edit
                       </button>
                       <button
+                        data-testid={`delete-prompt-button-${prompt.id}`}
                         onClick={() => handleDeletePrompt(prompt.id)}
                         className="px-3 py-1 text-sm bg-warning text-white rounded hover:opacity-90"
                       >
@@ -176,7 +182,7 @@ export function ProjectPage() {
                     </div>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="font-bold text-lg break-words whitespace-pre-wrap">{prompt.name}</div>
+                    <div data-testid={`prompt-name-${prompt.id}`} className="font-bold text-lg break-words whitespace-pre-wrap">{prompt.name}</div>
                     <div className="text-gray-600 text-sm break-words whitespace-pre-wrap max-w-full">{prompt.prompt}</div>
                     <div className="text-xs text-gray-400 break-all">Prompt ID: {prompt.id}</div>
                     <div className="text-xs text-gray-400">
@@ -192,16 +198,17 @@ export function ProjectPage() {
         {(showEditor || (!showEditor && selectedPrompt)) && (
           <div>
             {showEditor && (
-              <div>
+              <div data-testid={isCreating ? 'create-prompt-panel' : 'edit-prompt-panel'}>
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-semibold">
+                  <h3 data-testid={isCreating ? 'create-prompt-header' : 'edit-prompt-header'} className="text-lg font-semibold">
                     {isCreating ? 'Create New Prompt' : 'Edit Prompt'}
                   </h3>
                   <button
+                    data-testid={isCreating ? 'create-prompt-cancel-button' : 'edit-prompt-cancel-button'}
                     onClick={handleCancelEditor}
                     className="px-3 py-1 text-sm bg-btn-subtle text-text-secondary rounded hover:bg-btn-subtle-hover"
                   >
-                    Cancel
+                        Cancel
                   </button>
                 </div>
 
@@ -223,12 +230,12 @@ export function ProjectPage() {
             {!showEditor && selectedPrompt && (
               <div>
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-semibold">Selected Prompt: {selectedPrompt.name}</h3>
+                  <h3 data-testid="selected-prompt-header" className="text-lg font-semibold">Selected Prompt: {selectedPrompt.name}</h3>
                   <button
                     onClick={() => setSelectedPrompt(null)}
                     className="px-3 py-1 text-sm bg-btn-subtle text-text-secondary rounded hover:bg-btn-subtle-hover"
                   >
-                    Close
+                        Close
                   </button>
                 </div>
                 <TestSuitePanel promptId={selectedPrompt.id} />

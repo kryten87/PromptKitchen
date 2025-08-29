@@ -45,7 +45,7 @@ export function CreateTestSuiteModal({ isOpen, onClose, promptId, onTestSuiteCre
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" data-testid="create-test-suite-modal">
       <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
         <h2 className="text-xl font-bold mb-4">Create New Test Suite</h2>
         <form onSubmit={handleSubmit}>
@@ -53,6 +53,7 @@ export function CreateTestSuiteModal({ isOpen, onClose, promptId, onTestSuiteCre
             <label htmlFor="test-suite-name" className="block text-gray-700 mb-2">Test Suite Name</label>
             <input
               id="test-suite-name"
+              data-testid="create-test-suite-name-input"
               type="text"
               className="w-full border border-gray-300 rounded px-3 py-2"
               value={name}
@@ -66,6 +67,7 @@ export function CreateTestSuiteModal({ isOpen, onClose, promptId, onTestSuiteCre
           <div className="flex justify-end gap-2">
             <button
               type="button"
+              data-testid="create-test-suite-cancel-button"
               className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
               onClick={onClose}
               disabled={loading}
@@ -74,6 +76,7 @@ export function CreateTestSuiteModal({ isOpen, onClose, promptId, onTestSuiteCre
             </button>
             <button
               type="submit"
+              data-testid="create-test-suite-submit-button"
               className="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700 disabled:opacity-50"
               disabled={!name.trim() || loading}
             >

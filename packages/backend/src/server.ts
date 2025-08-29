@@ -44,6 +44,8 @@ const userService = new UserService({
 const projectService = new ProjectService(projectRepository);
 const promptService = PromptService.factory(dbConnector);
 
+const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+
 registerAuthController(server, { userService });
 registerTestSuiteRoutes(server, dbConnector);
 registerProjectRoutes(server, projectService, userService);
@@ -122,10 +124,10 @@ server.get('/', async () => {
 export async function start() {
   await runMigrations(dbConnector); // Run DB migrations after connection
   try {
-    const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+    await runMigrations(dbConnector); // Run DB migrations after connection
     await server.listen({ port, host: '0.0.0.0' });
     server.log.info(`Server started on port ${port}`);
-  } catch (err) {
+} catch (err) {
     server.log.error(err);
     process.exit(1);
   }

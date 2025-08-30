@@ -16,15 +16,15 @@ let project: Project;
 async function createPrompt(page: Page, name: string, text: string) {
   await page.getByTestId('create-new-prompt-button').click();
 
-  const createPromptPanel = page.getByTestId('create-prompt-panel');
-  await expect(createPromptPanel).toBeVisible();
+  const createPromptModal = page.getByTestId('create-prompt-modal');
+  await expect(createPromptModal).toBeVisible();
 
-  await createPromptPanel.getByTestId('create-prompt-name-input').fill(name);
-  await createPromptPanel.getByTestId('create-prompt-text-input').fill(text);
+  await createPromptModal.getByTestId('create-prompt-name-input').fill(name);
+  await createPromptModal.getByTestId('create-prompt-text-input').fill(text);
 
-  await createPromptPanel.getByTestId('create-prompt-submit-button').click();
+  await createPromptModal.getByTestId('create-prompt-submit-button').click();
 
-  await expect(createPromptPanel).not.toBeVisible();
+  await expect(createPromptModal).not.toBeVisible();
 }
 
 test.beforeEach(async ({ page }) => {
@@ -114,18 +114,18 @@ test('Initial Page Load', async ({ page }) => {
   await expect(page.getByTestId('no-prompts-message')).toBeVisible();
 });
 
-test('Create New Prompt Panel', async ({ page }) => {
+test('Create New Prompt Modal', async ({ page }) => {
   await page.getByTestId('create-new-prompt-button').click();
 
-  const createPromptPanel = page.getByTestId('create-prompt-panel');
-  await expect(createPromptPanel).toBeVisible();
+  const createPromptModal = page.getByTestId('create-prompt-modal');
+  await expect(createPromptModal).toBeVisible();
 
-  await expect(createPromptPanel.getByTestId('create-prompt-header')).toBeVisible();
-  await expect(createPromptPanel.getByTestId('create-prompt-name-input')).toBeVisible();
-  await expect(createPromptPanel.getByTestId('create-prompt-text-input')).toBeVisible();
-  await expect(createPromptPanel.getByTestId('create-prompt-cancel-button')).toBeVisible();
+  await expect(createPromptModal.getByTestId('create-prompt-header')).toBeVisible();
+  await expect(createPromptModal.getByTestId('create-prompt-name-input')).toBeVisible();
+  await expect(createPromptModal.getByTestId('create-prompt-text-input')).toBeVisible();
+  await expect(createPromptModal.getByTestId('create-prompt-cancel-button')).toBeVisible();
 
-  const createButton = createPromptPanel.getByTestId('create-prompt-submit-button');
+  const createButton = createPromptModal.getByTestId('create-prompt-submit-button');
   await expect(createButton).toBeVisible();
   await expect(createButton).toBeDisabled();
 });
@@ -133,25 +133,25 @@ test('Create New Prompt Panel', async ({ page }) => {
 test('Enable Create Prompt Button', async ({ page }) => {
   await page.getByTestId('create-new-prompt-button').click();
 
-  const createPromptPanel = page.getByTestId('create-prompt-panel');
-  await expect(createPromptPanel).toBeVisible();
+  const createPromptModal = page.getByTestId('create-prompt-modal');
+  await expect(createPromptModal).toBeVisible();
 
-  await createPromptPanel.getByTestId('create-prompt-name-input').fill('Test Prompt Name');
-  await createPromptPanel.getByTestId('create-prompt-text-input').fill('Test Prompt Text');
+  await createPromptModal.getByTestId('create-prompt-name-input').fill('Test Prompt Name');
+  await createPromptModal.getByTestId('create-prompt-text-input').fill('Test Prompt Text');
 
-  const createButton = createPromptPanel.getByTestId('create-prompt-submit-button');
+  const createButton = createPromptModal.getByTestId('create-prompt-submit-button');
   await expect(createButton).toBeEnabled();
 });
 
 test('Cancel Creating a Prompt', async ({ page }) => {
   await page.getByTestId('create-new-prompt-button').click();
 
-  const createPromptPanel = page.getByTestId('create-prompt-panel');
-  await expect(createPromptPanel).toBeVisible();
+  const createPromptModal = page.getByTestId('create-prompt-modal');
+  await expect(createPromptModal).toBeVisible();
 
-  await createPromptPanel.getByTestId('create-prompt-cancel-button').click();
+  await createPromptModal.getByTestId('create-prompt-cancel-button').click();
 
-  await expect(createPromptPanel).not.toBeVisible();
+  await expect(createPromptModal).not.toBeVisible();
   await expect(page.getByTestId('no-prompts-message')).toBeVisible();
 });
 

@@ -107,7 +107,7 @@ describe('ProjectPage', () => {
     expect(deleteButtons).toHaveLength(2);
   });
 
-  it('shows create prompt form when create new prompt is clicked', async () => {
+  it('shows create prompt modal when create new prompt is clicked', async () => {
     mockApiClient.request = jest.fn()
       .mockImplementation((path: string) => {
         if (path === '/projects/1') return Promise.resolve(mockProject);
@@ -120,6 +120,7 @@ describe('ProjectPage', () => {
     const createButton = await screen.findByRole('button', { name: 'Create New Prompt' });
     fireEvent.click(createButton);
 
+    expect(screen.getByTestId('create-prompt-modal')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Create New Prompt' })).toBeInTheDocument();
     expect(screen.getByLabelText('Prompt Name')).toBeInTheDocument();
     expect(screen.getByLabelText('Prompt Text')).toBeInTheDocument();
@@ -170,6 +171,9 @@ describe('ProjectPage', () => {
     const createButton = await screen.findByRole('button', { name: 'Create New Prompt' });
     fireEvent.click(createButton);
 
+    // Wait for modal to open
+    await screen.findByTestId('create-prompt-modal');
+
     const nameInput = screen.getByLabelText('Prompt Name');
     const textInput = screen.getByLabelText('Prompt Text');
     const createPromptButton = screen.getByText('Create Prompt');
@@ -188,6 +192,11 @@ describe('ProjectPage', () => {
         }),
         headers: { 'Content-Type': 'application/json' },
       });
+    });
+
+    // Modal should close after successful creation
+    await waitFor(() => {
+      expect(screen.queryByTestId('create-prompt-modal')).not.toBeInTheDocument();
     });
   });
 
@@ -231,7 +240,7 @@ describe('ProjectPage', () => {
     expect(mockApiClient.request).not.toHaveBeenCalledWith('/prompts/p1', { method: 'DELETE' });
   });
 
-  it('shows cancel button in editor and hides editor when clicked', async () => {
+  it('shows cancel button in modal and hides modal when clicked', async () => {
     mockApiClient.request = jest.fn()
       .mockImplementation((path: string) => {
         if (path === '/projects/1') return Promise.resolve(mockProject);
@@ -244,11 +253,11 @@ describe('ProjectPage', () => {
     const createButton = await screen.findByRole('button', { name: 'Create New Prompt' });
     fireEvent.click(createButton);
 
-    const cancelButton = screen.getByText('Cancel');
+    const cancelButton = screen.getByTestId('create-prompt-cancel-button');
     fireEvent.click(cancelButton);
 
+    expect(screen.queryByTestId('create-prompt-modal')).not.toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: 'Create New Prompt' })).not.toBeInTheDocument();
-    expect(screen.queryByLabelText('Prompt Name')).not.toBeInTheDocument();
   });
 
   it('shows no prompts message when prompts list is empty', async () => {

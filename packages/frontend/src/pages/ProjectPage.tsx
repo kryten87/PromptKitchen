@@ -2,7 +2,7 @@ import type { Project, Prompt } from '@prompt-kitchen/shared/src/dtos';
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ConfirmModal } from '../components/ConfirmModal';
-import { CreatePromptForm } from '../components/CreatePromptForm';
+import { CreatePromptModal } from '../components/CreatePromptModal';
 import { PromptEditor } from '../components/PromptEditor';
 import PromptHistoryModal from '../components/PromptHistoryModal';
 import { TestSuitePanel } from '../components/TestSuitePanel';
@@ -16,8 +16,8 @@ export function ProjectPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
-  const [isCreating, setIsCreating] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
+  const [showCreatePromptModal, setShowCreatePromptModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [confirmModal, setConfirmModal] = useState<{
     open: boolean;
@@ -51,20 +51,16 @@ export function ProjectPage() {
   }, [loadProjectAndPrompts]);
 
   const handleCreateNewPrompt = () => {
-    setSelectedPrompt(null);
-    setIsCreating(true);
-    setShowEditor(true);
+    setShowCreatePromptModal(true);
   };
 
   const handleEditPrompt = (prompt: Prompt) => {
     setSelectedPrompt(prompt);
-    setIsCreating(false);
     setShowEditor(true);
   };
 
   const handleViewPrompt = (prompt: Prompt) => {
     setSelectedPrompt(prompt);
-    setIsCreating(false);
     setShowEditor(false);
   };
 
@@ -99,9 +95,7 @@ export function ProjectPage() {
         headers: { 'Content-Type': 'application/json' },
       });
       await loadProjectAndPrompts();
-      setSelectedPrompt(null);
-      setIsCreating(false);
-      setShowEditor(false);
+      setShowCreatePromptModal(false);
     } catch {
       setErrorAlert('Failed to create prompt');
     }
@@ -121,7 +115,6 @@ export function ProjectPage() {
   const handleCancelEditor = () => {
     setShowEditor(false);
     setSelectedPrompt(null);
-    setIsCreating(false);
   };
 
   if (loading) return <div className="p-4">Loading project...</div>;
@@ -197,14 +190,14 @@ export function ProjectPage() {
 
         {(showEditor || (!showEditor && selectedPrompt)) && (
           <div>
-            {showEditor && (
-              <div data-testid={isCreating ? 'create-prompt-panel' : 'edit-prompt-panel'}>
+            {showEditor && selectedPrompt && (
+              <div data-testid="edit-prompt-panel">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 data-testid={isCreating ? 'create-prompt-header' : 'edit-prompt-header'} className="text-lg font-semibold">
-                    {isCreating ? 'Create New Prompt' : 'Edit Prompt'}
+                  <h3 data-testid="edit-prompt-header" className="text-lg font-semibold">
+                    Edit Prompt
                   </h3>
                   <button
-                    data-testid={isCreating ? 'create-prompt-cancel-button' : 'edit-prompt-cancel-button'}
+                    data-testid="edit-prompt-cancel-button"
                     onClick={handleCancelEditor}
                     className="px-3 py-1 text-sm bg-btn-subtle text-text-secondary rounded hover:bg-btn-subtle-hover"
                   >
@@ -212,18 +205,11 @@ export function ProjectPage() {
                   </button>
                 </div>
 
-                {isCreating ? (
-                  <CreatePromptForm
-                    projectId={projectId!}
-                    onPromptCreated={handlePromptCreated}
-                  />
-                ) : (
-                  <PromptEditor
-                    prompt={selectedPrompt}
-                    onPromptUpdated={handlePromptUpdated}
-                    onViewHistory={() => setShowHistoryModal(true)}
-                  />
-                )}
+                <PromptEditor
+                  prompt={selectedPrompt}
+                  onPromptUpdated={handlePromptUpdated}
+                  onViewHistory={() => setShowHistoryModal(true)}
+                />
               </div>
             )}
 
@@ -244,6 +230,13 @@ export function ProjectPage() {
           </div>
         )}
       </div>
+
+      <CreatePromptModal
+        open={showCreatePromptModal}
+        projectId={projectId!}
+        onPromptCreated={handlePromptCreated}
+        onCancel={() => setShowCreatePromptModal(false)}
+      />
 
       <PromptHistoryModal
         isOpen={showHistoryModal}

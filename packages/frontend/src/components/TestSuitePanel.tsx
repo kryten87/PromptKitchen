@@ -3,9 +3,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { useApiClient } from '../hooks/useApiClient';
 import { useTestSuiteRunPolling } from '../hooks/useTestSuiteRunPolling';
 import { ConfirmModal } from './ConfirmModal';
+import { CreateTestCaseModal } from './CreateTestCaseModal';
 import { CreateTestSuiteModal } from './CreateTestSuiteModal';
 import { EditTestSuiteModal } from './EditTestSuiteModal';
-import { TestCaseEditor } from './TestCaseEditor';
 import { TestResultsView } from './TestResultsView';
 
 interface TestSuitePanelProps {
@@ -26,7 +26,7 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
   const [testCases, setTestCases] = useState<TestCase[]>([]);
   const [loadingTestCases, setLoadingTestCases] = useState(false);
   const [testCasesError, setTestCasesError] = useState<string | null>(null);
-  const [showTestCaseEditor, setShowTestCaseEditor] = useState(false);
+  const [showTestCaseModal, setShowTestCaseModal] = useState(false);
   const [editingTestCase, setEditingTestCase] = useState<TestCase | null>(null);
 
   // Test suite execution state
@@ -139,12 +139,12 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
 
   const handleCreateTestCase = () => {
     setEditingTestCase(null);
-    setShowTestCaseEditor(true);
+    setShowTestCaseModal(true);
   };
 
   const handleEditTestCase = (testCase: TestCase) => {
     setEditingTestCase(testCase);
-    setShowTestCaseEditor(true);
+    setShowTestCaseModal(true);
   };
 
   const handleDeleteTestCase = (testCaseId: string) => {
@@ -169,14 +169,14 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
 
   const handleTestCaseCreated = (testCase: TestCase) => {
     setTestCases(prev => [...prev, testCase]);
-    setShowTestCaseEditor(false);
+    setShowTestCaseModal(false);
   };
 
   const handleTestCaseUpdated = (updatedTestCase: TestCase) => {
     setTestCases(prev => prev.map(tc =>
       tc.id === updatedTestCase.id ? updatedTestCase : tc
     ));
-    setShowTestCaseEditor(false);
+    setShowTestCaseModal(false);
   };
 
   const handleRunTestSuite = async (testSuiteId: string) => {
@@ -207,8 +207,8 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
     }
   };
 
-  const handleCancelTestCaseEditor = () => {
-    setShowTestCaseEditor(false);
+  const handleCancelTestCaseModal = () => {
+    setShowTestCaseModal(false);
     setEditingTestCase(null);
   };
 
@@ -318,17 +318,7 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
                 </div>
               </div>
 
-              {showTestCaseEditor ? (
-                <div className="mb-4">
-                  <TestCaseEditor
-                    testSuiteId={selectedTestSuiteForCases.id}
-                    testCase={editingTestCase}
-                    onTestCaseCreated={handleTestCaseCreated}
-                    onTestCaseUpdated={handleTestCaseUpdated}
-                    onCancel={handleCancelTestCaseEditor}
-                  />
-                </div>
-              ) : loadingTestCases ? (
+              {loadingTestCases ? (
                 <div className="text-gray-500 text-sm">Loading test cases...</div>
               ) : testCasesError ? (
                 <div className="text-red-500 text-sm">{testCasesError}</div>
@@ -455,6 +445,15 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
         onClose={() => setShowEditModal(false)}
         testSuite={selectedTestSuite}
         onTestSuiteUpdated={handleTestSuiteUpdated}
+      />
+
+      <CreateTestCaseModal
+        open={showTestCaseModal}
+        testSuiteId={selectedTestSuiteForCases?.id || ''}
+        testCase={editingTestCase}
+        onTestCaseCreated={handleTestCaseCreated}
+        onTestCaseUpdated={handleTestCaseUpdated}
+        onCancel={handleCancelTestCaseModal}
       />
     </div>
   );

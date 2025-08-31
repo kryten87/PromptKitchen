@@ -162,8 +162,8 @@ test('Create a New Prompt', async ({ page }) => {
 
   await expect(page.getByTestId('no-prompts-message')).not.toBeVisible();
 
-  const editPromptPanel = page.getByTestId('edit-prompt-panel');
-  await expect(editPromptPanel).not.toBeVisible();
+  const editPromptModal = page.getByTestId('edit-prompt-modal');
+  await expect(editPromptModal).not.toBeVisible();
 
   // Can't get by ID since we don't know it, so we'll check for the name
   const promptListItem = page.locator(`[data-testid^="prompt-list-item-"]`);
@@ -226,12 +226,12 @@ test('Edit a Prompt (and cancel)', async ({ page }) => {
 
   await page.getByTestId(`edit-prompt-button-${promptId}`).click();
 
-  const editPromptPanel = page.getByTestId('edit-prompt-panel');
-  await expect(editPromptPanel).toBeVisible();
+  const editPromptModal = page.getByTestId('edit-prompt-modal');
+  await expect(editPromptModal).toBeVisible();
 
-  await editPromptPanel.getByTestId('edit-prompt-cancel-button').click();
+  await editPromptModal.getByTestId('edit-prompt-cancel-button').click();
 
-  await expect(editPromptPanel).not.toBeVisible();
+  await expect(editPromptModal).not.toBeVisible();
   await expect(promptListItem.getByText(promptName)).toBeVisible();
 });
 
@@ -245,18 +245,18 @@ test('Edit a Prompt (and save)', async ({ page }) => {
 
   await page.getByTestId(`edit-prompt-button-${promptId}`).click();
 
-  const editPromptPanel = page.getByTestId('edit-prompt-panel');
-  await expect(editPromptPanel).toBeVisible();
+  const editPromptModal = page.getByTestId('edit-prompt-modal');
+  await expect(editPromptModal).toBeVisible();
 
   const newName = 'Updated Prompt Name';
   const newText = 'Updated Prompt Text';
 
-  await editPromptPanel.locator('input[type="text"]').fill(newName);
-  await editPromptPanel.locator('textarea').fill(newText);
+  await editPromptModal.locator('input[type="text"]').fill(newName);
+  await editPromptModal.locator('textarea').fill(newText);
 
-  await editPromptPanel.getByText('Save').click();
+  await editPromptModal.getByText('Save').click();
 
-  await expect(editPromptPanel).not.toBeVisible();
+  await expect(editPromptModal).not.toBeVisible();
 
   const newPromptListItem = page.locator(`[data-testid^="prompt-list-item-"]`);
   await expect(newPromptListItem.getByText(newName)).toBeVisible();

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ConfirmModal } from '../components/ConfirmModal';
 import { CreatePromptModal } from '../components/CreatePromptModal';
-import { PromptEditor } from '../components/PromptEditor';
+import { EditPromptModal } from '../components/EditPromptModal';
 import PromptHistoryModal from '../components/PromptHistoryModal';
 import { TestSuitePanel } from '../components/TestSuitePanel';
 import { useApiClient } from '../hooks/useApiClient';
@@ -16,7 +16,7 @@ export function ProjectPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
-  const [showEditor, setShowEditor] = useState(false);
+  const [showEditPromptModal, setShowEditPromptModal] = useState(false);
   const [showCreatePromptModal, setShowCreatePromptModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [confirmModal, setConfirmModal] = useState<{
@@ -56,12 +56,12 @@ export function ProjectPage() {
 
   const handleEditPrompt = (prompt: Prompt) => {
     setSelectedPrompt(prompt);
-    setShowEditor(true);
+    setShowEditPromptModal(true);
   };
 
   const handleViewPrompt = (prompt: Prompt) => {
     setSelectedPrompt(prompt);
-    setShowEditor(false);
+    setShowEditPromptModal(false);
   };
 
   const handleDeletePrompt = async (promptId: string) => {
@@ -74,7 +74,7 @@ export function ProjectPage() {
           await apiClient.request(`/prompts/${promptId}`, { method: 'DELETE' });
           await loadProjectAndPrompts();
           if (selectedPrompt?.id === promptId) {
-            setShowEditor(false);
+            setShowEditPromptModal(false);
             setSelectedPrompt(null);
           }
         } catch {
@@ -104,7 +104,7 @@ export function ProjectPage() {
   const handlePromptUpdated = async (updatedPrompt: Prompt) => {
     await loadProjectAndPrompts();
     setSelectedPrompt(updatedPrompt);
-    setShowEditor(false);
+    setShowEditPromptModal(false);
   };
 
   const handlePromptRestored = async (restoredPrompt: Prompt) => {
@@ -113,7 +113,7 @@ export function ProjectPage() {
   };
 
   const handleCancelEditor = () => {
-    setShowEditor(false);
+    setShowEditPromptModal(false);
     setSelectedPrompt(null);
   };
 
@@ -194,47 +194,28 @@ export function ProjectPage() {
         </div>
       )}
 
-      {(showEditor || (!showEditor && selectedPrompt)) && (
+      {selectedPrompt && !showEditPromptModal && (
         <div>
-          {showEditor && selectedPrompt && (
-            <div data-testid="edit-prompt-panel">
-              <div className="flex justify-between items-center mb-4">
-                <h3 data-testid="edit-prompt-header" className="text-lg font-semibold">
-                    Edit Prompt
-                </h3>
-                <button
-                  data-testid="edit-prompt-cancel-button"
-                  onClick={handleCancelEditor}
-                  className="px-3 py-1 text-sm bg-btn-subtle text-text-secondary rounded hover:bg-btn-subtle-hover"
-                >
-                        Cancel
-                </button>
-              </div>
-
-              <PromptEditor
-                prompt={selectedPrompt}
-                onPromptUpdated={handlePromptUpdated}
-                onViewHistory={() => setShowHistoryModal(true)}
-              />
-            </div>
-          )}
-
-          {!showEditor && selectedPrompt && (
-            <div>
-              <div className="flex justify-between items-center mb-4">
-                <h3 data-testid="selected-prompt-header" className="text-lg font-semibold">Selected Prompt: {selectedPrompt.name}</h3>
-                <button
-                  onClick={() => setSelectedPrompt(null)}
-                  className="px-3 py-1 text-sm bg-btn-subtle text-text-secondary rounded hover:bg-btn-subtle-hover"
-                >
-                        Close
-                </button>
-              </div>
-              <TestSuitePanel promptId={selectedPrompt.id} />
-            </div>
-          )}
+          <div className="flex justify-between items-center mb-4">
+            <h3 data-testid="selected-prompt-header" className="text-lg font-semibold">Selected Prompt: {selectedPrompt.name}</h3>
+            <button
+              onClick={() => setSelectedPrompt(null)}
+              className="px-3 py-1 text-sm bg-btn-subtle text-text-secondary rounded hover:bg-btn-subtle-hover"
+            >
+              Close
+            </button>
+          </div>
+          <TestSuitePanel promptId={selectedPrompt.id} />
         </div>
       )}
+
+      <EditPromptModal
+        open={showEditPromptModal}
+        prompt={selectedPrompt}
+        onPromptUpdated={handlePromptUpdated}
+        onViewHistory={() => setShowHistoryModal(true)}
+        onCancel={handleCancelEditor}
+      />
 
       <CreatePromptModal
         open={showCreatePromptModal}

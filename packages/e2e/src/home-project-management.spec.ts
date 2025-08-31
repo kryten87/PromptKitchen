@@ -96,25 +96,25 @@ test('hovers over project card to show edit and delete buttons', async ({
   page,
 }) => {
   const projectCard = page.getByTestId(
-    `project-card-${toKebabCase(project.name)}`,
+    `project-list-item-${toKebabCase(project.name)}`,
   );
   await projectCard.hover();
 
   await expect(
-    projectCard.getByTestId(`project-card-edit-button-${toKebabCase(project.name)}`),
+    projectCard.getByTestId(`project-list-item-edit-button-${toKebabCase(project.name)}`),
   ).toBeVisible();
   await expect(
-    projectCard.getByTestId(`project-card-delete-button-${toKebabCase(project.name)}`),
+    projectCard.getByTestId(`project-list-item-delete-button-${toKebabCase(project.name)}`),
   ).toBeVisible();
 });
 
 test('shows delete confirmation modal and cancels', async ({ page }) => {
   const projectCard = page.getByTestId(
-    `project-card-${toKebabCase(project.name)}`,
+    `project-list-item-${toKebabCase(project.name)}`,
   );
   await projectCard.hover();
   await projectCard.getByTestId(
-    `project-card-delete-button-${toKebabCase(project.name)}`,
+    `project-list-item-delete-button-${toKebabCase(project.name)}`,
   ).click();
 
   const confirmModal = page.getByTestId('confirm-modal');
@@ -130,11 +130,11 @@ test('shows delete confirmation modal and cancels', async ({ page }) => {
 
 test('deletes a project from the dashboard', async ({ page }) => {
   const projectCard = page.getByTestId(
-    `project-card-${toKebabCase(project.name)}`,
+    `project-list-item-${toKebabCase(project.name)}`,
   );
   await projectCard.hover();
   await projectCard.getByTestId(
-    `project-card-delete-button-${toKebabCase(project.name)}`,
+    `project-list-item-delete-button-${toKebabCase(project.name)}`,
   ).click();
 
   const confirmModal = page.getByTestId('confirm-modal');
@@ -147,11 +147,11 @@ test('deletes a project from the dashboard', async ({ page }) => {
 
 test('shows edit project modal and cancels', async ({ page }) => {
   const projectCard = page.getByTestId(
-    `project-card-${toKebabCase(project.name)}`,
+    `project-list-item-${toKebabCase(project.name)}`,
   );
   await projectCard.hover();
   await projectCard.getByTestId(
-    `project-card-edit-button-${toKebabCase(project.name)}`,
+    `project-list-item-edit-button-${toKebabCase(project.name)}`,
   ).click();
 
   const editModal = page.getByTestId('edit-project-modal');
@@ -172,11 +172,11 @@ test('shows edit project modal and cancels', async ({ page }) => {
 
 test('edits a project from the dashboard', async ({ page }) => {
   const projectCard = page.getByTestId(
-    `project-card-${toKebabCase(project.name)}`,
+    `project-list-item-${toKebabCase(project.name)}`,
   );
   await projectCard.hover();
   await projectCard.getByTestId(
-    `project-card-edit-button-${toKebabCase(project.name)}`,
+    `project-list-item-edit-button-${toKebabCase(project.name)}`,
   ).click();
 
   const editModal = page.getByTestId('edit-project-modal');
@@ -193,7 +193,7 @@ test('edits a project from the dashboard', async ({ page }) => {
   await editModal.getByTestId('edit-project-modal-submit-button').click();
   await expect(editModal).not.toBeVisible();
 
-  const updatedCard = page.getByTestId(`project-card-${toKebabCase(newName)}`);
+  const updatedCard = page.getByTestId(`project-list-item-${toKebabCase(newName)}`);
   await expect(updatedCard).toBeVisible();
   await expect(updatedCard).toContainText(newName);
 });

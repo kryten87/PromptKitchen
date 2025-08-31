@@ -2,8 +2,8 @@ import type { Project, Prompt } from '@prompt-kitchen/shared/src/dtos';
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ConfirmModal } from '../components/ConfirmModal';
-import { CreatePromptForm } from '../components/CreatePromptForm';
-import { PromptEditor } from '../components/PromptEditor';
+import { CreatePromptModal } from '../components/CreatePromptModal';
+import { EditPromptModal } from '../components/EditPromptModal';
 import PromptHistoryModal from '../components/PromptHistoryModal';
 import { TestSuitePanel } from '../components/TestSuitePanel';
 import { useApiClient } from '../hooks/useApiClient';
@@ -16,8 +16,8 @@ export function ProjectPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
-  const [isCreating, setIsCreating] = useState(false);
-  const [showEditor, setShowEditor] = useState(false);
+  const [showEditPromptModal, setShowEditPromptModal] = useState(false);
+  const [showCreatePromptModal, setShowCreatePromptModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [confirmModal, setConfirmModal] = useState<{
     open: boolean;
@@ -51,21 +51,17 @@ export function ProjectPage() {
   }, [loadProjectAndPrompts]);
 
   const handleCreateNewPrompt = () => {
-    setSelectedPrompt(null);
-    setIsCreating(true);
-    setShowEditor(true);
+    setShowCreatePromptModal(true);
   };
 
   const handleEditPrompt = (prompt: Prompt) => {
     setSelectedPrompt(prompt);
-    setIsCreating(false);
-    setShowEditor(true);
+    setShowEditPromptModal(true);
   };
 
   const handleViewPrompt = (prompt: Prompt) => {
     setSelectedPrompt(prompt);
-    setIsCreating(false);
-    setShowEditor(false);
+    setShowEditPromptModal(false);
   };
 
   const handleDeletePrompt = async (promptId: string) => {
@@ -78,7 +74,7 @@ export function ProjectPage() {
           await apiClient.request(`/prompts/${promptId}`, { method: 'DELETE' });
           await loadProjectAndPrompts();
           if (selectedPrompt?.id === promptId) {
-            setShowEditor(false);
+            setShowEditPromptModal(false);
             setSelectedPrompt(null);
           }
         } catch {
@@ -99,9 +95,7 @@ export function ProjectPage() {
         headers: { 'Content-Type': 'application/json' },
       });
       await loadProjectAndPrompts();
-      setSelectedPrompt(null);
-      setIsCreating(false);
-      setShowEditor(false);
+      setShowCreatePromptModal(false);
     } catch {
       setErrorAlert('Failed to create prompt');
     }
@@ -110,7 +104,7 @@ export function ProjectPage() {
   const handlePromptUpdated = async (updatedPrompt: Prompt) => {
     await loadProjectAndPrompts();
     setSelectedPrompt(updatedPrompt);
-    setShowEditor(false);
+    setShowEditPromptModal(false);
   };
 
   const handlePromptRestored = async (restoredPrompt: Prompt) => {
@@ -119,9 +113,8 @@ export function ProjectPage() {
   };
 
   const handleCancelEditor = () => {
-    setShowEditor(false);
+    setShowEditPromptModal(false);
     setSelectedPrompt(null);
-    setIsCreating(false);
   };
 
   if (loading) return <div className="p-4">Loading project...</div>;
@@ -147,103 +140,89 @@ export function ProjectPage() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div>
-          {prompts.length === 0 ? (
-            <div data-testid="no-prompts-message" className="text-gray-500">No prompts found for this project.</div>
-          ) : (
-            <ul className="divide-y divide-gray-200 bg-white rounded shadow">
-              {prompts.map((prompt) => (
-                <li key={prompt.id} data-testid={`prompt-list-item-${prompt.id}`} className="p-4 hover:bg-gray-50 flex flex-col h-full">
-                  <div className="flex justify-between items-start mb-3">
-                    <div></div>
-                    <div className="flex space-x-2">
-                      <button
-                        data-testid={`view-prompt-button-${prompt.id}`}
-                        onClick={() => handleViewPrompt(prompt)}
-                        className="px-3 py-1 text-sm bg-btn-subtle text-text-secondary rounded hover:bg-btn-subtle-hover"
-                      >
-                        View
-                      </button>
-                      <button
-                        data-testid={`edit-prompt-button-${prompt.id}`}
-                        onClick={() => handleEditPrompt(prompt)}
-                        className="px-3 py-1 text-sm bg-btn-subtle text-text-secondary rounded hover:bg-btn-subtle-hover"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        data-testid={`delete-prompt-button-${prompt.id}`}
-                        onClick={() => handleDeletePrompt(prompt.id)}
-                        className="px-3 py-1 text-sm bg-warning text-white rounded hover:opacity-90"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div data-testid={`prompt-name-${prompt.id}`} className="font-bold text-lg break-words whitespace-pre-wrap">{prompt.name}</div>
-                    <div className="text-gray-600 text-sm break-words whitespace-pre-wrap max-w-full">{prompt.prompt}</div>
-                    <div className="text-xs text-gray-400 break-all">Prompt ID: {prompt.id}</div>
-                    <div className="text-xs text-gray-400">
+      {prompts.length === 0 ? (
+        <div data-testid="no-prompts-message" className="text-gray-500 mb-6">No prompts found for this project.</div>
+      ) : (
+        <div className="mb-6">
+          <ul className="divide-y divide-gray-200 bg-white rounded-lg shadow">
+            {prompts.map((prompt) => (
+              <li
+                key={prompt.id}
+                className="p-4 hover:bg-gray-50 flex items-center justify-between"
+                data-testid={`prompt-list-item-${prompt.id}`}
+              >
+                <div className="flex-1 min-w-0 mr-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 data-testid={`prompt-name-${prompt.id}`} className="text-lg font-semibold text-gray-900 truncate">
+                      {prompt.name}
+                    </h3>
+                    <div className="text-xs text-gray-400 ml-4 flex-shrink-0">
                       Last updated: {new Date(prompt.updatedAt).toLocaleString()}
                     </div>
                   </div>
-                </li>
-              ))}
-            </ul>
-          )}
+                  <p className="text-gray-600 text-sm mb-2 break-words whitespace-pre-wrap line-clamp-2">
+                    {prompt.prompt}
+                  </p>
+                  <div className="text-xs text-gray-400">Prompt ID: {prompt.id}</div>
+                </div>
+                <div className="flex space-x-2 flex-shrink-0">
+                  <button
+                    onClick={() => handleViewPrompt(prompt)}
+                    className="px-3 py-1 text-sm bg-btn-subtle text-text-secondary rounded hover:bg-btn-subtle-hover"
+                    data-testid={`view-prompt-button-${prompt.id}`}
+                  >
+                    View
+                  </button>
+                  <button
+                    onClick={() => handleEditPrompt(prompt)}
+                    className="px-3 py-1 text-sm bg-btn-subtle text-text-secondary rounded hover:bg-btn-subtle-hover"
+                    data-testid={`edit-prompt-button-${prompt.id}`}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeletePrompt(prompt.id)}
+                    className="px-3 py-1 text-sm bg-warning text-white rounded hover:opacity-90"
+                    data-testid={`delete-prompt-button-${prompt.id}`}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
+      )}
 
-        {(showEditor || (!showEditor && selectedPrompt)) && (
-          <div>
-            {showEditor && (
-              <div data-testid={isCreating ? 'create-prompt-panel' : 'edit-prompt-panel'}>
-                <div className="flex justify-between items-center mb-4">
-                  <h3 data-testid={isCreating ? 'create-prompt-header' : 'edit-prompt-header'} className="text-lg font-semibold">
-                    {isCreating ? 'Create New Prompt' : 'Edit Prompt'}
-                  </h3>
-                  <button
-                    data-testid={isCreating ? 'create-prompt-cancel-button' : 'edit-prompt-cancel-button'}
-                    onClick={handleCancelEditor}
-                    className="px-3 py-1 text-sm bg-btn-subtle text-text-secondary rounded hover:bg-btn-subtle-hover"
-                  >
-                        Cancel
-                  </button>
-                </div>
-
-                {isCreating ? (
-                  <CreatePromptForm
-                    projectId={projectId!}
-                    onPromptCreated={handlePromptCreated}
-                  />
-                ) : (
-                  <PromptEditor
-                    prompt={selectedPrompt}
-                    onPromptUpdated={handlePromptUpdated}
-                    onViewHistory={() => setShowHistoryModal(true)}
-                  />
-                )}
-              </div>
-            )}
-
-            {!showEditor && selectedPrompt && (
-              <div>
-                <div className="flex justify-between items-center mb-4">
-                  <h3 data-testid="selected-prompt-header" className="text-lg font-semibold">Selected Prompt: {selectedPrompt.name}</h3>
-                  <button
-                    onClick={() => setSelectedPrompt(null)}
-                    className="px-3 py-1 text-sm bg-btn-subtle text-text-secondary rounded hover:bg-btn-subtle-hover"
-                  >
-                        Close
-                  </button>
-                </div>
-                <TestSuitePanel promptId={selectedPrompt.id} />
-              </div>
-            )}
+      {selectedPrompt && !showEditPromptModal && (
+        <div>
+          <div className="flex justify-between items-center mb-4">
+            <h3 data-testid="selected-prompt-header" className="text-lg font-semibold">Selected Prompt: {selectedPrompt.name}</h3>
+            <button
+              onClick={() => setSelectedPrompt(null)}
+              className="px-3 py-1 text-sm bg-btn-subtle text-text-secondary rounded hover:bg-btn-subtle-hover"
+            >
+              Close
+            </button>
           </div>
-        )}
-      </div>
+          <TestSuitePanel promptId={selectedPrompt.id} />
+        </div>
+      )}
+
+      <EditPromptModal
+        open={showEditPromptModal}
+        prompt={selectedPrompt}
+        onPromptUpdated={handlePromptUpdated}
+        onViewHistory={() => setShowHistoryModal(true)}
+        onCancel={handleCancelEditor}
+      />
+
+      <CreatePromptModal
+        open={showCreatePromptModal}
+        projectId={projectId!}
+        onPromptCreated={handlePromptCreated}
+        onCancel={() => setShowCreatePromptModal(false)}
+      />
 
       <PromptHistoryModal
         isOpen={showHistoryModal}

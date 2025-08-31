@@ -310,7 +310,7 @@ describe('TestSuitePanel', () => {
     });
   });
 
-  it('shows test case editor when Add Test Case is clicked', async () => {
+  it('shows test case modal when Add Test Case is clicked', async () => {
     mockApiClient.request
       .mockResolvedValueOnce(mockTestSuites) // Initial test suites load
       .mockResolvedValueOnce([]); // Empty test cases
@@ -331,13 +331,14 @@ describe('TestSuitePanel', () => {
     // Click Add Test Case
     fireEvent.click(screen.getByText('Add Test Case'));
 
+    expect(screen.getByTestId('create-test-case-modal')).toBeInTheDocument();
     expect(screen.getByText('Create New Test Case')).toBeInTheDocument();
     expect(screen.getByText('Input Variables')).toBeInTheDocument();
     expect(screen.getByText('Expected Output')).toBeInTheDocument();
     expect(screen.getByText('Run Mode')).toBeInTheDocument();
   });
 
-  it('shows test case editor when editing a test case', async () => {
+  it('shows test case modal when editing a test case', async () => {
     mockApiClient.request
       .mockResolvedValueOnce(mockTestSuites) // Initial test suites load
       .mockResolvedValueOnce(mockTestCases); // Test cases load
@@ -360,6 +361,7 @@ describe('TestSuitePanel', () => {
     // Skip the test suite edit buttons (2) and click on test case edit button
     fireEvent.click(editButtons[2]);
 
+    expect(screen.getByTestId('create-test-case-modal')).toBeInTheDocument();
     expect(screen.getByText('Edit Test Case')).toBeInTheDocument();
     expect(screen.getByDisplayValue('name')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Alice')).toBeInTheDocument();

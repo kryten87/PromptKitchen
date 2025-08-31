@@ -67,7 +67,6 @@ test('home page - clicking "New Project" opens the Create New Project modal', as
 
 test('home page - creating a new project and cancelling', async ({ page }) => {
   const projectName = `Test Project - ${Date.now()} - ${randomSuffix()}`;
-  const description = 'Test Description';
 
   // Click the "New Project" button using data-testid
   await page.getByTestId('dashboard-new-project-button').click();
@@ -75,13 +74,10 @@ test('home page - creating a new project and cancelling', async ({ page }) => {
   // Assert that the modal is displayed using data-testid
   await expect(page.getByTestId('create-project-modal')).toBeVisible();
 
-  // Fill in the project name and description
+  // Fill in the project name
   await page
     .getByTestId('create-project-modal-name-input')
     .fill('Test Project');
-  await page
-    .getByTestId('create-project-modal-description-input')
-    .fill('Test Description');
 
   // Click the "Cancel" button
   await page.getByTestId('create-project-modal-cancel-button').click();
@@ -89,13 +85,12 @@ test('home page - creating a new project and cancelling', async ({ page }) => {
   // Assert that the modal is no longer visible
   await expect(page.getByTestId('create-project-modal')).not.toBeVisible();
 
-  // Assert that the project card was not created
-  await expect(page.getByTestId(`project-card-${toKebabCase(projectName)}`)).not.toBeVisible();
+  // Assert that the project was not created
+  await expect(page.getByTestId(`project-list-item-${toKebabCase(projectName)}`)).not.toBeVisible();
 });
 
 test('home page - creating a new project and submitting', async ({ page }) => {
   const projectName = `Test Project - ${Date.now()} - ${randomSuffix()}`;
-  const description = 'Test Description';
 
   // Click the "New Project" button using data-testid
   await page.getByTestId('dashboard-new-project-button').click();
@@ -109,7 +104,7 @@ test('home page - creating a new project and submitting', async ({ page }) => {
     .fill(projectName);
   await page
     .getByTestId('create-project-modal-description-input')
-    .fill(description);
+    .fill('Test Description');
 
   // Click the "Create" button
   await page.getByTestId('create-project-modal-submit-button').click();
@@ -117,6 +112,6 @@ test('home page - creating a new project and submitting', async ({ page }) => {
   // Assert that the modal is no longer visible
   await expect(page.getByTestId('create-project-modal')).not.toBeVisible();
 
-  // Assert that the project card was created
-  await expect(page.getByTestId(`project-card-${toKebabCase(projectName)}`)).toBeVisible();
+  // Assert that the new project page is displayed
+  await expect(page.getByTestId(`project-name`)).toHaveText(projectName);
 });

@@ -1,6 +1,7 @@
 import type { Project } from '@prompt-kitchen/shared';
 import { toKebabCase } from '@prompt-kitchen/shared/src/helpers/toKebabCase';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ConfirmModal } from '../components/ConfirmModal';
 import { CreateProjectModal } from '../components/CreateProjectModal';
 import { EditProjectModal } from '../components/EditProjectModal';
@@ -20,6 +21,7 @@ export function DashboardPage() {
       } | null>(null);
   const [errorAlert, setErrorAlert] = useState<string | null>(null);
   const apiClient = useApiClient();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -36,6 +38,11 @@ export function DashboardPage() {
 
     fetchProjects();
   }, [apiClient]);
+
+  const handleProjectCreated = (project: Project) => {
+    setProjects([project, ...projects]);
+    navigate(`/projects/${project.id}`);
+  };
 
   const handleEditClick = (project: Project) => {
     setSelectedProject(project);
@@ -78,7 +85,7 @@ export function DashboardPage() {
       <CreateProjectModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
-        onProjectCreated={(project: Project) => setProjects([project, ...projects])}
+        onProjectCreated={handleProjectCreated}
         data-testid="create-project-modal"
       />
 
@@ -93,17 +100,17 @@ export function DashboardPage() {
       {error && <p className="text-red-500">{error}</p>}
 
       {!loading && !error && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <ul className="space-y-4">
           {projects.map((project) => (
-            <div
+            <li
               key={project.id}
               role="button"
               tabIndex={0}
               className="relative group block p-6 w-full text-left bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400 cursor-pointer"
-              onClick={() => window.location.assign(`/projects/${project.id}`)}
-              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') window.location.assign(`/projects/${project.id}`); }}
+              onClick={() => navigate(`/projects/${project.id}`)}
+              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') navigate(`/projects/${project.id}`); }}
               aria-label={`Go to project ${project.name}`}
-              data-testid={`project-card-${toKebabCase(project.name)}`}
+              data-testid={`project-list-item-${toKebabCase(project.name)}`}
             >
               <div>
                 <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900">{project.name}</h5>
@@ -114,7 +121,7 @@ export function DashboardPage() {
                   className="bg-btn-subtle hover:bg-btn-subtle-hover text-text-secondary py-1 px-2 rounded text-xs z-10"
                   onClick={e => { e.stopPropagation(); handleEditClick(project); }}
                   aria-label={`Edit ${project.name}`}
-                  data-testid={`project-card-edit-button-${toKebabCase(project.name)}`}
+                  data-testid={`project-list-item-edit-button-${toKebabCase(project.name)}`}
                 >
                   Edit
                 </button>
@@ -122,14 +129,14 @@ export function DashboardPage() {
                   className="bg-warning hover:opacity-90 text-white py-1 px-2 rounded text-xs z-10"
                   onClick={e => { e.stopPropagation(); handleDelete(project.id); }}
                   aria-label={`Delete ${project.name}`}
-                  data-testid={`project-card-delete-button-${toKebabCase(project.name)}`}
+                  data-testid={`project-list-item-delete-button-${toKebabCase(project.name)}`}
                 >
                   Delete
                 </button>
               </div>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
 
       {/* ConfirmModal for delete confirmations */}

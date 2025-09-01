@@ -67,6 +67,11 @@
 - Create Test Case: "Create" button disabled if no variable entered
 - when I have a prompt open and I click "view" for another prompt, all other panels should close (currently showing incorrect info because it keeps the old data)
 - create test case: add expected output with no variables --> enable create button
+- after "Create New Prompt", view test suites for the new project
+- after "Create New Test Suite", view test cases for the new test suite
+
+
+
 
 # Tweaks
 - after creating project, jump directly to project/:id page

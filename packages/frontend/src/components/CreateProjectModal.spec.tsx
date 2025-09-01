@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import * as useApiClientModule from '../hooks/useApiClient';
 import { createMockApiClient } from '../mocks/ApiClient';
-import { CreateProjectModal } from './CreateProjectModal';
+import { ProjectModal } from './ProjectModal';
 
 const mockOnClose = jest.fn();
 const mockOnProjectCreated = jest.fn();
@@ -17,42 +17,49 @@ describe('CreateProjectModal', () => {
 
   it('renders when open', () => {
     render(
-      <CreateProjectModal isOpen={true} onClose={mockOnClose} onProjectCreated={mockOnProjectCreated} />
+      <ProjectModal isOpen={true} onClose={mockOnClose} onProjectCreated={mockOnProjectCreated} />
     );
     expect(screen.getByText('Create New Project')).toBeInTheDocument();
   });
 
   it('does not render when closed', () => {
     const { container } = render(
-      <CreateProjectModal isOpen={false} onClose={mockOnClose} onProjectCreated={mockOnProjectCreated} />
+      <ProjectModal isOpen={false} onClose={mockOnClose} onProjectCreated={mockOnProjectCreated} />
     );
     expect(container).toBeEmptyDOMElement();
   });
 
   it('calls onClose when cancel is clicked', () => {
     render(
-      <CreateProjectModal isOpen={true} onClose={mockOnClose} onProjectCreated={mockOnProjectCreated} />
+      <ProjectModal isOpen={true} onClose={mockOnClose} onProjectCreated={mockOnProjectCreated} />
     );
     fireEvent.click(screen.getByText('Cancel'));
     expect(mockOnClose).toHaveBeenCalled();
   });
 
   it('submits form and calls onProjectCreated', async () => {
-    mockApiClient.request = jest.fn().mockResolvedValue({ id: '1', name: 'Test', description: 'Desc' });
+    mockApiClient.request = jest.fn().mockResolvedValue({ 
+      id: '1', 
+      userId: 'user1',
+      name: 'Test', 
+      description: 'Desc',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
     render(
-      <CreateProjectModal isOpen={true} onClose={mockOnClose} onProjectCreated={mockOnProjectCreated} />
+      <ProjectModal isOpen={true} onClose={mockOnClose} onProjectCreated={mockOnProjectCreated} />
     );
     fireEvent.change(screen.getByLabelText('Project Name', { selector: 'input' }), { target: { value: 'Test' } });
     fireEvent.change(screen.getByLabelText('Description', { selector: 'textarea' }), { target: { value: 'Desc' } });
     fireEvent.click(screen.getByText('Create'));
-    await waitFor(() => expect(mockOnProjectCreated).toHaveBeenCalledWith({ id: '1', name: 'Test', description: 'Desc' }));
+    await waitFor(() => expect(mockOnProjectCreated).toHaveBeenCalledWith(expect.objectContaining({ name: 'Test', description: 'Desc' })));
     expect(mockOnClose).toHaveBeenCalled();
   });
 
   it('shows error on API failure', async () => {
     mockApiClient.request = jest.fn().mockRejectedValue(new Error('fail'));
     render(
-      <CreateProjectModal isOpen={true} onClose={mockOnClose} onProjectCreated={mockOnProjectCreated} />
+      <ProjectModal isOpen={true} onClose={mockOnClose} onProjectCreated={mockOnProjectCreated} />
     );
     fireEvent.change(screen.getByLabelText('Project Name', { selector: 'input' }), { target: { value: 'Test' } });
     fireEvent.click(screen.getByText('Create'));

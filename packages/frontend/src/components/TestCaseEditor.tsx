@@ -25,6 +25,7 @@ export function TestCaseEditor({
   const [runMode, setRunMode] = useState<TestCaseRunMode>('DEFAULT');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'simple' | 'advanced'>('simple');
   const apiClient = useApiClient();
 
   const isEditing = !!testCase;
@@ -54,6 +55,13 @@ export function TestCaseEditor({
 
       // Set run mode
       setRunMode(testCase.runMode);
+
+      // Set initial tab based on whether assertions exist
+      if (testCase.assertions && testCase.assertions.length > 0) {
+        setActiveTab('advanced');
+      } else {
+        setActiveTab('simple');
+      }
     }
   }, [testCase]);
 
@@ -170,9 +178,11 @@ export function TestCaseEditor({
     }
   };
 
-  const isValid = (Object.keys(inputs).length > 0 &&
-                  Object.keys(inputs).every(key => key.trim() !== '')) &&
-                  (expectedOutput.trim() !== '' || assertions.length > 0);
+  const isValid = Object.keys(inputs).every(key => key.trim() !== '') &&
+                  (activeTab === 'simple' 
+                    ? expectedOutput.trim() !== '' 
+                    : assertions.length > 0 && assertions.every(assertion => 
+                      assertion.path.trim() !== '' && assertion.matcher.trim() !== ''));
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-6" data-testid={isEditing ? "edit-test-case-panel" : "create-test-case-panel"}>
@@ -266,43 +276,81 @@ export function TestCaseEditor({
           </div>
         </div>
 
-        {/* Expected Output Section */}
+        {/* Test Case Type Tabs */}
         <div>
-          <div className="flex justify-between items-center mb-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Expected Output
-            </label>
-            <label className="inline-flex items-center">
-              <input
-                type="checkbox"
-                checked={isJsonOutput}
-                onChange={(e) => setIsJsonOutput(e.target.checked)}
-                className="form-checkbox"
-                disabled={loading}
-              />
-              <span className="ml-2 text-sm">JSON Output</span>
-            </label>
+          <div className="border-b border-gray-200 mb-4">
+            <nav className="-mb-px flex space-x-8">
+              <button
+                type="button"
+                onClick={() => setActiveTab('simple')}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'simple'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+                data-testid="simple-tab"
+              >
+                Simple Test Case
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('advanced')}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'advanced'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+                data-testid="advanced-tab"
+              >
+                Advanced Test Case
+              </button>
+            </nav>
           </div>
 
-          <textarea
-            value={expectedOutput}
-            onChange={(e) => setExpectedOutput(e.target.value)}
-            className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-            rows={isJsonOutput ? 6 : 3}
-            placeholder={isJsonOutput ? 'Enter expected JSON output...' : 'Enter expected string output...'}
-            disabled={loading}
-            data-testid="expected-output-input"
-          />
+          {/* Simple Test Case Tab Content */}
+          {activeTab === 'simple' && (
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Expected Output
+                </label>
+                <label className="inline-flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={isJsonOutput}
+                    onChange={(e) => setIsJsonOutput(e.target.checked)}
+                    className="form-checkbox"
+                    disabled={loading}
+                  />
+                  <span className="ml-2 text-sm">JSON Output</span>
+                </label>
+              </div>
 
-          {isJsonOutput && (
-            <div className="text-xs text-gray-500 mt-1">
-              Enter valid JSON. The output will be parsed and compared using deep equality.
+              <textarea
+                value={expectedOutput}
+                onChange={(e) => setExpectedOutput(e.target.value)}
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+                rows={isJsonOutput ? 6 : 3}
+                placeholder={isJsonOutput ? 'Enter expected JSON output...' : 'Enter expected string output...'}
+                disabled={loading}
+                data-testid="expected-output-input"
+              />
+
+              {isJsonOutput && (
+                <div className="text-xs text-gray-500 mt-1">
+                  Enter valid JSON. The output will be parsed and compared using deep equality.
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Advanced Test Case Tab Content */}
+          {activeTab === 'advanced' && (
+            <div>
+              <AssertionsSection assertions={assertions} onChange={setAssertions} />
             </div>
           )}
         </div>
-
-        {/* Assertions Section */}
-        <AssertionsSection assertions={assertions} onChange={setAssertions} />
 
         {/* Run Mode Section */}
         <div>

@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { EditPromptModal } from './EditPromptModal';
+import { PromptModal } from './PromptModal';
 
 const mockPrompt = {
   id: '1',
@@ -21,7 +21,7 @@ describe('EditPromptModal', () => {
   };
 
   it('renders when open is true and prompt is provided', () => {
-    render(<EditPromptModal {...defaultProps} />);
+    render(<PromptModal {...defaultProps} />);
     
     expect(screen.getByTestId('edit-prompt-modal')).toBeInTheDocument();
     expect(screen.getByTestId('edit-prompt-header')).toHaveTextContent('Edit Prompt');
@@ -29,20 +29,20 @@ describe('EditPromptModal', () => {
   });
 
   it('does not render when open is false', () => {
-    render(<EditPromptModal {...defaultProps} open={false} />);
+    render(<PromptModal {...defaultProps} open={false} />);
     
     expect(screen.queryByTestId('edit-prompt-modal')).not.toBeInTheDocument();
   });
 
   it('does not render when prompt is null', () => {
-    render(<EditPromptModal {...defaultProps} prompt={null} />);
+    render(<PromptModal {...defaultProps} prompt={null} />);
     
     expect(screen.queryByTestId('edit-prompt-modal')).not.toBeInTheDocument();
   });
 
   it('calls onCancel when cancel button is clicked', () => {
     const onCancel = jest.fn();
-    render(<EditPromptModal {...defaultProps} onCancel={onCancel} />);
+    render(<PromptModal {...defaultProps} onCancel={onCancel} />);
     
     screen.getByTestId('edit-prompt-cancel-button').click();
     

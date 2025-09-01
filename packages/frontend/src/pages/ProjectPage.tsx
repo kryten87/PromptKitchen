@@ -2,8 +2,7 @@ import type { Project, Prompt } from '@prompt-kitchen/shared/src/dtos';
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ConfirmModal } from '../components/ConfirmModal';
-import { CreatePromptModal } from '../components/CreatePromptModal';
-import { EditPromptModal } from '../components/EditPromptModal';
+import { PromptModal } from '../components/PromptModal';
 import PromptHistoryModal from '../components/PromptHistoryModal';
 import { TestSuitePanel } from '../components/TestSuitePanel';
 import { useApiClient } from '../hooks/useApiClient';
@@ -209,7 +208,7 @@ export function ProjectPage() {
         </div>
       )}
 
-      <EditPromptModal
+      <PromptModal
         open={showEditPromptModal}
         prompt={selectedPrompt}
         onPromptUpdated={handlePromptUpdated}
@@ -217,7 +216,7 @@ export function ProjectPage() {
         onCancel={handleCancelEditor}
       />
 
-      <CreatePromptModal
+      <PromptModal
         open={showCreatePromptModal}
         projectId={projectId!}
         onPromptCreated={handlePromptCreated}

@@ -178,8 +178,7 @@ export function TestCaseEditor({
     }
   };
 
-  const isValid = (Object.keys(inputs).length > 0 &&
-                  Object.keys(inputs).every(key => key.trim() !== '')) &&
+  const isValid = Object.keys(inputs).every(key => key.trim() !== '') &&
                   (expectedOutput.trim() !== '' || assertions.length > 0);
 
   return (

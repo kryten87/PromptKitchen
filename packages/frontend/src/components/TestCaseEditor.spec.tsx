@@ -583,4 +583,24 @@ describe('TestCaseEditor', () => {
 
     expect(screen.getByRole('button', { name: 'Saving...' })).toBeDisabled();
   });
+
+  it('enables create button when test case has no input variables but has expected output', () => {
+    render(
+      <TestCaseEditor
+        testSuiteId="suite-1"
+        onTestCaseCreated={mockOnTestCaseCreated}
+        onCancel={mockOnCancel}
+      />
+    );
+
+    const createButton = screen.getByRole('button', { name: 'Create' });
+    expect(createButton).toBeDisabled();
+
+    // Add expected output without any input variables
+    const outputTextarea = screen.getByPlaceholderText('Enter expected string output...');
+    fireEvent.change(outputTextarea, { target: { value: 'Expected result' } });
+
+    // Button should now be enabled even without input variables
+    expect(createButton).not.toBeDisabled();
+  });
 });

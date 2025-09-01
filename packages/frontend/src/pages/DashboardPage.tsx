@@ -3,8 +3,7 @@ import { toKebabCase } from '@prompt-kitchen/shared/src/helpers/toKebabCase';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ConfirmModal } from '../components/ConfirmModal';
-import { CreateProjectModal } from '../components/CreateProjectModal';
-import { EditProjectModal } from '../components/EditProjectModal';
+import { ProjectModal } from '../components/ProjectModal';
 import { useApiClient } from '../hooks/useApiClient';
 
 export function DashboardPage() {
@@ -82,14 +81,13 @@ export function DashboardPage() {
         </button>
       </div>
 
-      <CreateProjectModal
+      <ProjectModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         onProjectCreated={handleProjectCreated}
-        data-testid="create-project-modal"
       />
 
-      <EditProjectModal
+      <ProjectModal
         isOpen={editModalOpen}
         onClose={() => setEditModalOpen(false)}
         project={selectedProject}

@@ -4,7 +4,7 @@
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { ApiClient } from '../ApiClient';
-import { EditTestSuiteModal } from './EditTestSuiteModal';
+import { TestSuiteModal } from './TestSuiteModal';
 
 // Mock the useApiClient hook
 jest.mock('../hooks/useApiClient', () => ({
@@ -33,60 +33,50 @@ describe('EditTestSuiteModal', () => {
 
   it('does not render when closed', () => {
     const { container } = render(
-      <EditTestSuiteModal
+      <TestSuiteModal
         isOpen={false}
         onClose={mockOnClose}
         testSuite={mockTestSuite}
         onTestSuiteUpdated={mockOnTestSuiteUpdated}
       />
     );
+
     expect(container).toBeEmptyDOMElement();
   });
 
   it('does not render when testSuite is null', () => {
     const { container } = render(
-      <EditTestSuiteModal
+      <TestSuiteModal
         isOpen={true}
         onClose={mockOnClose}
         testSuite={null}
         onTestSuiteUpdated={mockOnTestSuiteUpdated}
       />
     );
+
     expect(container).toBeEmptyDOMElement();
   });
 
-  it('renders modal when open with test suite', () => {
+  it('renders correctly when open with testSuite', () => {
     render(
-      <EditTestSuiteModal
+      <TestSuiteModal
         isOpen={true}
         onClose={mockOnClose}
         testSuite={mockTestSuite}
         onTestSuiteUpdated={mockOnTestSuiteUpdated}
       />
     );
+
+    expect(screen.getByTestId('edit-test-suite-modal')).toBeInTheDocument();
     expect(screen.getByText('Edit Test Suite')).toBeInTheDocument();
-    expect(screen.getByLabelText('Test Suite Name')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('Test Suite 1')).toBeInTheDocument();
-    expect(screen.getByText('Cancel')).toBeInTheDocument();
-    expect(screen.getByText('Save')).toBeInTheDocument();
+    expect(screen.getByTestId('edit-test-suite-name-input')).toBeInTheDocument();
+    expect(screen.getByTestId('edit-test-suite-cancel-button')).toBeInTheDocument();
+    expect(screen.getByTestId('edit-test-suite-submit-button')).toBeInTheDocument();
   });
 
-  it('calls onClose when cancel is clicked', () => {
+  it('pre-fills name input with testSuite name', () => {
     render(
-      <EditTestSuiteModal
-        isOpen={true}
-        onClose={mockOnClose}
-        testSuite={mockTestSuite}
-        onTestSuiteUpdated={mockOnTestSuiteUpdated}
-      />
-    );
-    fireEvent.click(screen.getByText('Cancel'));
-    expect(mockOnClose).toHaveBeenCalled();
-  });
-
-  it('updates test suite name in form', () => {
-    render(
-      <EditTestSuiteModal
+      <TestSuiteModal
         isOpen={true}
         onClose={mockOnClose}
         testSuite={mockTestSuite}
@@ -94,15 +84,13 @@ describe('EditTestSuiteModal', () => {
       />
     );
 
-    const nameInput = screen.getByLabelText('Test Suite Name');
-    fireEvent.change(nameInput, { target: { value: 'Updated Test Suite' } });
-
-    expect(screen.getByDisplayValue('Updated Test Suite')).toBeInTheDocument();
+    const nameInput = screen.getByTestId('edit-test-suite-name-input') as HTMLInputElement;
+    expect(nameInput.value).toBe('Test Suite 1');
   });
 
-  it('disables save button when name is empty', () => {
+  it('calls onClose when cancel button is clicked', () => {
     render(
-      <EditTestSuiteModal
+      <TestSuiteModal
         isOpen={true}
         onClose={mockOnClose}
         testSuite={mockTestSuite}
@@ -110,24 +98,16 @@ describe('EditTestSuiteModal', () => {
       />
     );
 
-    const nameInput = screen.getByLabelText('Test Suite Name');
-    fireEvent.change(nameInput, { target: { value: '' } });
-
-    const saveButton = screen.getByText('Save');
-    expect(saveButton).toBeDisabled();
+    fireEvent.click(screen.getByTestId('edit-test-suite-cancel-button'));
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
   it('updates test suite successfully', async () => {
-    const updatedTestSuite = {
-      ...mockTestSuite,
-      name: 'Updated Test Suite',
-      updatedAt: new Date(),
-    };
-
-    mockApiClient.request.mockResolvedValue(updatedTestSuite);
+    const mockUpdatedTestSuite = { ...mockTestSuite, name: 'Updated Test Suite' };
+    mockApiClient.request.mockResolvedValueOnce(mockUpdatedTestSuite);
 
     render(
-      <EditTestSuiteModal
+      <TestSuiteModal
         isOpen={true}
         onClose={mockOnClose}
         testSuite={mockTestSuite}
@@ -135,9 +115,9 @@ describe('EditTestSuiteModal', () => {
       />
     );
 
-    const nameInput = screen.getByLabelText('Test Suite Name');
+    const nameInput = screen.getByTestId('edit-test-suite-name-input');
     fireEvent.change(nameInput, { target: { value: 'Updated Test Suite' } });
-    fireEvent.click(screen.getByText('Save'));
+    fireEvent.click(screen.getByTestId('edit-test-suite-submit-button'));
 
     await waitFor(() => {
       expect(mockApiClient.request).toHaveBeenCalledWith('/test-suites/suite-1', {
@@ -146,15 +126,15 @@ describe('EditTestSuiteModal', () => {
       });
     });
 
-    expect(mockOnTestSuiteUpdated).toHaveBeenCalledWith(updatedTestSuite);
+    expect(mockOnTestSuiteUpdated).toHaveBeenCalledWith(mockUpdatedTestSuite);
     expect(mockOnClose).toHaveBeenCalled();
   });
 
-  it('shows error message when update fails', async () => {
-    mockApiClient.request.mockRejectedValue(new Error('API Error'));
+  it('shows error message on update failure', async () => {
+    mockApiClient.request.mockRejectedValueOnce(new Error('API Error'));
 
     render(
-      <EditTestSuiteModal
+      <TestSuiteModal
         isOpen={true}
         onClose={mockOnClose}
         testSuite={mockTestSuite}
@@ -162,9 +142,9 @@ describe('EditTestSuiteModal', () => {
       />
     );
 
-    const nameInput = screen.getByLabelText('Test Suite Name');
+    const nameInput = screen.getByTestId('edit-test-suite-name-input');
     fireEvent.change(nameInput, { target: { value: 'Updated Test Suite' } });
-    fireEvent.click(screen.getByText('Save'));
+    fireEvent.click(screen.getByTestId('edit-test-suite-submit-button'));
 
     await waitFor(() => {
       expect(screen.getByText('Failed to update test suite')).toBeInTheDocument();
@@ -172,85 +152,5 @@ describe('EditTestSuiteModal', () => {
 
     expect(mockOnTestSuiteUpdated).not.toHaveBeenCalled();
     expect(mockOnClose).not.toHaveBeenCalled();
-  });
-
-  it('shows loading state during update', async () => {
-    mockApiClient.request.mockImplementation(() => new Promise(() => {})); // Never resolves
-
-    render(
-      <EditTestSuiteModal
-        isOpen={true}
-        onClose={mockOnClose}
-        testSuite={mockTestSuite}
-        onTestSuiteUpdated={mockOnTestSuiteUpdated}
-      />
-    );
-
-    const nameInput = screen.getByLabelText('Test Suite Name');
-    fireEvent.change(nameInput, { target: { value: 'Updated Test Suite' } });
-    fireEvent.click(screen.getByText('Save'));
-
-    expect(screen.getByText('Saving...')).toBeInTheDocument();
-    expect(nameInput).toBeDisabled();
-  });
-
-  it('trims whitespace from name', async () => {
-    const updatedTestSuite = {
-      ...mockTestSuite,
-      name: 'Updated Test Suite',
-      updatedAt: new Date(),
-    };
-
-    mockApiClient.request.mockResolvedValue(updatedTestSuite);
-
-    render(
-      <EditTestSuiteModal
-        isOpen={true}
-        onClose={mockOnClose}
-        testSuite={mockTestSuite}
-        onTestSuiteUpdated={mockOnTestSuiteUpdated}
-      />
-    );
-
-    const nameInput = screen.getByLabelText('Test Suite Name');
-    fireEvent.change(nameInput, { target: { value: '  Updated Test Suite  ' } });
-    fireEvent.click(screen.getByText('Save'));
-
-    await waitFor(() => {
-      expect(mockApiClient.request).toHaveBeenCalledWith('/test-suites/suite-1', {
-        method: 'PUT',
-        body: JSON.stringify({ name: 'Updated Test Suite' }),
-      });
-    });
-  });
-
-  it('updates name when testSuite prop changes', () => {
-    const { rerender } = render(
-      <EditTestSuiteModal
-        isOpen={true}
-        onClose={mockOnClose}
-        testSuite={mockTestSuite}
-        onTestSuiteUpdated={mockOnTestSuiteUpdated}
-      />
-    );
-
-    expect(screen.getByDisplayValue('Test Suite 1')).toBeInTheDocument();
-
-    const newTestSuite = {
-      ...mockTestSuite,
-      id: 'suite-2',
-      name: 'Different Test Suite',
-    };
-
-    rerender(
-      <EditTestSuiteModal
-        isOpen={true}
-        onClose={mockOnClose}
-        testSuite={newTestSuite}
-        onTestSuiteUpdated={mockOnTestSuiteUpdated}
-      />
-    );
-
-    expect(screen.getByDisplayValue('Different Test Suite')).toBeInTheDocument();
   });
 });

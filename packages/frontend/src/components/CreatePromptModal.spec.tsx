@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { CreatePromptModal } from './CreatePromptModal';
+import { PromptModal } from './PromptModal';
 
 describe('CreatePromptModal', () => {
   const mockOnPromptCreated = jest.fn();
@@ -11,7 +11,7 @@ describe('CreatePromptModal', () => {
 
   it('does not render when open is false', () => {
     render(
-      <CreatePromptModal
+      <PromptModal
         open={false}
         projectId="test-project-id"
         onPromptCreated={mockOnPromptCreated}
@@ -24,7 +24,7 @@ describe('CreatePromptModal', () => {
 
   it('renders modal when open is true', () => {
     render(
-      <CreatePromptModal
+      <PromptModal
         open={true}
         projectId="test-project-id"
         onPromptCreated={mockOnPromptCreated}
@@ -39,7 +39,7 @@ describe('CreatePromptModal', () => {
 
   it('calls onCancel when cancel button is clicked', () => {
     render(
-      <CreatePromptModal
+      <PromptModal
         open={true}
         projectId="test-project-id"
         onPromptCreated={mockOnPromptCreated}
@@ -53,7 +53,7 @@ describe('CreatePromptModal', () => {
 
   it('renders the CreatePromptForm with correct props', () => {
     render(
-      <CreatePromptModal
+      <PromptModal
         open={true}
         projectId="test-project-id"
         onPromptCreated={mockOnPromptCreated}

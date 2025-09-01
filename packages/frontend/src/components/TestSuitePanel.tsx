@@ -4,8 +4,7 @@ import { useApiClient } from '../hooks/useApiClient';
 import { useTestSuiteRunPolling } from '../hooks/useTestSuiteRunPolling';
 import { ConfirmModal } from './ConfirmModal';
 import { CreateTestCaseModal } from './CreateTestCaseModal';
-import { CreateTestSuiteModal } from './CreateTestSuiteModal';
-import { EditTestSuiteModal } from './EditTestSuiteModal';
+import { TestSuiteModal } from './TestSuiteModal';
 import { TestResultsView } from './TestResultsView';
 
 interface TestSuitePanelProps {
@@ -433,14 +432,14 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
         />
       )}
 
-      <CreateTestSuiteModal
+      <TestSuiteModal
         isOpen={showCreateModal}
         onClose={() => setShowCreateModal(false)}
         promptId={promptId}
         onTestSuiteCreated={handleCreateTestSuite}
       />
 
-      <EditTestSuiteModal
+      <TestSuiteModal
         isOpen={showEditModal}
         onClose={() => setShowEditModal(false)}
         testSuite={selectedTestSuite}

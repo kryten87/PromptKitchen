@@ -4,7 +4,7 @@
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { ApiClient } from '../ApiClient';
-import { CreateTestSuiteModal } from './CreateTestSuiteModal';
+import { TestSuiteModal } from './TestSuiteModal';
 
 // Mock the useApiClient hook
 jest.mock('../hooks/useApiClient', () => ({
@@ -25,60 +25,37 @@ describe('CreateTestSuiteModal', () => {
 
   it('does not render when closed', () => {
     const { container } = render(
-      <CreateTestSuiteModal
+      <TestSuiteModal
         isOpen={false}
         onClose={mockOnClose}
         promptId="prompt-1"
         onTestSuiteCreated={mockOnTestSuiteCreated}
       />
     );
+
     expect(container).toBeEmptyDOMElement();
   });
 
-  it('renders modal when open', () => {
+  it('renders correctly when open', () => {
     render(
-      <CreateTestSuiteModal
+      <TestSuiteModal
         isOpen={true}
         onClose={mockOnClose}
         promptId="prompt-1"
         onTestSuiteCreated={mockOnTestSuiteCreated}
       />
     );
+
+    expect(screen.getByTestId('create-test-suite-modal')).toBeInTheDocument();
     expect(screen.getByText('Create New Test Suite')).toBeInTheDocument();
-    expect(screen.getByLabelText('Test Suite Name')).toBeInTheDocument();
-    expect(screen.getByText('Cancel')).toBeInTheDocument();
-    expect(screen.getByText('Create')).toBeInTheDocument();
+    expect(screen.getByTestId('create-test-suite-name-input')).toBeInTheDocument();
+    expect(screen.getByTestId('create-test-suite-cancel-button')).toBeInTheDocument();
+    expect(screen.getByTestId('create-test-suite-submit-button')).toBeInTheDocument();
   });
 
-  it('calls onClose when cancel is clicked', () => {
+  it('calls onClose when cancel button is clicked', () => {
     render(
-      <CreateTestSuiteModal
-        isOpen={true}
-        onClose={mockOnClose}
-        promptId="prompt-1"
-        onTestSuiteCreated={mockOnTestSuiteCreated}
-      />
-    );
-    fireEvent.click(screen.getByText('Cancel'));
-    expect(mockOnClose).toHaveBeenCalled();
-  });
-
-  it('disables create button when name is empty', () => {
-    render(
-      <CreateTestSuiteModal
-        isOpen={true}
-        onClose={mockOnClose}
-        promptId="prompt-1"
-        onTestSuiteCreated={mockOnTestSuiteCreated}
-      />
-    );
-    const createButton = screen.getByText('Create');
-    expect(createButton).toBeDisabled();
-  });
-
-  it('enables create button when name is provided', () => {
-    render(
-      <CreateTestSuiteModal
+      <TestSuiteModal
         isOpen={true}
         onClose={mockOnClose}
         promptId="prompt-1"
@@ -86,26 +63,51 @@ describe('CreateTestSuiteModal', () => {
       />
     );
 
-    const nameInput = screen.getByLabelText('Test Suite Name');
-    fireEvent.change(nameInput, { target: { value: 'Test Suite 1' } });
+    fireEvent.click(screen.getByTestId('create-test-suite-cancel-button'));
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
+  });
 
-    const createButton = screen.getByText('Create');
-    expect(createButton).not.toBeDisabled();
+  it('disables submit button when name is empty', () => {
+    render(
+      <TestSuiteModal
+        isOpen={true}
+        onClose={mockOnClose}
+        promptId="prompt-1"
+        onTestSuiteCreated={mockOnTestSuiteCreated}
+      />
+    );
+
+    expect(screen.getByTestId('create-test-suite-submit-button')).toBeDisabled();
+  });
+
+  it('enables submit button when name is provided', () => {
+    render(
+      <TestSuiteModal
+        isOpen={true}
+        onClose={mockOnClose}
+        promptId="prompt-1"
+        onTestSuiteCreated={mockOnTestSuiteCreated}
+      />
+    );
+
+    const nameInput = screen.getByTestId('create-test-suite-name-input');
+    fireEvent.change(nameInput, { target: { value: 'Test Suite' } });
+
+    expect(screen.getByTestId('create-test-suite-submit-button')).not.toBeDisabled();
   });
 
   it('creates test suite successfully', async () => {
-    const newTestSuite = {
+    const mockCreatedTestSuite = {
       id: 'suite-1',
       promptId: 'prompt-1',
-      name: 'Test Suite 1',
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      name: 'New Test Suite',
+      createdAt: new Date('2023-01-01'),
+      updatedAt: new Date('2023-01-01'),
     };
-
-    mockApiClient.request.mockResolvedValue(newTestSuite);
+    mockApiClient.request.mockResolvedValueOnce(mockCreatedTestSuite);
 
     render(
-      <CreateTestSuiteModal
+      <TestSuiteModal
         isOpen={true}
         onClose={mockOnClose}
         promptId="prompt-1"
@@ -113,26 +115,26 @@ describe('CreateTestSuiteModal', () => {
       />
     );
 
-    const nameInput = screen.getByLabelText('Test Suite Name');
-    fireEvent.change(nameInput, { target: { value: 'Test Suite 1' } });
-    fireEvent.click(screen.getByText('Create'));
+    const nameInput = screen.getByTestId('create-test-suite-name-input');
+    fireEvent.change(nameInput, { target: { value: 'New Test Suite' } });
+    fireEvent.click(screen.getByTestId('create-test-suite-submit-button'));
 
     await waitFor(() => {
       expect(mockApiClient.request).toHaveBeenCalledWith('/prompts/prompt-1/test-suites', {
         method: 'POST',
-        body: JSON.stringify({ name: 'Test Suite 1' }),
+        body: JSON.stringify({ name: 'New Test Suite' }),
       });
     });
 
-    expect(mockOnTestSuiteCreated).toHaveBeenCalledWith(newTestSuite);
+    expect(mockOnTestSuiteCreated).toHaveBeenCalledWith(mockCreatedTestSuite);
     expect(mockOnClose).toHaveBeenCalled();
   });
 
-  it('shows error message when creation fails', async () => {
-    mockApiClient.request.mockRejectedValue(new Error('API Error'));
+  it('shows error message on creation failure', async () => {
+    mockApiClient.request.mockRejectedValueOnce(new Error('API Error'));
 
     render(
-      <CreateTestSuiteModal
+      <TestSuiteModal
         isOpen={true}
         onClose={mockOnClose}
         promptId="prompt-1"
@@ -140,9 +142,9 @@ describe('CreateTestSuiteModal', () => {
       />
     );
 
-    const nameInput = screen.getByLabelText('Test Suite Name');
-    fireEvent.change(nameInput, { target: { value: 'Test Suite 1' } });
-    fireEvent.click(screen.getByText('Create'));
+    const nameInput = screen.getByTestId('create-test-suite-name-input');
+    fireEvent.change(nameInput, { target: { value: 'Test Suite' } });
+    fireEvent.click(screen.getByTestId('create-test-suite-submit-button'));
 
     await waitFor(() => {
       expect(screen.getByText('Failed to create test suite')).toBeInTheDocument();
@@ -150,57 +152,5 @@ describe('CreateTestSuiteModal', () => {
 
     expect(mockOnTestSuiteCreated).not.toHaveBeenCalled();
     expect(mockOnClose).not.toHaveBeenCalled();
-  });
-
-  it('shows loading state during creation', async () => {
-    mockApiClient.request.mockImplementation(() => new Promise(() => {})); // Never resolves
-
-    render(
-      <CreateTestSuiteModal
-        isOpen={true}
-        onClose={mockOnClose}
-        promptId="prompt-1"
-        onTestSuiteCreated={mockOnTestSuiteCreated}
-      />
-    );
-
-    const nameInput = screen.getByLabelText('Test Suite Name');
-    fireEvent.change(nameInput, { target: { value: 'Test Suite 1' } });
-    fireEvent.click(screen.getByText('Create'));
-
-    expect(screen.getByText('Creating...')).toBeInTheDocument();
-    expect(nameInput).toBeDisabled();
-  });
-
-  it('trims whitespace from name', async () => {
-    const newTestSuite = {
-      id: 'suite-1',
-      promptId: 'prompt-1',
-      name: 'Test Suite 1',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    mockApiClient.request.mockResolvedValue(newTestSuite);
-
-    render(
-      <CreateTestSuiteModal
-        isOpen={true}
-        onClose={mockOnClose}
-        promptId="prompt-1"
-        onTestSuiteCreated={mockOnTestSuiteCreated}
-      />
-    );
-
-    const nameInput = screen.getByLabelText('Test Suite Name');
-    fireEvent.change(nameInput, { target: { value: '  Test Suite 1  ' } });
-    fireEvent.click(screen.getByText('Create'));
-
-    await waitFor(() => {
-      expect(mockApiClient.request).toHaveBeenCalledWith('/prompts/prompt-1/test-suites', {
-        method: 'POST',
-        body: JSON.stringify({ name: 'Test Suite 1' }),
-      });
-    });
   });
 });

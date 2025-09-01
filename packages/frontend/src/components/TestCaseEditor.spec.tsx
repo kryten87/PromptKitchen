@@ -603,4 +603,130 @@ describe('TestCaseEditor', () => {
     // Button should now be enabled even without input variables
     expect(createButton).not.toBeDisabled();
   });
+
+  it('simple tab: disables create button when expected output is empty', () => {
+    render(
+      <TestCaseEditor
+        testSuiteId="suite-1"
+        onTestCaseCreated={mockOnTestCaseCreated}
+        onCancel={mockOnCancel}
+      />
+    );
+
+    const createButton = screen.getByRole('button', { name: 'Create' });
+    
+    // Should be on simple tab by default and disabled without expected output
+    expect(createButton).toBeDisabled();
+    
+    // Switching to advanced tab and back should still require expected output
+    fireEvent.click(screen.getByTestId('advanced-tab'));
+    fireEvent.click(screen.getByTestId('simple-tab'));
+    
+    expect(createButton).toBeDisabled();
+  });
+
+  it('advanced tab: disables create button when no assertions are added', () => {
+    render(
+      <TestCaseEditor
+        testSuiteId="suite-1"
+        onTestCaseCreated={mockOnTestCaseCreated}
+        onCancel={mockOnCancel}
+      />
+    );
+
+    const createButton = screen.getByRole('button', { name: 'Create' });
+    
+    // Switch to advanced tab
+    fireEvent.click(screen.getByTestId('advanced-tab'));
+    
+    // Button should be disabled without assertions
+    expect(createButton).toBeDisabled();
+  });
+
+  it('advanced tab: enables create button when at least one assertion is added with path', () => {
+    render(
+      <TestCaseEditor
+        testSuiteId="suite-1"
+        onTestCaseCreated={mockOnTestCaseCreated}
+        onCancel={mockOnCancel}
+      />
+    );
+
+    const createButton = screen.getByRole('button', { name: 'Create' });
+    
+    // Switch to advanced tab
+    fireEvent.click(screen.getByTestId('advanced-tab'));
+    expect(createButton).toBeDisabled();
+    
+    // Add an assertion
+    fireEvent.click(screen.getByText('+ Add assertion'));
+    
+    // Button should still be disabled until path is filled
+    expect(createButton).toBeDisabled();
+    
+    // Fill in the path field
+    const pathInput = screen.getByPlaceholderText('Path (e.g. $.items[*].id)');
+    fireEvent.change(pathInput, { target: { value: '$.result' } });
+    
+    // Button should now be enabled
+    expect(createButton).not.toBeDisabled();
+  });
+
+  it('tab switching: validation changes based on active tab', () => {
+    render(
+      <TestCaseEditor
+        testSuiteId="suite-1"
+        onTestCaseCreated={mockOnTestCaseCreated}
+        onCancel={mockOnCancel}
+      />
+    );
+
+    const createButton = screen.getByRole('button', { name: 'Create' });
+    
+    // Start on simple tab - disabled without expected output
+    expect(createButton).toBeDisabled();
+    
+    // Add expected output - should enable button
+    const outputTextarea = screen.getByPlaceholderText('Enter expected string output...');
+    fireEvent.change(outputTextarea, { target: { value: 'Expected result' } });
+    expect(createButton).not.toBeDisabled();
+    
+    // Switch to advanced tab - should disable button (no assertions)
+    fireEvent.click(screen.getByTestId('advanced-tab'));
+    expect(createButton).toBeDisabled();
+    
+    // Add assertion - should still be disabled until path is filled
+    fireEvent.click(screen.getByText('+ Add assertion'));
+    expect(createButton).toBeDisabled();
+    
+    // Fill in the path field - should enable button
+    const pathInput = screen.getByPlaceholderText('Path (e.g. $.items[*].id)');
+    fireEvent.change(pathInput, { target: { value: '$.result' } });
+    expect(createButton).not.toBeDisabled();
+    
+    // Switch back to simple tab - should enable button (has expected output)
+    fireEvent.click(screen.getByTestId('simple-tab'));
+    expect(createButton).not.toBeDisabled();
+  });
+
+  it('simple tab: clearing expected output disables create button', () => {
+    render(
+      <TestCaseEditor
+        testSuiteId="suite-1"
+        onTestCaseCreated={mockOnTestCaseCreated}
+        onCancel={mockOnCancel}
+      />
+    );
+
+    const createButton = screen.getByRole('button', { name: 'Create' });
+    const outputTextarea = screen.getByPlaceholderText('Enter expected string output...');
+    
+    // Add expected output - should enable button
+    fireEvent.change(outputTextarea, { target: { value: 'Expected result' } });
+    expect(createButton).not.toBeDisabled();
+    
+    // Clear expected output - should disable button
+    fireEvent.change(outputTextarea, { target: { value: '' } });
+    expect(createButton).toBeDisabled();
+  });
 });

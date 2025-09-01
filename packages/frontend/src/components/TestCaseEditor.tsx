@@ -179,7 +179,10 @@ export function TestCaseEditor({
   };
 
   const isValid = Object.keys(inputs).every(key => key.trim() !== '') &&
-                  (expectedOutput.trim() !== '' || assertions.length > 0);
+                  (activeTab === 'simple' 
+                    ? expectedOutput.trim() !== '' 
+                    : assertions.length > 0 && assertions.every(assertion => 
+                      assertion.path.trim() !== '' && assertion.matcher.trim() !== ''));
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-6" data-testid={isEditing ? "edit-test-case-panel" : "create-test-case-panel"}>

@@ -7,4 +7,9 @@ I. authenticate, add a new project, add a new prompt, add a new test suite, clic
       b. click "X" button next to second input --> see only one variable name input element, value input element
     3. click "Advanced Test Case" --> "Expected Output" element disappears, "No assertions defined" should be visible, "Add Assertion", "Import from last output", and "Preview" buttons should appear
       a. click "Add Assertion" --> "No assertions defined" disappears; "Path" input element, match type dropdown, match operator (eg. toEqual) dropdown, "Not" checkbox, and "Remove" buttons all appear
-        i. enter "$.value" in path input, select a match type, select a match operator -->
+        i. enter "$.value" in path input, select a match type, select a match operator --> "Create" button should be enabled
+          * click "Create" --> Test case should be added in Test Case list with "Edit" and "Delete" buttons
+            - click "Delete" --> "Are you sure you want to delete this test case?" modal appears with "No" and "Yes" buttons
+              . click "No" --> "Are you sure" modal disappears; test case remains in list
+              . click "Yes" --> "Are you sure" modal disappears; test case disappears from list
+

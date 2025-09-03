@@ -461,3 +461,59 @@ test('Test 13: Delete Test Case (Confirm)', async ({ page }) => {
   // Test case disappears from list
   await expect(testCaseItem).not.toBeVisible();
 });
+
+// Test 14: Display Advanced Test Case Details
+test('Test 14: Display Advanced Test Case Details', async ({ page }) => {
+  // Setup: Create an advanced test case with assertions
+  const dbPath = fs.readFileSync(DB_PATH_FILE, 'utf-8');
+  const db = new DatabaseConnector({ filename: dbPath });
+  
+  const testCaseId = crypto.randomUUID();
+  const assertions = [
+    {
+      assertionId: 'assertion-1',
+      path: '$.value',
+      matcher: 'toEqual',
+      expected: 'hello, world',
+      pathMatch: 'ANY',
+    },
+    {
+      assertionId: 'assertion-2',
+      path: '$.status',
+      matcher: 'toContain',
+      expected: 'success',
+      pathMatch: 'ALL',
+    },
+  ];
+  
+  await db.knex('test_cases').insert({
+    id: testCaseId,
+    test_suite_id: testSuiteId,
+    inputs: JSON.stringify({ name: 'John' }),
+    expected_output: 'default output',
+    output_type: 'string',
+    assertions: JSON.stringify(assertions),
+    run_mode: 'DEFAULT',
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
+  await db.destroy();
+
+  await navigateToTestCasesPanel(page, promptId, testSuiteId);
+
+  // Test case appears in list
+  const testCaseItem = page.getByTestId(`test-case-item-${testCaseId}`);
+  await expect(testCaseItem).toBeVisible();
+
+  // Test case shows "Assertions:" label instead of "Expected:"
+  await expect(testCaseItem).toContainText('Assertions:');
+  await expect(testCaseItem).not.toContainText('Expected:');
+
+  // Test case displays formatted assertions
+  await expect(testCaseItem).toContainText('$.value toEqual "hello, world"');
+  await expect(testCaseItem).toContainText('$.status toContain "success" (ALL match)');
+
+  // Test case shows inputs as usual
+  await expect(testCaseItem).toContainText('Inputs:');
+  await expect(testCaseItem).toContainText('{"name":"John"}');
+});

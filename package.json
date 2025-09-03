@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "npm run build --workspaces",
-    "check": "npm run build && npm run lint:fix && npm run test",
+    "check": "npm run build && npm run lint:fix && npm run test && echo 'All checks passed!'",
     "check:task": "npm run build && npm run lint:fix && npm run test && npm run validate:tasklist",
     "dev": "./scripts/run-dev.bash",
     "dev:backend": "npm run dev --workspace=packages/backend",

@@ -4,6 +4,7 @@ import { useApiClient } from '../hooks/useApiClient';
 import { useTestSuiteRunPolling } from '../hooks/useTestSuiteRunPolling';
 import { ConfirmModal } from './ConfirmModal';
 import { CreateTestCaseModal } from './CreateTestCaseModal';
+import { TestCaseDisplay } from './TestCaseDisplay';
 import { TestSuiteModal } from './TestSuiteModal';
 import { TestResultsView } from './TestResultsView';
 
@@ -343,14 +344,7 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
                           Delete
                         </button>
                       </div>
-                      <div className="pr-20">
-                        <div className="text-sm font-medium break-words whitespace-pre-wrap">Test Case {testCase.id}</div>
-                        <div className="text-xs text-gray-500">Mode: <span className="font-mono">{testCase.runMode}</span></div>
-                        <div className="text-xs">
-                          <div className="mb-1"><strong>Inputs:</strong> {JSON.stringify(testCase.inputs)}</div>
-                          <div><strong>Expected:</strong> {typeof testCase.expectedOutput === 'string' ? testCase.expectedOutput : JSON.stringify(testCase.expectedOutput)}</div>
-                        </div>
-                      </div>
+                      <TestCaseDisplay testCase={testCase} />
                     </li>
                   ))}
                 </ul>
@@ -392,7 +386,8 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
                       testCaseName: r.testCaseId, // No name, so use ID
                       status: r.status.toLowerCase() === 'pass' ? 'pass' : 'fail',
                       expectedOutput,
-                      actualOutput: typeof r.output === 'string' ? r.output : JSON.stringify(r.output)
+                      actualOutput: typeof r.output === 'string' ? r.output : JSON.stringify(r.output),
+                      testCaseAssertions: testCase?.assertions
                     };
                   })}
                 />

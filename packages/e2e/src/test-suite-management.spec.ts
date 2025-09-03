@@ -330,3 +330,54 @@ test('Add Test Case Panel (Future)', async ({ page }) => {
 
     await expect(page.getByTestId('create-test-case-panel')).toBeVisible();
 });
+
+test('Test Suite Results Modal Shows Test Case Assertions', async ({ page }) => {
+  // Create a test suite first
+  await page.getByTestId(`view-prompt-button-${promptObj.id}`).click();
+  await page.waitForSelector('[data-testid="create-test-suite-button"]');
+  await createTestSuite(page, 'Test Suite For Results');
+
+  const testSuiteListItem = page.locator(`[data-testid^="test-suite-list-item-"]`);
+  const testSuiteId = (await testSuiteListItem.getAttribute('data-testid'))!.replace('test-suite-list-item-', '');
+
+  // Setup: Create an advanced test case with assertions in the database
+  const dbPath = fs.readFileSync(DB_PATH_FILE, 'utf-8');
+  const db = new DatabaseConnector({ filename: dbPath });
+  
+  const testCaseId = crypto.randomUUID();
+  const assertions = [
+    {
+      assertionId: 'assertion-1',
+      path: '$.value',
+      matcher: 'toEqual',
+      expected: 'hello, world',
+      pathMatch: 'ANY',
+    },
+  ];
+  
+  await db.knex('test_cases').insert({
+    id: testCaseId,
+    test_suite_id: testSuiteId,
+    inputs: JSON.stringify({ name: 'John' }),
+    expected_output: 'default output',
+    output_type: 'string',
+    assertions: JSON.stringify(assertions),
+    run_mode: 'DEFAULT',
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
+  await db.destroy();
+
+  // Run the test suite to trigger the results modal
+  await page.getByTestId(`run-test-suite-button-${testSuiteId}`).click();
+
+  // Wait for the results modal to appear (it should appear immediately)
+  const resultsModal = page.locator('.fixed.inset-0.z-50');
+  await expect(resultsModal).toBeVisible();
+  await expect(resultsModal.getByText('Test Suite Results')).toBeVisible();
+
+  // Check that the Assertions column shows the test case assertions
+  // We should see "Test Case Assertions:" label and the formatted assertion
+  await expect(resultsModal.getByText('Test Case Assertions:')).toBeVisible();
+  await expect(resultsModal.getByText('$.value toEqual "hello, world"')).toBeVisible();
+});

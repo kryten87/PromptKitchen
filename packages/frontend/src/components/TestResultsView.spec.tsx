@@ -18,10 +18,11 @@ describe('TestResultsView', () => {
     expect(screen.getByText('Test 2')).toBeInTheDocument();
     expect(screen.getByText('Pass')).toBeInTheDocument();
     expect(screen.getByText('Fail')).toBeInTheDocument();
-    expect(screen.getByText('expected1')).toBeInTheDocument();
-    expect(screen.getByText('expected2')).toBeInTheDocument();
     expect(screen.getByText('output1')).toBeInTheDocument();
     expect(screen.getByText('output2')).toBeInTheDocument();
+    // Expected outputs should now appear in the Assertions column for simple tests
+    expect(screen.getByText('expected1')).toBeInTheDocument();
+    expect(screen.getByText('expected2')).toBeInTheDocument();
   });
 
   it('applies correct color for pass/fail', () => {
@@ -36,13 +37,14 @@ describe('TestResultsView', () => {
     expect(failCell).toHaveClass('text-red-600');
   });
 
-  it('displays expected output column header', () => {
+  it('displays column headers correctly', () => {
     const results: TestResult[] = [
       { id: '1', testCaseName: 'Test 1', status: 'pass', expectedOutput: 'expected1', actualOutput: 'output1' },
     ];
     render(<TestResultsView results={results} />);
-    expect(screen.getByText('Expected Output')).toBeInTheDocument();
     expect(screen.getByText('Actual Output')).toBeInTheDocument();
+    expect(screen.getByText('Assertions')).toBeInTheDocument();
+    expect(screen.queryByText('Expected Output')).not.toBeInTheDocument();
   });
   it('renders assertion chips for results with assertionResults', () => {
     const results: TestResult[] = [
@@ -179,5 +181,172 @@ describe('TestResultsView', () => {
       fireEvent.click(expandBtn);
     });
     expect(screen.getByTestId('test-results-assertion-sample-empty-a1')).toHaveTextContent('No samples');
+  });
+
+  it('displays test case assertions when testCaseAssertions are provided', () => {
+    const results: TestResult[] = [
+      {
+        id: '1',
+        testCaseName: 'Test 1',
+        status: 'pass',
+        expectedOutput: 'expected1',
+        actualOutput: 'output1',
+        testCaseAssertions: [
+          {
+            assertionId: 'assertion-1',
+            path: '$.value',
+            matcher: 'toEqual',
+            expected: 'hello, world',
+            pathMatch: 'ANY',
+          },
+          {
+            assertionId: 'assertion-2',
+            path: '$.status',
+            matcher: 'toContain',
+            expected: 'success',
+            pathMatch: 'ALL',
+          },
+        ],
+      },
+    ];
+    render(<TestResultsView results={results} />);
+    
+    expect(screen.getByText('Test Case Assertions:')).toBeInTheDocument();
+    expect(screen.getByText('$.value toEqual "hello, world"')).toBeInTheDocument();
+    expect(screen.getByText('$.status toContain "success" (ALL match)')).toBeInTheDocument();
+  });
+
+  it('displays test case assertions with negation properly', () => {
+    const results: TestResult[] = [
+      {
+        id: '1',
+        testCaseName: 'Test 1',
+        status: 'pass',
+        expectedOutput: 'expected1',
+        actualOutput: 'output1',
+        testCaseAssertions: [
+          {
+            assertionId: 'assertion-1',
+            path: '$.status',
+            matcher: 'toEqual',
+            expected: 'inactive',
+            not: true,
+            pathMatch: 'ANY',
+          },
+        ],
+      },
+    ];
+    render(<TestResultsView results={results} />);
+    
+    expect(screen.getByText('$.status not toEqual "inactive"')).toBeInTheDocument();
+  });
+
+  it('displays test case assertions without expected value for matchers like toBeNull', () => {
+    const results: TestResult[] = [
+      {
+        id: '1',
+        testCaseName: 'Test 1',
+        status: 'pass',
+        expectedOutput: 'expected1',
+        actualOutput: 'output1',
+        testCaseAssertions: [
+          {
+            assertionId: 'assertion-1',
+            path: '$.data',
+            matcher: 'toBeNull',
+            pathMatch: 'ANY',
+          },
+        ],
+      },
+    ];
+    render(<TestResultsView results={results} />);
+    
+    expect(screen.getByText('$.data toBeNull')).toBeInTheDocument();
+  });
+
+  it('prefers test case assertions over assertion results when both are present', () => {
+    const results: TestResult[] = [
+      {
+        id: '1',
+        testCaseName: 'Test 1',
+        status: 'pass',
+        expectedOutput: 'expected1',
+        actualOutput: 'output1',
+        testCaseAssertions: [
+          {
+            assertionId: 'assertion-1',
+            path: '$.value',
+            matcher: 'toEqual',
+            expected: 'hello',
+            pathMatch: 'ANY',
+          },
+        ],
+        assertionResults: [
+          {
+            assertionId: 'a1',
+            path: '$.foo',
+            matcher: 'toEqual',
+            not: false,
+            pathMatch: 'ANY',
+            passed: true,
+            actualSamples: ['bar'],
+            message: 'Matched',
+          },
+        ],
+      },
+    ];
+    render(<TestResultsView results={results} />);
+    
+    // Should show test case assertions, not assertion results
+    expect(screen.getByText('Test Case Assertions:')).toBeInTheDocument();
+    expect(screen.getByText('$.value toEqual "hello"')).toBeInTheDocument();
+    expect(screen.queryByTestId('test-results-assertion-chip-a1')).not.toBeInTheDocument();
+  });
+
+  it('falls back to assertion results when no test case assertions are provided', () => {
+    const results: TestResult[] = [
+      {
+        id: '1',
+        testCaseName: 'Test 1',
+        status: 'pass',
+        expectedOutput: 'expected1',
+        actualOutput: 'output1',
+        assertionResults: [
+          {
+            assertionId: 'a1',
+            path: '$.foo',
+            matcher: 'toEqual',
+            not: false,
+            pathMatch: 'ANY',
+            passed: true,
+            actualSamples: ['bar'],
+            message: 'Matched',
+          },
+        ],
+      },
+    ];
+    render(<TestResultsView results={results} />);
+    
+    // Should show assertion results
+    expect(screen.queryByText('Test Case Assertions:')).not.toBeInTheDocument();
+    expect(screen.getByTestId('test-results-assertion-chip-a1')).toBeInTheDocument();
+  });
+
+  it('displays expected output in assertions column for simple tests (no custom assertions)', () => {
+    const results: TestResult[] = [
+      {
+        id: '1',
+        testCaseName: 'Simple Test',
+        status: 'pass',
+        expectedOutput: 'Simple expected output',
+        actualOutput: 'Simple actual output',
+      },
+    ];
+    render(<TestResultsView results={results} />);
+    
+    // Should show expected output in the assertions column
+    expect(screen.getByText('Expected Output:')).toBeInTheDocument();
+    expect(screen.getByText('Simple expected output')).toBeInTheDocument();
+    expect(screen.queryByTestId(/test-results-assertion-chip/)).not.toBeInTheDocument();
   });
 });

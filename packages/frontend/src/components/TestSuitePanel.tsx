@@ -386,7 +386,8 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
                       testCaseName: r.testCaseId, // No name, so use ID
                       status: r.status.toLowerCase() === 'pass' ? 'pass' : 'fail',
                       expectedOutput,
-                      actualOutput: typeof r.output === 'string' ? r.output : JSON.stringify(r.output)
+                      actualOutput: typeof r.output === 'string' ? r.output : JSON.stringify(r.output),
+                      testCaseAssertions: testCase?.assertions
                     };
                   })}
                 />

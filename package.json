@@ -12,6 +12,7 @@
     "dev:backend": "npm run dev --workspace=packages/backend",
     "dev:frontend": "npm run dev --workspace=packages/frontend",
     "e2e": "npm run --workspace=packages/e2e test",
+    "e2e:all": "npm run --workspace=packages/e2e test:all",
     "lint": "npm run lint --workspaces",
     "lint:fix": "npm run lint:fix --workspaces",
     "test": "npm run test --workspaces",

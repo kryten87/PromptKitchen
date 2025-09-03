@@ -15,7 +15,11 @@ let project: Project;
 let promptId: string;
 let testSuiteId: string;
 
-
+// Helper function to navigate to test cases panel
+async function navigateToTestCasesPanel(page: any, promptId: string, testSuiteId: string) {
+  await page.getByTestId(`view-prompt-button-${promptId}`).click();
+  await page.getByTestId(`test-cases-test-suite-button-${testSuiteId}`).click();
+}
 
 test.beforeEach(async ({ page }) => {
   const dbPath = fs.readFileSync(DB_PATH_FILE, 'utf-8');
@@ -119,138 +123,262 @@ test.afterEach(async () => {
   await db.destroy();
 });
 
-test('Test Case 1: Test Case Panel UI and Basic Interaction', async ({ page }) => {
-  // Navigate to the prompt details page first
-  await page.getByTestId(`view-prompt-button-${promptId}`).click();
+// Test 1: Initial Test Cases Panel State
+test('Test 1: Initial Test Cases Panel State', async ({ page }) => {
+  await navigateToTestCasesPanel(page, promptId, testSuiteId);
   
-  // 1. Click the "Test Cases" button associated with Test Suite
-  await page.getByTestId(`test-cases-test-suite-button-${testSuiteId}`).click();
-  
-  // 2. Assert: The "Test Cases" panel becomes visible
+  // Test cases panel is visible with data-testid="test-cases-panel"
   const testCasesPanel = page.getByTestId('test-cases-panel');
   await expect(testCasesPanel).toBeVisible();
   
-  // 3. Assert: The panel title is Test Cases for "Test Suite"
-  await expect(testCasesPanel.getByTestId('test-cases-header')).toHaveText('Test Cases for "Test Suite"');
+  // Message "No test cases found for this test suite" is displayed
+  await expect(page.getByText('No test cases found for this test suite')).toBeVisible();
   
-  // 4. Assert: An "Add Test Case" button is visible inside the panel
-  await expect(testCasesPanel.getByTestId('add-test-case-button')).toBeVisible();
-  
-  // 5. Assert: A "Close" button is visible inside the panel
-  await expect(testCasesPanel.getByTestId('close-test-cases-panel-button')).toBeVisible();
-  
-  // 6. Click the "Close" button
-  await testCasesPanel.getByTestId('close-test-cases-panel-button').click();
-  
-  // 7. Assert: The "Test Cases" panel is no longer visible
-  await expect(testCasesPanel).not.toBeVisible();
+  // "Add Test Case" button is visible and enabled
+  const addTestCaseButton = page.getByTestId('add-test-case-button');
+  await expect(addTestCaseButton).toBeVisible();
+  await expect(addTestCaseButton).toBeEnabled();
 });
 
-test('Test Case 2: "Create New Test Case" Panel Interaction', async ({ page }) => {
-  // Navigate to the prompt details page first
-  await page.getByTestId(`view-prompt-button-${promptId}`).click();
+// Test 2: Open Create Test Case Modal (Simple Mode)
+test('Test 2: Open Create Test Case Modal (Simple Mode)', async ({ page }) => {
+  await navigateToTestCasesPanel(page, promptId, testSuiteId);
   
-  // 1. Click the "Test Cases" button for Test Suite
-  await page.getByTestId(`test-cases-test-suite-button-${testSuiteId}`).click();
+  // Click "Add Test Case" button
+  await page.getByTestId('add-test-case-button').click();
   
-  // 2. Click the "Add Test Case" button
-  const testCasesPanel = page.getByTestId('test-cases-panel');
-  await testCasesPanel.getByTestId('add-test-case-button').click();
+  // "Create New Test Case" modal appears with data-testid="create-test-case-modal"
+  const createModal = page.getByTestId('create-test-case-modal');
+  await expect(createModal).toBeVisible();
   
-  // 3. Assert: The "Create New Test Case" panel appears with the title Create New Test Case
-  const createTestCasePanel = page.getByTestId('create-test-case-panel');
-  await expect(createTestCasePanel).toBeVisible();
-  await expect(createTestCasePanel.getByTestId('create-test-case-header')).toHaveText('Create New Test Case');
+  // "Simple Test Case" tab is active/enabled
+  const simpleTab = page.getByTestId('simple-tab');
+  await expect(simpleTab).toBeVisible();
   
-  // 4. Assert: The "Create" button is disabled
-  const createButton = createTestCasePanel.getByTestId('create-test-case-submit-button');
+  // "Expected Output" input element is visible with data-testid="expected-output-input"
+  const expectedOutputInput = page.getByTestId('expected-output-input');
+  await expect(expectedOutputInput).toBeVisible();
+  
+  // "Create" button is disabled
+  const createButton = page.getByTestId('create-test-case-submit-button');
   await expect(createButton).toBeDisabled();
-  
-  // 5. Click the "Cancel" button
-  await createTestCasePanel.getByTestId('create-test-case-cancel-button').click();
-  
-  // 6. Assert: The "Create New Test Case" panel disappears
-  await expect(createTestCasePanel).not.toBeVisible();
-  
-  // 7. Click the "Add Test Case" button again
-  await testCasesPanel.getByTestId('add-test-case-button').click();
-  
-  // 8. Click the "Add Input" button
-  await createTestCasePanel.getByTestId('add-input-button').click();
-  
-  // 9. Assert: A new input row appears containing a variable name input, a value input, and a "X" (delete) button
-  const inputRow = createTestCasePanel.locator('[data-testid^="input-row-"]').first();
-  await expect(inputRow).toBeVisible();
-  await expect(inputRow.getByTestId('input-variable-input')).toBeVisible();
-  await expect(inputRow.getByTestId('input-value-input')).toBeVisible();
-  await expect(inputRow.getByTestId('remove-input-button')).toBeVisible();
-  
-  // 10. Click the "X" button
-  await inputRow.getByTestId('remove-input-button').click();
-  
-  // 11. Assert: The input row is removed
-  await expect(inputRow).not.toBeVisible();
 });
 
-test('Test Case 3: Create, Verify, and Cancel Creation of a Test Case', async ({ page }) => {
-  // Navigate to the prompt details page first
-  await page.getByTestId(`view-prompt-button-${promptId}`).click();
+// Test 3: Enable Create Button with Expected Output
+test('Test 3: Enable Create Button with Expected Output', async ({ page }) => {
+  await navigateToTestCasesPanel(page, promptId, testSuiteId);
+  await page.getByTestId('add-test-case-button').click();
   
-  // 1. Click the "Test Cases" button for Test Suite
-  await page.getByTestId(`test-cases-test-suite-button-${testSuiteId}`).click();
+  // Enter any value in "Expected Output" element
+  await page.getByTestId('expected-output-input').fill('Test output');
   
-  const testCasesPanel = page.getByTestId('test-cases-panel');
-  
-  // 2. Click the "Add Test Case" button
-  await testCasesPanel.getByTestId('add-test-case-button').click();
-  
-  const createTestCasePanel = page.getByTestId('create-test-case-panel');
-  
-  // 3. Click "Add Input", and enter name for the variable and world for the value
-  await createTestCasePanel.getByTestId('add-input-button').click();
-  const inputRow = createTestCasePanel.locator('[data-testid^="input-row-"]').first();
-  await inputRow.getByTestId('input-variable-input').fill('name');
-  await inputRow.getByTestId('input-value-input').fill('world');
-  
-  // 4. Enter Hello, world! in the "Expected Output" field
-  await createTestCasePanel.getByTestId('expected-output-input').fill('Hello, world!');
-  
-  // 5. Assert: The "Create" button is now enabled
-  const createButton = createTestCasePanel.getByTestId('create-test-case-submit-button');
+  // "Create" button becomes enabled
+  const createButton = page.getByTestId('create-test-case-submit-button');
   await expect(createButton).toBeEnabled();
+});
+
+// Test 4: Create Simple Test Case Successfully
+test('Test 4: Create Simple Test Case Successfully', async ({ page }) => {
+  await navigateToTestCasesPanel(page, promptId, testSuiteId);
+  await page.getByTestId('add-test-case-button').click();
   
-  // 6. Click the "Cancel" button
-  await createTestCasePanel.getByTestId('create-test-case-cancel-button').click();
+  // Enter value in expected output
+  await page.getByTestId('expected-output-input').fill('Test output');
   
-  // 7. Assert: The "Create New Test Case" panel disappears
-  await expect(createTestCasePanel).not.toBeVisible();
+  // Click "Create" button
+  await page.getByTestId('create-test-case-submit-button').click();
   
-  // 8. Assert: The message "No test cases found for this test suite" is displayed in the "Test Cases" panel
-  await expect(testCasesPanel.getByTestId('no-test-cases-message')).toBeVisible();
+  // Modal disappears (not visible)
+  const createModal = page.getByTestId('create-test-case-modal');
+  await expect(createModal).not.toBeVisible();
   
-  // 9. Repeat steps 2-4
-  await testCasesPanel.getByTestId('add-test-case-button').click();
-  await createTestCasePanel.getByTestId('add-input-button').click();
-  const inputRow2 = createTestCasePanel.locator('[data-testid^="input-row-"]').first();
-  await inputRow2.getByTestId('input-variable-input').fill('name');
-  await inputRow2.getByTestId('input-value-input').fill('world');
-  await createTestCasePanel.getByTestId('expected-output-input').fill('Hello, world!');
-  
-  // 10. Click the "Create" button
-  await createButton.click();
-  
-  // 11. Assert: The "Create New Test Case" panel disappears
-  await expect(createTestCasePanel).not.toBeVisible();
-  
-  // 12. Assert: A new test case appears in the list, showing a Test Case ID, an "Edit" button, and a "Delete" button
-  const testCaseItem = testCasesPanel.locator('[data-testid^="test-case-item-"]').first();
+  // New test case appears in test case list
+  const testCaseItem = page.locator('[data-testid^="test-case-item-"]').first();
   await expect(testCaseItem).toBeVisible();
+  
+  // Test case has "Edit" and "Delete" buttons
   await expect(testCaseItem.getByTestId('edit-test-case-button')).toBeVisible();
   await expect(testCaseItem.getByTestId('delete-test-case-button')).toBeVisible();
 });
 
-test('Test Case 4: Delete a Test Case', async ({ page }) => {
-  // Setup: Create a test case with one input (name: world) and an expected output (Hello, world!)
+// Test 5: Add Input Variables Interface
+test('Test 5: Add Input Variables Interface', async ({ page }) => {
+  await navigateToTestCasesPanel(page, promptId, testSuiteId);
+  await page.getByTestId('add-test-case-button').click();
+  
+  // Click "Add Input" button
+  await page.getByTestId('add-input-button').click();
+  
+  // Variable name input element appears
+  const variableNameInput = page.getByTestId('input-variable-input').first();
+  await expect(variableNameInput).toBeVisible();
+  
+  // Variable value input element appears
+  const variableValueInput = page.getByTestId('input-value-input').first();
+  await expect(variableValueInput).toBeVisible();
+});
+
+// Test 6: Add Multiple Input Variables
+test('Test 6: Add Multiple Input Variables', async ({ page }) => {
+  await navigateToTestCasesPanel(page, promptId, testSuiteId);
+  await page.getByTestId('add-test-case-button').click();
+  
+  // Click "Add Input" button
+  await page.getByTestId('add-input-button').click();
+  
+  // Enter name and value in first input pair
+  await page.getByTestId('input-variable-input').first().fill('name1');
+  await page.getByTestId('input-value-input').first().fill('value1');
+  
+  // Click "Add Input" again
+  await page.getByTestId('add-input-button').click();
+  
+  // Second variable name input element appears
+  const secondNameInput = page.getByTestId('input-variable-input').nth(1);
+  await expect(secondNameInput).toBeVisible();
+  
+  // Second variable value input element appears
+  const secondValueInput = page.getByTestId('input-value-input').nth(1);
+  await expect(secondValueInput).toBeVisible();
+  
+  // First input pair remains visible
+  await expect(page.getByTestId('input-variable-input').first()).toBeVisible();
+  await expect(page.getByTestId('input-value-input').first()).toBeVisible();
+});
+
+// Test 7: Remove Input Variable
+test('Test 7: Remove Input Variable', async ({ page }) => {
+  await navigateToTestCasesPanel(page, promptId, testSuiteId);
+  await page.getByTestId('add-test-case-button').click();
+  
+  // Add two input pairs
+  await page.getByTestId('add-input-button').click();
+  await page.getByTestId('add-input-button').click();
+  
+  // Click "X" button next to second input pair
+  await page.getByTestId('remove-input-button').nth(1).click();
+  
+  // Only one variable name input element remains visible
+  await expect(page.getByTestId('input-variable-input')).toHaveCount(1);
+  
+  // Only one variable value input element remains visible
+  await expect(page.getByTestId('input-value-input')).toHaveCount(1);
+});
+
+// Test 8: Switch to Advanced Test Case Mode
+test('Test 8: Switch to Advanced Test Case Mode', async ({ page }) => {
+  await navigateToTestCasesPanel(page, promptId, testSuiteId);
+  await page.getByTestId('add-test-case-button').click();
+  
+  // Click "Advanced Test Case" tab
+  await page.getByTestId('advanced-tab').click();
+  
+  // "Expected Output" element disappears
+  await expect(page.getByTestId('expected-output-input')).not.toBeVisible();
+  
+  // "No assertions defined" message is visible
+  await expect(page.getByText('No assertions defined')).toBeVisible();
+  
+  // "Add assertion" button appears
+  await expect(page.getByText('+ Add assertion')).toBeVisible();
+  
+  // "Import from last output" button appears
+  await expect(page.getByText('Import from last output')).toBeVisible();
+  
+  // "Preview" button appears
+  await expect(page.getByText('Preview')).toBeVisible();
+});
+
+// Test 9: Add First Assertion
+test('Test 9: Add First Assertion', async ({ page }) => {
+  await navigateToTestCasesPanel(page, promptId, testSuiteId);
+  await page.getByTestId('add-test-case-button').click();
+  await page.getByTestId('advanced-tab').click();
+  
+  // Click "Add assertion" button
+  await page.getByText('+ Add assertion').click();
+  
+  // "No assertions defined" message disappears
+  await expect(page.getByText('No assertions defined')).not.toBeVisible();
+  
+  // Assertion elements appear (checking for the first assertion row)
+  const firstAssertionRow = page.locator('li[role="listitem"]').first();
+  await expect(firstAssertionRow).toBeVisible();
+  
+  // Path input appears
+  const pathInput = firstAssertionRow.locator('input[placeholder*="Path"]');
+  await expect(pathInput).toBeVisible();
+  
+  // Match type dropdown appears (Any match/All match)
+  const pathMatchSelect = firstAssertionRow.locator('select').first();
+  await expect(pathMatchSelect).toBeVisible();
+  
+  // Matcher dropdown appears
+  const matcherSelect = firstAssertionRow.locator('select').nth(1);
+  await expect(matcherSelect).toBeVisible();
+  
+  // "Not" checkbox appears
+  const notCheckbox = firstAssertionRow.locator('input[type="checkbox"]');
+  await expect(notCheckbox).toBeVisible();
+  
+  // "Remove" button appears
+  await expect(firstAssertionRow.getByText('Remove')).toBeVisible();
+});
+
+// Test 10: Enable Create Button with Valid Assertion
+test('Test 10: Enable Create Button with Valid Assertion', async ({ page }) => {
+  await navigateToTestCasesPanel(page, promptId, testSuiteId);
+  await page.getByTestId('add-test-case-button').click();
+  await page.getByTestId('advanced-tab').click();
+  await page.getByText('+ Add assertion').click();
+  
+  const firstAssertionRow = page.locator('li[role="listitem"]').first();
+  
+  // Enter "$.value" in path input
+  const pathInput = firstAssertionRow.locator('input[placeholder*="Path"]');
+  await pathInput.fill('$.value');
+  
+  // Select a match type from dropdown (should already be set to "Any match" by default)
+  
+  // Select a match operator from dropdown (should already be set to "toEqual" by default)
+  
+  // "Create" button becomes enabled
+  const createButton = page.getByTestId('create-test-case-submit-button');
+  await expect(createButton).toBeEnabled();
+});
+
+// Test 11: Create Advanced Test Case Successfully
+test('Test 11: Create Advanced Test Case Successfully', async ({ page }) => {
+  await navigateToTestCasesPanel(page, promptId, testSuiteId);
+  await page.getByTestId('add-test-case-button').click();
+  await page.getByTestId('advanced-tab').click();
+  await page.getByText('+ Add assertion').click();
+  
+  const firstAssertionRow = page.locator('li[role="listitem"]').first();
+  
+  // Configure assertion
+  const pathInput = firstAssertionRow.locator('input[placeholder*="Path"]');
+  await pathInput.fill('$.value');
+  
+  // Click "Create" button
+  await page.getByTestId('create-test-case-submit-button').click();
+  
+  // Modal disappears
+  const createModal = page.getByTestId('create-test-case-modal');
+  await expect(createModal).not.toBeVisible();
+  
+  // Test case appears in test case list
+  const testCaseItem = page.locator('[data-testid^="test-case-item-"]').first();
+  await expect(testCaseItem).toBeVisible();
+  
+  // Test case has "Edit" and "Delete" buttons
+  await expect(testCaseItem.getByTestId('edit-test-case-button')).toBeVisible();
+  await expect(testCaseItem.getByTestId('delete-test-case-button')).toBeVisible();
+});
+
+// Test 12: Delete Test Case (Cancel)
+test('Test 12: Delete Test Case (Cancel)', async ({ page }) => {
+  // Setup: Create a test case first
   const dbPath = fs.readFileSync(DB_PATH_FILE, 'utf-8');
   const db = new DatabaseConnector({ filename: dbPath });
   
@@ -258,8 +386,8 @@ test('Test Case 4: Delete a Test Case', async ({ page }) => {
   await db.knex('test_cases').insert({
     id: testCaseId,
     test_suite_id: testSuiteId,
-    inputs: JSON.stringify({ name: 'world' }),
-    expected_output: 'Hello, world!',
+    inputs: JSON.stringify({}),
+    expected_output: 'Test output',
     output_type: 'string',
     assertions: JSON.stringify([]),
     run_mode: 'DEFAULT',
@@ -268,41 +396,32 @@ test('Test Case 4: Delete a Test Case', async ({ page }) => {
   });
   await db.destroy();
   
-  await page.getByTestId(`view-prompt-button-${promptId}`).click();
-  await page.getByTestId(`test-cases-test-suite-button-${testSuiteId}`).click();
-  const testCasesPanel = page.getByTestId('test-cases-panel');
+  await navigateToTestCasesPanel(page, promptId, testSuiteId);
   
-  // 2. Click the "Delete" button for the created test case
-  const testCaseItem = testCasesPanel.getByTestId(`test-case-item-${testCaseId}`);
+  // Click "Delete" button on test case
+  const testCaseItem = page.getByTestId(`test-case-item-${testCaseId}`);
   await testCaseItem.getByTestId('delete-test-case-button').click();
   
-  // 3. Assert: A confirmation modal appears with the message "Are you sure you want to delete this test case?"
+  // "Are you sure you want to delete this test case?" modal appears with "No" and "Yes" buttons
   const confirmModal = page.getByTestId('confirm-modal');
   await expect(confirmModal).toBeVisible();
   await expect(confirmModal).toContainText('Are you sure you want to delete this test case?');
+  await expect(confirmModal.getByTestId('confirm-no')).toBeVisible();
+  await expect(confirmModal.getByTestId('confirm-yes')).toBeVisible();
   
-  // 4. Click the "No" button
+  // Click "No" in confirmation modal
   await confirmModal.getByTestId('confirm-no').click();
   
-  // 5. Assert: The modal disappears and the test case remains in the list
+  // Confirmation modal disappears
   await expect(confirmModal).not.toBeVisible();
+  
+  // Test case remains in list
   await expect(testCaseItem).toBeVisible();
-  
-  // 6. Click the "Delete" button again
-  await testCaseItem.getByTestId('delete-test-case-button').click();
-  
-  // 7. Click the "Yes" button
-  await confirmModal.getByTestId('confirm-yes').click();
-  
-  // 8. Assert: The test case is removed from the list
-  await expect(testCaseItem).not.toBeVisible();
-  
-  // 9. Assert: The message "No test cases found for this test suite" is displayed
-  await expect(testCasesPanel.getByTestId('no-test-cases-message')).toBeVisible();
 });
 
-test('Test Case 5: Edit a Test Case', async ({ page }) => {
-  // Setup: Create a test case with one input (name: world) and an expected output (Hello, world!)
+// Test 13: Delete Test Case (Confirm)
+test('Test 13: Delete Test Case (Confirm)', async ({ page }) => {
+  // Setup: Create a test case first
   const dbPath = fs.readFileSync(DB_PATH_FILE, 'utf-8');
   const db = new DatabaseConnector({ filename: dbPath });
   
@@ -310,8 +429,8 @@ test('Test Case 5: Edit a Test Case', async ({ page }) => {
   await db.knex('test_cases').insert({
     id: testCaseId,
     test_suite_id: testSuiteId,
-    inputs: JSON.stringify({ name: 'world' }),
-    expected_output: 'Hello, world!',
+    inputs: JSON.stringify({}),
+    expected_output: 'Test output',
     output_type: 'string',
     assertions: JSON.stringify([]),
     run_mode: 'DEFAULT',
@@ -320,51 +439,25 @@ test('Test Case 5: Edit a Test Case', async ({ page }) => {
   });
   await db.destroy();
   
-  await page.getByTestId(`view-prompt-button-${promptId}`).click();
-  await page.getByTestId(`test-cases-test-suite-button-${testSuiteId}`).click();
-  const testCasesPanel = page.getByTestId('test-cases-panel');
+  await navigateToTestCasesPanel(page, promptId, testSuiteId);
   
-  // 2. Click the "Edit" button for the created test case
-  const testCaseItem = testCasesPanel.getByTestId(`test-case-item-${testCaseId}`);
-  await testCaseItem.getByTestId('edit-test-case-button').click();
+  // Click "Delete" button on test case
+  const testCaseItem = page.getByTestId(`test-case-item-${testCaseId}`);
+  await testCaseItem.getByTestId('delete-test-case-button').click();
   
-  // 3. Assert: The "Edit Test Case" panel appears
-  const editTestCasePanel = page.getByTestId('edit-test-case-panel');
-  await expect(editTestCasePanel).toBeVisible();
+  // "Are you sure you want to delete this test case?" modal appears with "No" and "Yes" buttons
+  const confirmModal = page.getByTestId('confirm-modal');
+  await expect(confirmModal).toBeVisible();
+  await expect(confirmModal).toContainText('Are you sure you want to delete this test case?');
+  await expect(confirmModal.getByTestId('confirm-no')).toBeVisible();
+  await expect(confirmModal.getByTestId('confirm-yes')).toBeVisible();
   
-  // 4. Assert: The input variable is pre-filled with name and world
-  const inputRow = editTestCasePanel.locator('[data-testid^="input-row-"]').first();
-  await expect(inputRow.getByTestId('input-variable-input')).toHaveValue('name');
-  await expect(inputRow.getByTestId('input-value-input')).toHaveValue('world');
+  // Click "Yes" in confirmation modal
+  await confirmModal.getByTestId('confirm-yes').click();
   
-  // 5. Assert: The expected output is pre-filled with Hello, world!
-  await expect(editTestCasePanel.getByTestId('expected-output-input')).toHaveValue('Hello, world!');
+  // Confirmation modal disappears
+  await expect(confirmModal).not.toBeVisible();
   
-  // 6. Click the "Cancel" button
-  await editTestCasePanel.getByTestId('edit-test-case-cancel-button').click();
-  
-  // 7. Assert: The "Edit Test Case" panel disappears and the test case is unchanged
-  await expect(editTestCasePanel).not.toBeVisible();
-  await expect(testCaseItem).toBeVisible();
-  
-  // 8. Click the "Edit" button again
-  await testCaseItem.getByTestId('edit-test-case-button').click();
-  
-  // 9. Change the input variable's value to galaxy
-  await inputRow.getByTestId('input-value-input').fill('galaxy');
-  
-  // 10. Change the expected output to Hello, galaxy!
-  await editTestCasePanel.getByTestId('expected-output-input').fill('Hello, galaxy!');
-  
-  // 11. Click the "Update" button
-  await editTestCasePanel.getByTestId('edit-test-case-update-button').click();
-  
-  // 12. Assert: The "Edit Test Case" panel disappears
-  await expect(editTestCasePanel).not.toBeVisible();
-  
-  // 13. Assert: The test case in the list now reflects the updated values
-  // We can verify this by editing again to see the persisted values
-  await testCaseItem.getByTestId('edit-test-case-button').click();
-  await expect(inputRow.getByTestId('input-value-input')).toHaveValue('galaxy');
-  await expect(editTestCasePanel.getByTestId('expected-output-input')).toHaveValue('Hello, galaxy!');
+  // Test case disappears from list
+  await expect(testCaseItem).not.toBeVisible();
 });

@@ -59,6 +59,7 @@
 - frontend/src/mocks -- what is this?
 - ensure that access control is working -- person A can only see projects for person A
 - playwright e2e tests
+- add lint, lint:fix to e2e
 
 # Bugs
 - added a project, prompt, test suite, and two test cases. Then added a second project -- first project gone
@@ -83,6 +84,7 @@
 - need a way to match results similar to jest matchers
 - test run history
 - model selection
+- when running a test suite are we hitting the AI multiple times or just once?
 - JSON editing where appropriate
 - auth middleware should check user in database; caching might be necessary
 

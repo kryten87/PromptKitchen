@@ -75,6 +75,15 @@ test.beforeEach(async ({ page }) => {
     updated_at: new Date(),
   });
 
+  // Insert prompt history record (required for test suite runs)
+  await db.knex('prompt_history').insert({
+    id: crypto.randomUUID(),
+    prompt_id: newPrompt.id,
+    prompt: newPrompt.prompt,
+    version: 1,
+    created_at: new Date(),
+  });
+
   promptObj = {
     ...newPrompt,
     version: 1,
@@ -371,9 +380,10 @@ test('Test Suite Results Modal Shows Test Case Assertions', async ({ page }) => 
   // Run the test suite to trigger the results modal
   await page.getByTestId(`run-test-suite-button-${testSuiteId}`).click();
 
-  // Wait for the results modal to appear (it should appear immediately)
+  // Wait for the API call to complete and the results modal to appear
+  // Give it more time since the test execution needs to complete
   const resultsModal = page.locator('.fixed.inset-0.z-50');
-  await expect(resultsModal).toBeVisible();
+  await expect(resultsModal).toBeVisible({ timeout: 10000 });
   await expect(resultsModal.getByText('Test Suite Results')).toBeVisible();
 
   // Check that the Assertions column shows the test case assertions

@@ -12,7 +12,6 @@
 - when visiting app, on 401 response from server, log out and redirect to login page
 
 # UX Problems
-- Create Test Case: "Create" button disabled if no variable entered
 - when I have a prompt open and I click "view" for another prompt, all other panels should close (currently showing incorrect info because it keeps the old data)
 - create test case: add expected output with no variables --> enable create button
 - after "Create New Prompt", view test suites for the new project
@@ -63,4 +62,7 @@ sort out front end/back end ports/proxies
 # New Features
 - functional log out button
 - test results during tests -- show expected and actual values
+
+# UX Problems
+- Create Test Case: "Create" button disabled if no variable entered
 

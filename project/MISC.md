@@ -1,5 +1,5 @@
 # Findings 9/3/2025
-- when adding a new test case with advanced assertions, the first edit does not save. Second and later edits work
+- when adding a new test case with advanced assertions, the first edit does not save. Second and later edits work **FIXED**
 - toMatch with a regex string does not work with i flag - flag is not saved **FIXED**
 
 

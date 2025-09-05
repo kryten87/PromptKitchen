@@ -2,6 +2,7 @@ import { loadPKConfig } from '../config';
 
 import { DatabaseConnector } from '@prompt-kitchen/shared';
 import type { JsonValue, TestCaseRunMode } from '@prompt-kitchen/shared/src/dtos';
+import type { Assertion } from '@prompt-kitchen/shared/src/types';
 import { FastifyInstance, FastifyRequest } from 'fastify';
 import { ExecutionService } from '../services/ExecutionService';
 import { LLMService } from '../services/LLMService';
@@ -15,6 +16,7 @@ interface CreateTestSuiteBody { name: string; }
 interface CreateTestCaseBody {
   inputs: Record<string, JsonValue>;
   expectedOutput: string | Record<string, JsonValue>;
+  assertions?: Assertion[];
   runMode: TestCaseRunMode;
 }
 
@@ -57,8 +59,8 @@ export async function registerTestSuiteRoutes(fastify: FastifyInstance, db: Data
 
   fastify.post('/api/test-suites/:testSuiteId/test-cases', async (request: FastifyRequest<{ Params: TestSuiteIdTestCasesParams; Body: CreateTestCaseBody }>, reply) => {
     const { testSuiteId } = request.params;
-    const { inputs, expectedOutput, runMode } = request.body;
-    const testCase = await service.createTestCase({ testSuiteId, inputs, expectedOutput, runMode });
+    const { inputs, expectedOutput, assertions, runMode } = request.body;
+    const testCase = await service.createTestCase({ testSuiteId, inputs, expectedOutput, assertions, runMode });
     reply.code(201).send(testCase);
   });
 

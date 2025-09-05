@@ -48,7 +48,7 @@ describe('CreateTestCaseModal', () => {
 
     render(<CreateTestCaseModal {...defaultProps} testCase={testCase} />);
 
-    expect(screen.getByTestId('create-test-case-modal')).toBeInTheDocument();
+    expect(screen.getByTestId('edit-test-case-modal')).toBeInTheDocument();
     expect(screen.getByText('Edit Test Case')).toBeInTheDocument();
   });
 

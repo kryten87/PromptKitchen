@@ -1,5 +1,6 @@
 import type { DatabaseConnector } from '@prompt-kitchen/shared';
 import { TestCase, TestSuite } from '@prompt-kitchen/shared/src/dtos';
+import type { Assertion } from '@prompt-kitchen/shared/src/types';
 import { TestCaseRepository } from '../repositories/TestCaseRepository';
 import { TestSuiteRepository } from '../repositories/TestSuiteRepository';
 import { TestSuiteService } from '../services/TestSuiteService';
@@ -101,6 +102,31 @@ describe('TestSuiteService', () => {
     const result = await service.getTestCaseById('case-1');
     expect(result).toBe(testCase);
     expect(testCaseRepo.getById).toHaveBeenCalledWith('case-1');
+  });
+
+  it('createTestCase creates a case with assertions', async () => {
+    const assertions: Assertion[] = [
+      {
+        assertionId: 'assertion-1',
+        path: '$.result',
+        matcher: 'toEqual',
+        expected: 'success',
+        not: false,
+        pathMatch: 'ANY',
+      },
+    ];
+    const testCaseWithAssertions = { ...testCase, assertions };
+    testCaseRepo.create.mockResolvedValue(testCaseWithAssertions);
+    const data = { 
+      testSuiteId: 'suite-1', 
+      inputs: { foo: 'bar' }, 
+      expectedOutput: 'baz', 
+      assertions,
+      runMode: 'DEFAULT' as const 
+    };
+    const result = await service.createTestCase(data);
+    expect(result).toBe(testCaseWithAssertions);
+    expect(testCaseRepo.create).toHaveBeenCalledWith(data);
   });
 
   it('createTestCase creates a case', async () => {

@@ -20,8 +20,10 @@ export function CreateTestCaseModal({
 }: CreateTestCaseModalProps) {
   if (!open) return null;
 
+  const isEditing = !!testCase;
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40" data-testid="create-test-case-modal">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40" data-testid={isEditing ? "edit-test-case-modal" : "create-test-case-modal"}>
       <div className="bg-white rounded-lg shadow-lg w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
         <TestCaseEditor
           testSuiteId={testSuiteId}

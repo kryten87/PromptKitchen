@@ -376,6 +376,66 @@ test('Test 11: Create Advanced Test Case Successfully', async ({ page }) => {
   await expect(testCaseItem.getByTestId('delete-test-case-button')).toBeVisible();
 });
 
+// Test 11.1: Create Advanced Test Case and Verify Assertions are Saved
+test('Test 11.1: Create Advanced Test Case and Verify Assertions are Saved', async ({ page }) => {
+  await navigateToTestCasesPanel(page, promptId, testSuiteId);
+  await page.getByTestId('add-test-case-button').click();
+  await page.getByTestId('advanced-tab').click();
+  await page.getByText('+ Add assertion').click();
+  
+  const firstAssertionRow = page.locator('li[role="listitem"]').first();
+  
+  // Configure assertion with specific values
+  const pathInput = firstAssertionRow.locator('input[placeholder*="Path"]');
+  await pathInput.fill('$.result');
+  
+  // Select matcher
+  const matcherSelect = firstAssertionRow.locator('select').nth(1);
+  await matcherSelect.selectOption('toEqual');
+  
+  // Enter expected value if needed (depends on UI implementation)
+  const expectedInput = firstAssertionRow.locator('input[placeholder*="Expected"]');
+  if (await expectedInput.isVisible()) {
+    await expectedInput.fill('success');
+  }
+  
+  // Click "Create" button
+  await page.getByTestId('create-test-case-submit-button').click();
+  
+  // Modal disappears
+  const createModal = page.getByTestId('create-test-case-modal');
+  await expect(createModal).not.toBeVisible();
+  
+  // Test case appears in test case list
+  const testCaseItem = page.locator('[data-testid^="test-case-item-"]').first();
+  await expect(testCaseItem).toBeVisible();
+  
+  // IMPORTANT: Verify that the assertions are actually displayed in the test case
+  // This would fail before our bug fix since assertions weren't saved on POST
+  await expect(testCaseItem).toContainText('Assertions:');
+  await expect(testCaseItem).toContainText('$.result');
+  
+  // Click edit to verify assertions are persisted
+  await testCaseItem.getByTestId('edit-test-case-button').click();
+  
+  // Edit modal should open with advanced tab active since assertions exist
+  const editModal = page.getByTestId('edit-test-case-modal');
+  await expect(editModal).toBeVisible();
+  
+  // Should be on advanced tab
+  const advancedTab = page.getByTestId('advanced-tab');
+  await expect(advancedTab).toHaveClass(/border-primary/);
+  
+  // Assertion should be present with correct values
+  const editAssertionRow = page.locator('li[role="listitem"]').first();
+  const editPathInput = editAssertionRow.locator('input[placeholder*="Path"]');
+  await expect(editPathInput).toHaveValue('$.result');
+  
+  // Cancel the edit
+  await page.getByTestId('edit-test-case-cancel-button').click();
+  await expect(editModal).not.toBeVisible();
+});
+
 // Test 12: Delete Test Case (Cancel)
 test('Test 12: Delete Test Case (Cancel)', async ({ page }) => {
   // Setup: Create a test case first
@@ -516,4 +576,98 @@ test('Test 14: Display Advanced Test Case Details', async ({ page }) => {
   // Test case shows inputs as usual
   await expect(testCaseItem).toContainText('Inputs:');
   await expect(testCaseItem).toContainText('{"name":"John"}');
+});
+
+// Test 15: Create Advanced Test Case with toMatch and Regex Flags
+test('Test 15: Create Advanced Test Case with toMatch and Regex Flags', async ({ page }) => {
+  // Setup: Create an advanced test case with toMatch and regex flags directly in database
+  const dbPath = fs.readFileSync(DB_PATH_FILE, 'utf-8');
+  const db = new DatabaseConnector({ filename: dbPath });
+  
+  const testCaseId = crypto.randomUUID();
+  const assertions = [
+    {
+      assertionId: 'assertion-1',
+      path: '$.message',
+      matcher: 'toMatch',
+      expected: { source: '[Hh]ello.*world', flags: 'im' },
+      pathMatch: 'ANY',
+    },
+  ];
+  
+  await db.knex('test_cases').insert({
+    id: testCaseId,
+    test_suite_id: testSuiteId,
+    inputs: JSON.stringify({ greeting: 'Hello beautiful world' }),
+    expected_output: 'default output',
+    output_type: 'string',
+    assertions: JSON.stringify(assertions),
+    run_mode: 'DEFAULT',
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
+  await db.destroy();
+
+  await navigateToTestCasesPanel(page, promptId, testSuiteId);
+
+  // Test case appears in list
+  const testCaseItem = page.getByTestId(`test-case-item-${testCaseId}`);
+  await expect(testCaseItem).toBeVisible();
+
+  // Test case shows "Assertions:" label
+  await expect(testCaseItem).toContainText('Assertions:');
+
+  // Test case displays formatted assertion with regex pattern and flags
+  await expect(testCaseItem).toContainText('$.message toMatch {"source":"[Hh]ello.*world","flags":"im"}');
+
+  // Test case shows inputs
+  await expect(testCaseItem).toContainText('Inputs:');
+  await expect(testCaseItem).toContainText('{"greeting":"Hello beautiful world"}');
+});
+
+// Test 16: Test Case with toMatch Pattern Without Flags
+test('Test 16: Test Case with toMatch Pattern Without Flags', async ({ page }) => {
+  // Setup: Create an advanced test case with toMatch without flags directly in database
+  const dbPath = fs.readFileSync(DB_PATH_FILE, 'utf-8');
+  const db = new DatabaseConnector({ filename: dbPath });
+  
+  const testCaseId = crypto.randomUUID();
+  const assertions = [
+    {
+      assertionId: 'assertion-1',
+      path: '$.status',
+      matcher: 'toMatch',
+      expected: 'success|completed',
+      pathMatch: 'ANY',
+    },
+  ];
+  
+  await db.knex('test_cases').insert({
+    id: testCaseId,
+    test_suite_id: testSuiteId,
+    inputs: JSON.stringify({ taskResult: 'Task completed successfully' }),
+    expected_output: 'default output',
+    output_type: 'string',
+    assertions: JSON.stringify(assertions),
+    run_mode: 'DEFAULT',
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
+  await db.destroy();
+
+  await navigateToTestCasesPanel(page, promptId, testSuiteId);
+
+  // Test case appears in list
+  const testCaseItem = page.getByTestId(`test-case-item-${testCaseId}`);
+  await expect(testCaseItem).toBeVisible();
+
+  // Test case shows "Assertions:" label
+  await expect(testCaseItem).toContainText('Assertions:');
+
+  // Test case displays formatted assertion with regex pattern (no flags shown when using string)
+  await expect(testCaseItem).toContainText('$.status toMatch "success|completed"');
+
+  // Test case shows inputs
+  await expect(testCaseItem).toContainText('Inputs:');
+  await expect(testCaseItem).toContainText('{"taskResult":"Task completed successfully"}');
 });

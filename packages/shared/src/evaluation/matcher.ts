@@ -6,6 +6,7 @@ import { deepEqual } from './deepEqual';
 
 export interface MatcherContext {
   deepEqual(a: unknown, b: unknown): boolean;
+  compileSafeRegex?(source: string, flags?: string): RegExp;
 }
 
 /**
@@ -152,7 +153,7 @@ registry[toBeOneOfMatcher.name] = toBeOneOfMatcher;
 export const toMatchMatcher: Matcher = {
   name: 'toMatch',
   arity: 'one',
-  evaluate(value: unknown, expected: unknown): boolean {
+  evaluate(value: unknown, expected: unknown, ctx: MatcherContext): boolean {
     if (typeof value !== 'string') {
       return false;
     }
@@ -170,7 +171,7 @@ export const toMatchMatcher: Matcher = {
       return false;
     }
     try {
-      const re = new RegExp(pattern, flags);
+      const re = ctx.compileSafeRegex ? ctx.compileSafeRegex(pattern, flags) : new RegExp(pattern, flags);
       return re.test(value);
     } catch {
       return false;

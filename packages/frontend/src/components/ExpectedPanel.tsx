@@ -20,6 +20,23 @@ export function ExpectedPanel({ matcher, expected, onChange }: ExpectedPanelProp
     if (expected === null || expected === undefined) {
       setTextValue('');
       setJsonValue('');
+      setFlags({ i: false, m: false, s: false, u: false });
+      return;
+    }
+
+    // Handle toMatch matcher with regex flags
+    if (matcher === 'toMatch' && typeof expected === 'object' && expected && 'source' in expected) {
+      const regexObj = expected as { source: string; flags?: string };
+      setTextValue(regexObj.source);
+      
+      // Parse flags string into individual boolean flags
+      const flagsStr = regexObj.flags || '';
+      setFlags({
+        i: flagsStr.includes('i'),
+        m: flagsStr.includes('m'),
+        s: flagsStr.includes('s'),
+        u: flagsStr.includes('u'),
+      });
       return;
     }
 
@@ -41,25 +58,59 @@ export function ExpectedPanel({ matcher, expected, onChange }: ExpectedPanelProp
     } catch {
       setJsonValue(valueAsString);
     }
-  }, [expected]);
+  }, [expected, matcher]);
 
   const handleFlagChange = (flag: keyof typeof flags) => {
-    setFlags((prev) => ({ ...prev, [flag]: !prev[flag] }));
+    const newFlags = { ...flags, [flag]: !flags[flag] };
+    setFlags(newFlags);
+    
+    // Update the expected value immediately when flags change
+    if (matcher === 'toMatch') {
+      const flagsStr = Object.keys(newFlags).filter((f) => newFlags[f as keyof typeof newFlags]).join('');
+      if (flagsStr.length > 0) {
+        onChange({ source: textValue, flags: flagsStr });
+      } else {
+        onChange(textValue);
+      }
+    }
   };
 
   const handleTextChange = (value: string) => {
     setTextValue(value);
     try {
       if (matcher === 'toMatch') {
-        new RegExp(value, Object.keys(flags).filter((f) => flags[f as keyof typeof flags]).join(''));
+        const flagsStr = Object.keys(flags).filter((f) => flags[f as keyof typeof flags]).join('');
+        new RegExp(value, flagsStr);
+        setValidationError(null);
+        
+        // Send the correct format based on whether flags are set
+        if (flagsStr.length > 0) {
+          onChange({ source: value, flags: flagsStr });
+        } else {
+          onChange(value);
+        }
       } else if (matcher === 'toEqual' || matcher === 'toContain') {
         JSON.parse(value);
+        setValidationError(null);
+        onChange(value);
+      } else {
+        setValidationError(null);
+        onChange(value);
       }
-      setValidationError(null);
     } catch {
       setValidationError('Invalid input');
+      // Still call onChange to update the value, even if invalid
+      if (matcher === 'toMatch') {
+        const flagsStr = Object.keys(flags).filter((f) => flags[f as keyof typeof flags]).join('');
+        if (flagsStr.length > 0) {
+          onChange({ source: value, flags: flagsStr });
+        } else {
+          onChange(value);
+        }
+      } else {
+        onChange(value);
+      }
     }
-    onChange(value);
   };
 
   const handleJsonChange = (value: string) => {
@@ -94,6 +145,7 @@ export function ExpectedPanel({ matcher, expected, onChange }: ExpectedPanelProp
                 type="checkbox"
                 checked={flags[flag as keyof typeof flags]}
                 onChange={() => handleFlagChange(flag as keyof typeof flags)}
+                data-testid={`regex-flag-${flag}`}
               />
               {flag}
             </label>

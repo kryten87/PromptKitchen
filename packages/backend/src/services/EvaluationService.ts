@@ -1,15 +1,47 @@
 import type { Assertion, AssertionResult, MatcherContext } from '@prompt-kitchen/shared';
 import { evaluateAssertions } from '@prompt-kitchen/shared';
+import { loadPKConfig } from '../config';
 // EvaluationService.ts
 // Provides methods for exact string match and deep JSON equality
 
+interface BackendMatcherContext extends MatcherContext {
+  compileSafeRegex(source: string, flags?: string): RegExp;
+}
+
 export class EvaluationService {
-  private readonly matcherContext: MatcherContext;
+  private readonly matcherContext: BackendMatcherContext;
+  private readonly config: ReturnType<typeof loadPKConfig>;
+  
   constructor() {
+    this.config = loadPKConfig();
     // Backend-safe regex compiler for matcher context
     this.matcherContext = {
       deepEqual: EvaluationService.deepJsonEqual,
+      compileSafeRegex: this.compileSafeRegex.bind(this),
     };
+  }
+
+  private compileSafeRegex(source: string, flags?: string): RegExp {
+    // Validate source length
+    if (source.length > this.config.PK_REGEX_MAX_SOURCE_LEN) {
+      throw new Error(`Regex source exceeds maximum length of ${this.config.PK_REGEX_MAX_SOURCE_LEN} characters`);
+    }
+
+    // Validate flags
+    const allowedFlags = this.config.PK_REGEX_ALLOWED_FLAGS;
+    if (flags) {
+      for (const flag of flags) {
+        if (!allowedFlags.includes(flag)) {
+          throw new Error(`Regex flag '${flag}' is not allowed. Allowed flags: ${allowedFlags}`);
+        }
+      }
+    }
+
+    try {
+      return new RegExp(source, flags || '');
+    } catch (error) {
+      throw new Error(`Invalid regex pattern: ${(error as Error).message}`);
+    }
   }
 
   static exactStringMatch(expected: string, actual: string): boolean {

@@ -376,6 +376,66 @@ test('Test 11: Create Advanced Test Case Successfully', async ({ page }) => {
   await expect(testCaseItem.getByTestId('delete-test-case-button')).toBeVisible();
 });
 
+// Test 11.1: Create Advanced Test Case and Verify Assertions are Saved
+test('Test 11.1: Create Advanced Test Case and Verify Assertions are Saved', async ({ page }) => {
+  await navigateToTestCasesPanel(page, promptId, testSuiteId);
+  await page.getByTestId('add-test-case-button').click();
+  await page.getByTestId('advanced-tab').click();
+  await page.getByText('+ Add assertion').click();
+  
+  const firstAssertionRow = page.locator('li[role="listitem"]').first();
+  
+  // Configure assertion with specific values
+  const pathInput = firstAssertionRow.locator('input[placeholder*="Path"]');
+  await pathInput.fill('$.result');
+  
+  // Select matcher
+  const matcherSelect = firstAssertionRow.locator('select').nth(1);
+  await matcherSelect.selectOption('toEqual');
+  
+  // Enter expected value if needed (depends on UI implementation)
+  const expectedInput = firstAssertionRow.locator('input[placeholder*="Expected"]');
+  if (await expectedInput.isVisible()) {
+    await expectedInput.fill('success');
+  }
+  
+  // Click "Create" button
+  await page.getByTestId('create-test-case-submit-button').click();
+  
+  // Modal disappears
+  const createModal = page.getByTestId('create-test-case-modal');
+  await expect(createModal).not.toBeVisible();
+  
+  // Test case appears in test case list
+  const testCaseItem = page.locator('[data-testid^="test-case-item-"]').first();
+  await expect(testCaseItem).toBeVisible();
+  
+  // IMPORTANT: Verify that the assertions are actually displayed in the test case
+  // This would fail before our bug fix since assertions weren't saved on POST
+  await expect(testCaseItem).toContainText('Assertions:');
+  await expect(testCaseItem).toContainText('$.result');
+  
+  // Click edit to verify assertions are persisted
+  await testCaseItem.getByTestId('edit-test-case-button').click();
+  
+  // Edit modal should open with advanced tab active since assertions exist
+  const editModal = page.getByTestId('edit-test-case-modal');
+  await expect(editModal).toBeVisible();
+  
+  // Should be on advanced tab
+  const advancedTab = page.getByTestId('advanced-tab');
+  await expect(advancedTab).toHaveClass(/border-primary/);
+  
+  // Assertion should be present with correct values
+  const editAssertionRow = page.locator('li[role="listitem"]').first();
+  const editPathInput = editAssertionRow.locator('input[placeholder*="Path"]');
+  await expect(editPathInput).toHaveValue('$.result');
+  
+  // Cancel the edit
+  await page.getByTestId('edit-test-case-cancel-button').click();
+  await expect(editModal).not.toBeVisible();
+});
+
 // Test 12: Delete Test Case (Cancel)
 test('Test 12: Delete Test Case (Cancel)', async ({ page }) => {
   // Setup: Create a test case first

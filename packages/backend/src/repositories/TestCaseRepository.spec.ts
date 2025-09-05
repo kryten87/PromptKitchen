@@ -1,4 +1,5 @@
 import { DatabaseConnector, runMigrations } from '@prompt-kitchen/shared';
+import type { Assertion } from '@prompt-kitchen/shared/src/types';
 import fs from 'fs';
 import path from 'path';
 import { TestCaseRepository } from '../repositories/TestCaseRepository';
@@ -32,6 +33,42 @@ describe('TestCaseRepository', () => {
   });
 
   let createdId: string;
+
+  it('should create a test case with assertions', async () => {
+    const assertions: Assertion[] = [
+      {
+        assertionId: 'assertion-1',
+        path: '$.result',
+        matcher: 'toEqual',
+        expected: 'success',
+        not: false,
+        pathMatch: 'ANY',
+      },
+      {
+        assertionId: 'assertion-2',
+        path: '$.status',
+        matcher: 'toContain',
+        expected: 'completed',
+        not: false,
+        pathMatch: 'ALL',
+      },
+    ];
+
+    const created = await repo.create({
+      testSuiteId,
+      inputs: { action: 'test' },
+      expectedOutput: { result: 'success', status: 'completed' },
+      assertions,
+      runMode: 'DEFAULT',
+    });
+
+    expect(created).toHaveProperty('id');
+    expect(created.testSuiteId).toBe(testSuiteId);
+    expect(created.inputs.action).toBe('test');
+    expect(created.expectedOutput).toEqual({ result: 'success', status: 'completed' });
+    expect(created.runMode).toBe('DEFAULT');
+    expect(created.assertions).toEqual(assertions);
+  });
 
   it('should create a test case', async () => {
     const created = await repo.create({

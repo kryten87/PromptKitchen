@@ -350,7 +350,9 @@ describe('TestSuitePanel', () => {
     });
 
     // Click the Test Cases button
-    fireEvent.click(screen.getAllByText('Test Cases')[0]);
+    await act(async () => {
+      fireEvent.click(screen.getAllByText('Test Cases')[0]);
+    });
 
     await waitFor(() => {
       expect(screen.getByText('Test Case case-1')).toBeInTheDocument();
@@ -359,9 +361,13 @@ describe('TestSuitePanel', () => {
     // Click Edit on the first test case
     const editButtons = screen.getAllByText('Edit');
     // Skip the test suite edit buttons (2) and click on test case edit button
-    fireEvent.click(editButtons[2]);
+    await act(async () => {
+      fireEvent.click(editButtons[2]);
+    });
 
-    expect(screen.getByTestId('create-test-case-modal')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId('edit-test-case-modal')).toBeInTheDocument();
+    });
     expect(screen.getByText('Edit Test Case')).toBeInTheDocument();
     expect(screen.getByDisplayValue('name')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Alice')).toBeInTheDocument();

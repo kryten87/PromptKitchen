@@ -22,7 +22,13 @@ RUN addgroup --system --gid 101 nginx && \
     adduser --system --disabled-password --ingroup nginx --no-create-home --home /nonexistent --shell /bin/false --uid 101 nginx
 
 # Install nginx
-RUN apt-get update && apt-get install -y nginx
+RUN apt-get update && apt-get install -y nginx bash
+
+# Create and set permissions for nginx directories
+RUN mkdir -p /var/lib/nginx/body /var/log/nginx /var/cache/nginx && \
+    chown -R nginx:nginx /var/lib/nginx /var/log/nginx /var/cache/nginx && \
+    touch /run/nginx.pid && \
+    chown -R nginx:nginx /run/nginx.pid
 
 # Copy nginx configuration
 COPY --from=builder --chown=nginx:nginx /app/scripts/docker/nginx.conf /etc/nginx/nginx.conf
@@ -33,6 +39,7 @@ COPY --from=builder --chown=nginx:nginx /app/packages/frontend/dist /var/www/htm
 # Copy backend build from builder
 COPY --from=builder --chown=nginx:nginx /app/packages/backend/dist ./packages/backend/dist
 COPY --from=builder --chown=nginx:nginx /app/packages/backend/package.json ./packages/backend/
+COPY --from=builder --chown=nginx:nginx /app/packages/shared/dist ./packages/shared/dist
 COPY --from=builder --chown=nginx:nginx /app/packages/shared/package.json ./packages/shared/
 COPY --from=builder --chown=nginx:nginx /app/node_modules ./node_modules
 

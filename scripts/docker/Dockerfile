@@ -25,22 +25,19 @@ RUN addgroup --system --gid 101 nginx && \
 RUN apt-get update && apt-get install -y nginx
 
 # Copy nginx configuration
-COPY --from=builder /app/scripts/docker/nginx.conf /etc/nginx/nginx.conf
+COPY --from=builder --chown=nginx:nginx /app/scripts/docker/nginx.conf /etc/nginx/nginx.conf
 
 # Copy frontend build from builder
-COPY --from=builder /app/packages/frontend/dist /var/www/html
+COPY --from=builder --chown=nginx:nginx /app/packages/frontend/dist /var/www/html
 
 # Copy backend build from builder
-COPY --from=builder /app/packages/backend/dist ./packages/backend/dist
-COPY --from=builder /app/packages/backend/package.json ./packages/backend/
-COPY --from=builder /app/packages/shared/package.json ./packages/shared/
-COPY --from=builder /app/node_modules ./node_modules
-
-# Change ownership of app files
-RUN chown -R nginx:nginx /app
+COPY --from=builder --chown=nginx:nginx /app/packages/backend/dist ./packages/backend/dist
+COPY --from=builder --chown=nginx:nginx /app/packages/backend/package.json ./packages/backend/
+COPY --from=builder --chown=nginx:nginx /app/packages/shared/package.json ./packages/shared/
+COPY --from=builder --chown=nginx:nginx /app/node_modules ./node_modules
 
 # Copy start script and set permissions
-COPY --from=builder /app/scripts/docker/start.sh /app/start.sh
+COPY --from=builder --chown=nginx:nginx /app/scripts/docker/start.sh /app/start.sh
 RUN chmod +x /app/start.sh
 
 # Expose port 80 for nginx

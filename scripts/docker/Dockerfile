@@ -17,6 +17,10 @@ RUN npm run build --workspaces
 FROM node:22-bookworm-slim
 WORKDIR /app
 
+# Create a non-root user and group
+RUN addgroup --system --gid 101 nginx && \
+    adduser --system --disabled-password --ingroup nginx --no-create-home --home /nonexistent --shell /bin/false --uid 101 nginx
+
 # Install nginx
 RUN apt-get update && apt-get install -y nginx
 
@@ -32,7 +36,8 @@ COPY --from=builder /app/packages/backend/package.json ./packages/backend/
 COPY --from=builder /app/packages/shared/package.json ./packages/shared/
 COPY --from=builder /app/node_modules ./node_modules
 
-
+# Change ownership of app files
+RUN chown -R nginx:nginx /app
 
 # Copy start script and set permissions
 COPY --from=builder /app/scripts/docker/start.sh /app/start.sh
@@ -43,6 +48,9 @@ EXPOSE 80
 
 # Set backend port
 ENV PORT=3001
+
+# Switch to non-root user
+USER nginx
 
 # Start backend server and nginx using the start script
 CMD ["/app/start.sh"]

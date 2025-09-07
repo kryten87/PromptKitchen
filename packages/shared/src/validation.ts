@@ -1,11 +1,16 @@
-import * as Ajv from 'ajv';
+import Ajv from 'ajv';
 import * as yup from 'yup';
 
-const ajv = new Ajv.default();
+const ajv = new Ajv();
 
 export function validateJsonSchema(json: object): boolean {
   try {
-    return ajv.validateSchema(json);
+    const valid = ajv.validateSchema(json);
+    if (typeof valid === 'boolean') {
+      return valid;
+    }
+    // This path is not expected for non-async schemas, but handles the union type.
+    return false;
   } catch {
     return false;
   }

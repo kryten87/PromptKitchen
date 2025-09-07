@@ -34,11 +34,16 @@ COPY --from=builder /app/node_modules ./node_modules
 
 
 
+# Copy start script and set permissions
+COPY --from=builder /app/scripts/docker/start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
 # Expose port 80 for nginx
 EXPOSE 80
 
 # Set backend port
 ENV PORT=3001
 
-# Start backend server and nginx
-CMD ["sh", "-c", "node packages/backend/dist/server.js & nginx -g 'daemon off;'"]
+# Start backend server and nginx using the start script
+CMD ["/app/start.sh"]
+

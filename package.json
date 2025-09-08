@@ -11,6 +11,8 @@
     "dev": "./scripts/run-dev.bash",
     "dev:backend": "npm run dev --workspace=packages/backend",
     "dev:frontend": "npm run dev --workspace=packages/frontend",
+    "docker:build": "docker build -t prompt-kitchen:latest -f scripts/docker/Dockerfile .",
+    "docker:run": "docker run --rm --env-file ./.env.docker -p '5173:80' prompt-kitchen:latest",
     "e2e": "npm run --workspace=packages/e2e test",
     "e2e:all": "npm run --workspace=packages/e2e test:all",
     "lint": "npm run lint --workspaces",

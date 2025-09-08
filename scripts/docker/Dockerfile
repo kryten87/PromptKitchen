@@ -41,7 +41,6 @@ COPY --from=builder --chown=nginx:nginx /app/packages/backend/dist ./packages/ba
 COPY --from=builder --chown=nginx:nginx /app/packages/backend/package.json ./packages/backend/
 COPY --from=builder --chown=nginx:nginx /app/packages/shared/dist ./packages/shared/dist
 COPY --from=builder --chown=nginx:nginx /app/packages/shared/package.json ./packages/shared/
-COPY --from=builder --chown=nginx:nginx /app/node_modules ./node_modules
 
 # Copy start script and set permissions
 COPY --from=builder --chown=nginx:nginx /app/scripts/docker/start.sh /app/start.sh

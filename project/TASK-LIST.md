@@ -324,7 +324,17 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 - [ ] 4.5.3. Set up a CI/CD pipeline (e.g., GitHub Actions) to automate testing and building.
 - [ ] 4.5.4. Deploy the application to a hosting provider.
 
-### 4.6. Review and Refine the UI/UX
+### 4.6. OWASP ZAP Testing
+
+- [ ] 4.5.1. Scan against dev server. Correct issues
+- [ ] 4.5.2. Scan against docker image. Correct issues
+
+### 4.7. Deployment
+
+- [ ] 4.7.1. Set up a CI/CD pipeline (e.g., GitHub Actions) to automate testing and building.
+- [ ] 4.7.2. Deploy the application to a hosting provider.
+
+### 4.8. Review and Refine the UI/UX
 
 - [ ] 4.6.1. Review all main user flows for clarity, consistency, and usability.
 - [ ] 4.6.2. Refine layout, spacing, and visual hierarchy for all major screens.

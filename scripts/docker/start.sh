@@ -12,13 +12,16 @@ NGINX_PID=$!
 # Function to gracefully shut down processes
 graceful_shutdown() {
   echo "Caught signal, shutting down gracefully..."
-  # Send SIGTERM to Node.js for graceful shutdown
-  kill -s SIGTERM $NODE_PID
-  # Send SIGQUIT to Nginx for graceful shutdown
-  kill -s SIGQUIT $NGINX_PID
-  # Wait for processes to terminate
-  wait $NODE_PID
-  wait $NGINX_PID
+  # Check if NODE_PID is set and the process exists
+  if [ -n "$NODE_PID" ] && kill -0 "$NODE_PID" 2>/dev/null; then
+    kill -s SIGTERM "$NODE_PID"
+    wait "$NODE_PID"
+  fi
+  # Check if NGINX_PID is set and the process exists
+  if [ -n "$NGINX_PID" ] && kill -0 "$NGINX_PID" 2>/dev/null; then
+    kill -s SIGQUIT "$NGINX_PID"
+    wait "$NGINX_PID"
+  fi
   echo "Shutdown complete."
 }
 

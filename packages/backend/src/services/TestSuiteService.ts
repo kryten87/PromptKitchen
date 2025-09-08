@@ -1,5 +1,5 @@
 import type { DatabaseConnector } from '@prompt-kitchen/shared';
-import { TestCase, TestSuite } from '@prompt-kitchen/shared/src/dtos';
+import { TestCase, TestSuite } from '@prompt-kitchen/shared';
 import { TestCaseRepository } from '../repositories/TestCaseRepository';
 import { TestSuiteRepository } from '../repositories/TestSuiteRepository';
 

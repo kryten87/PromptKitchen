@@ -1,7 +1,7 @@
 // ExecutionService.ts
 import type { Assertion, AssertionResult } from '@prompt-kitchen/shared';
 import { DatabaseConnector } from '@prompt-kitchen/shared';
-import { TestResult, TestSuiteRun } from '@prompt-kitchen/shared/src/dtos';
+import { TestResult, TestSuiteRun } from '@prompt-kitchen/shared';
 import type { PKConfig } from '../config';
 import { TestCaseRepository } from '../repositories/TestCaseRepository';
 import { TestSuiteRunRepository } from '../repositories/TestSuiteRunRepository';

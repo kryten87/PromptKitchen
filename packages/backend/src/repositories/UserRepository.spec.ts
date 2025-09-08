@@ -1,5 +1,5 @@
 import { DatabaseConnector, runMigrations } from '@prompt-kitchen/shared';
-import type { User } from '@prompt-kitchen/shared/src/dtos';
+import type { User } from '@prompt-kitchen/shared';
 import { UserRepository } from '../repositories/UserRepository';
 
 describe('UserRepository', () => {

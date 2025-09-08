@@ -1,5 +1,5 @@
 import { DatabaseConnector, runMigrations } from '@prompt-kitchen/shared';
-import type { Assertion } from '@prompt-kitchen/shared/src/types';
+import type { Assertion } from '@prompt-kitchen/shared';
 import fs from 'fs';
 import path from 'path';
 import { TestCaseRepository } from '../repositories/TestCaseRepository';

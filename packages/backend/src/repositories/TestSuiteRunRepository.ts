@@ -1,6 +1,6 @@
 import type { AssertionResult } from '@prompt-kitchen/shared';
 import { DatabaseConnector } from '@prompt-kitchen/shared';
-import { JsonValue, TestResult, TestSuiteRun } from '@prompt-kitchen/shared/src/dtos';
+import { JsonValue, TestResult, TestSuiteRun } from '@prompt-kitchen/shared';
 import { randomUUID } from 'crypto';
 import { Knex } from 'knex';
 

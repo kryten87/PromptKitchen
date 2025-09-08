@@ -1,5 +1,5 @@
 import { DatabaseConnector } from '@prompt-kitchen/shared';
-import { Prompt, PromptHistory } from '@prompt-kitchen/shared/src/dtos';
+import { Prompt, PromptHistory } from '@prompt-kitchen/shared';
 import { Knex } from 'knex';
 
 interface PromptRow {

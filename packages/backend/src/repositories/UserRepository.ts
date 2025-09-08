@@ -1,4 +1,4 @@
-import type { User } from '@prompt-kitchen/shared/src/dtos';
+import type { User } from '@prompt-kitchen/shared';
 import type { Knex } from 'knex';
 
 interface UserRow {

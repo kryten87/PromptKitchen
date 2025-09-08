@@ -1,5 +1,5 @@
 import { DatabaseConnector } from '@prompt-kitchen/shared';
-import { Project } from '@prompt-kitchen/shared/src/dtos';
+import { Project } from '@prompt-kitchen/shared';
 import { Knex } from 'knex';
 
 interface ProjectRow {

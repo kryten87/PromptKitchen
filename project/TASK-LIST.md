@@ -319,8 +319,8 @@ This document outlines the step-by-step tasks required to build the Prompt Kitch
 
 ### 4.5. Deployment
 
-- [ ] 4.5.1. Create Dockerfiles for the `frontend` and `backend`.
-- [ ] 4.5.2. Create a `docker-compose.yml` for local development and deployment.
+- ✅ 4.5.1. Create Dockerfiles for the `frontend` and `backend`.
+- ✅ 4.5.2. Set up Postgres connection
 - [ ] 4.5.3. Set up a CI/CD pipeline (e.g., GitHub Actions) to automate testing and building.
 - [ ] 4.5.4. Deploy the application to a hosting provider.
 

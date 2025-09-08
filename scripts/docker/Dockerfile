@@ -5,7 +5,7 @@ COPY package.json package-lock.json ./
 COPY packages/backend/package.json ./packages/backend/
 COPY packages/frontend/package.json ./packages/frontend/
 COPY packages/shared/package.json ./packages/shared/
-RUN npm install
+RUN npm install --omit=dev
 
 # Builder stage for building frontend and backend
 FROM base AS builder
@@ -35,6 +35,11 @@ COPY --from=builder --chown=nginx:nginx /app/scripts/docker/nginx.conf /etc/ngin
 
 # Copy frontend build from builder
 COPY --from=builder --chown=nginx:nginx /app/packages/frontend/dist /var/www/html
+
+# Copy production node_modules from base stage
+COPY --from=base --chown=nginx:nginx /app/node_modules ./node_modules
+COPY --from=base --chown=nginx:nginx /app/package.json ./
+COPY --from=base --chown=nginx:nginx /app/package-lock.json ./
 
 # Copy backend build from builder
 COPY --from=builder --chown=nginx:nginx /app/packages/backend/dist ./packages/backend/dist

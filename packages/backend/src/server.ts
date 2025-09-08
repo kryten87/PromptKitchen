@@ -33,10 +33,21 @@ const server = Fastify({
 });
 
 const dbFile = process.env.DB_FILE;
-const postgresConnectionString = process.env.POSTGRES_CONNECTION_STRING;
+const postgresHost = process.env.POSTGRES_HOST;
+const postgresPort = process.env.POSTGRES_PORT ? parseInt(process.env.POSTGRES_PORT, 10) : undefined;
+const postgresUser = process.env.POSTGRES_USER;
+const postgresPassword = process.env.POSTGRES_PASSWORD;
+const postgresDatabase = process.env.POSTGRES_DATABASE;
 
 // Dependency injection setup
-const dbConnector = new DatabaseConnector({ dbFile, postgresConnectionString });
+const dbConnector = new DatabaseConnector({
+  dbFile,
+  postgresHost,
+  postgresPort,
+  postgresUser,
+  postgresPassword,
+  postgresDatabase,
+});
 const userRepository = new UserRepository(dbConnector);
 const projectRepository = new ProjectRepository(dbConnector);
 const userService = new UserService({

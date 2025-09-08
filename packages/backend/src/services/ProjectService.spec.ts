@@ -8,7 +8,7 @@ describe('ProjectService', () => {
   let service: ProjectService;
 
   beforeAll(async () => {
-    db = new DatabaseConnector({ filename: ':memory:' });
+    db = new DatabaseConnector({ dbFile: ':memory:' });
     await runMigrations(db);
     repo = new ProjectRepository(db);
     service = new ProjectService(repo);

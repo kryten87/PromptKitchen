@@ -1,4 +1,4 @@
-import { defineProjectSchema } from '@prompt-kitchen/shared/src/validation';
+import { defineProjectSchema } from '@prompt-kitchen/shared';
 import { FastifyInstance } from 'fastify';
 import * as yup from 'yup';
 import { createAuthMiddleware } from '../authMiddleware';

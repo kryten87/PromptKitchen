@@ -1,0 +1,26 @@
+# Dependencies
+**/node_modules
+
+# Build artifacts
+**/dist
+
+# Git
+.git
+
+# Project design files
+project/
+
+# E2E tests
+packages/e2e
+
+# Env files
+**/.env
+
+# IDE files
+.idea/
+.vscode/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

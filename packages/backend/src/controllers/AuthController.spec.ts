@@ -1,5 +1,5 @@
 // packages/backend/src/AuthController.spec.ts
-import { User } from '@prompt-kitchen/shared/src/dtos';
+import { User } from '@prompt-kitchen/shared';
 import Fastify, { FastifyReply, FastifyRequest } from 'fastify';
 import jwt from 'jsonwebtoken';
 import { createAuthMiddleware } from '../authMiddleware';

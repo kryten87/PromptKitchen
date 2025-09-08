@@ -1,4 +1,4 @@
-import { Project } from '@prompt-kitchen/shared/src/dtos';
+import { Project } from '@prompt-kitchen/shared';
 import { ProjectRepository } from '../repositories/ProjectRepository';
 
 export class ProjectService {

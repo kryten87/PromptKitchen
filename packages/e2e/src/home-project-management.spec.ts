@@ -16,7 +16,7 @@ let project: Project;
 
 test.beforeEach(async ({ page }) => {
   const dbPath = fs.readFileSync(DB_PATH_FILE, 'utf-8');
-  const db = new DatabaseConnector({ filename: dbPath });
+  const db = new DatabaseConnector({ dbFile: dbPath });
 
   const userId = 'user-123';
   // Ensure user exists for foreign key constraint
@@ -76,7 +76,7 @@ test.beforeEach(async ({ page }) => {
 
 test.afterEach(async () => {
   const dbPath = fs.readFileSync(DB_PATH_FILE, 'utf-8');
-  const db = new DatabaseConnector({ filename: dbPath });
+  const db = new DatabaseConnector({ dbFile: dbPath });
   if (project) {
     try {
       await db.knex('projects').where('id', project.id).del();

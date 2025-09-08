@@ -32,9 +32,22 @@ const server = Fastify({
   logger: true,
 });
 
+const dbFile = process.env.DB_FILE;
+const postgresHost = process.env.POSTGRES_HOST;
+const postgresPort = process.env.POSTGRES_PORT ? parseInt(process.env.POSTGRES_PORT, 10) : undefined;
+const postgresUser = process.env.POSTGRES_USER;
+const postgresPassword = process.env.POSTGRES_PASSWORD;
+const postgresDatabase = process.env.POSTGRES_DATABASE;
+
 // Dependency injection setup
-const dbFile = process.env.DB_FILE || './dev.sqlite3';
-const dbConnector = new DatabaseConnector({ filename: dbFile });
+const dbConnector = new DatabaseConnector({
+  dbFile,
+  postgresHost,
+  postgresPort,
+  postgresUser,
+  postgresPassword,
+  postgresDatabase,
+});
 const userRepository = new UserRepository(dbConnector);
 const projectRepository = new ProjectRepository(dbConnector);
 const userService = new UserService({
@@ -122,12 +135,11 @@ server.get('/', async () => {
 });
 
 export async function start() {
-  await runMigrations(dbConnector); // Run DB migrations after connection
   try {
     await runMigrations(dbConnector); // Run DB migrations after connection
     await server.listen({ port, host: '0.0.0.0' });
     server.log.info(`Server started on port ${port}`);
-} catch (err) {
+  } catch (err) {
     server.log.error(err);
     process.exit(1);
   }

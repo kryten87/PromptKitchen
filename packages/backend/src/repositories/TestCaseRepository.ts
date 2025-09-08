@@ -1,6 +1,6 @@
 import { DatabaseConnector } from '@prompt-kitchen/shared';
-import type { TestCaseRunMode } from '@prompt-kitchen/shared/src/dtos';
-import { TestCase, type JsonValue } from '@prompt-kitchen/shared/src/dtos';
+import type { TestCaseRunMode } from '@prompt-kitchen/shared';
+import { TestCase, type JsonValue } from '@prompt-kitchen/shared';
 import { Knex } from 'knex';
 
 interface TestCaseRow {

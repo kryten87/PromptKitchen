@@ -1,4 +1,4 @@
-import { definePromptSchema } from '@prompt-kitchen/shared/src/validation';
+import { definePromptSchema } from '@prompt-kitchen/shared';
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import * as yup from 'yup';
 import { PromptService } from '../services/PromptService';

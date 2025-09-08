@@ -30,7 +30,7 @@ describe('Migration 010 & 011: assertions/details columns', () => {
     if (fs.existsSync(TMP_DB)) {
       fs.unlinkSync(TMP_DB);
     }
-    db = new DatabaseConnector({ filename: TMP_DB });
+    db = new DatabaseConnector({ dbFile: TMP_DB });
   });
 
   afterEach(async () => {

@@ -25,7 +25,7 @@ async function createTestSuite(page: import('@playwright/test').Page, name: stri
 
 test.beforeEach(async ({ page }) => {
   const dbPath = fs.readFileSync(DB_PATH_FILE, 'utf-8');
-  const db = new DatabaseConnector({ filename: dbPath });
+  const db = new DatabaseConnector({ dbFile: dbPath });
 
   const userId = 'user-123';
   // Ensure user exists for foreign key constraint
@@ -116,7 +116,7 @@ test.beforeEach(async ({ page }) => {
 
 test.afterEach(async () => {
   const dbPath = fs.readFileSync(DB_PATH_FILE, 'utf-8');
-  const db = new DatabaseConnector({ filename: dbPath });
+  const db = new DatabaseConnector({ dbFile: dbPath });
   if (project) {
     try {
       await db.knex('test_suites').where('prompt_id', promptObj.id).del();
@@ -351,7 +351,7 @@ test('Test Suite Results Modal Shows Test Case Assertions', async ({ page }) => 
 
   // Setup: Create an advanced test case with assertions in the database
   const dbPath = fs.readFileSync(DB_PATH_FILE, 'utf-8');
-  const db = new DatabaseConnector({ filename: dbPath });
+  const db = new DatabaseConnector({ dbFile: dbPath });
   
   const testCaseId = crypto.randomUUID();
   const assertions = [

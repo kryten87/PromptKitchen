@@ -1,5 +1,5 @@
 import { JwtService } from '@prompt-kitchen/shared';
-import type { User } from '@prompt-kitchen/shared/src/dtos';
+import type { User } from '@prompt-kitchen/shared';
 import { UserRepository } from '../repositories/UserRepository';
 
 export interface UserServiceDeps {

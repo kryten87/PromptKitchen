@@ -4,13 +4,13 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx src/index.ts",
-    "build": "tsc",
+    "build": "rm -rf dist && rm -rf tsconfig.tsbuildinfo && tsc -b",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "test:watch": "jest --watch",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint --fix src/**/*.ts",
-  "migrate:up": "ts-node scripts/cli-migrate.ts up",
-  "migrate:down": "ts-node scripts/cli-migrate.ts down"
+    "migrate:up": "ts-node scripts/cli-migrate.ts up",
+    "migrate:down": "ts-node scripts/cli-migrate.ts down"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +22,7 @@
     "fastify": "^5.4.0",
     "jsonwebtoken": "^9.0.2",
     "knex": "^3.1.0",
+    "pg": "^8.16.3",
     "sqlite3": "^5.1.7",
     "undici": "^7.12.0"
   },

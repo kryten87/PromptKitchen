@@ -12,7 +12,7 @@ const TEST_DB_PATH = path.join(__dirname, '../../dev.test.suite.sqlite3');
 
 beforeAll(async () => {
   if (fs.existsSync(TEST_DB_PATH)) fs.unlinkSync(TEST_DB_PATH);
-  db = new DatabaseConnector({ filename: TEST_DB_PATH });
+  db = new DatabaseConnector({ dbFile: TEST_DB_PATH });
   await runMigrations(db);
   suiteRepo = new TestSuiteRepository(db);
   caseRepo = new TestCaseRepository(db);

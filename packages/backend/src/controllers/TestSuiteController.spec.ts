@@ -1,5 +1,5 @@
 import { DatabaseConnector, runMigrations } from '@prompt-kitchen/shared';
-import type { Assertion } from '@prompt-kitchen/shared/src/types';
+import type { Assertion } from '@prompt-kitchen/shared';
 import fs from 'fs';
 import path from 'path';
 import { TestSuiteService } from '../services/TestSuiteService';
@@ -13,7 +13,7 @@ describe('TestSuiteController Integration Tests', () => {
 
   beforeAll(async () => {
     if (fs.existsSync(TEST_DB_PATH)) fs.unlinkSync(TEST_DB_PATH);
-    db = new DatabaseConnector({ filename: TEST_DB_PATH });
+    db = new DatabaseConnector({ dbFile: TEST_DB_PATH });
     await runMigrations(db);
     service = TestSuiteService.factory(db);
 

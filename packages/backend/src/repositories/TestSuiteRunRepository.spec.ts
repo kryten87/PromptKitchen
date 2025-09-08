@@ -2,7 +2,7 @@ import { DatabaseConnector, runMigrations } from '@prompt-kitchen/shared';
 import { TestSuiteRunRepository } from '../repositories/TestSuiteRunRepository';
 
 // Use a real DatabaseConnector with an in-memory SQLite DB for testing
-const db = new DatabaseConnector({ filename: ':memory:' });
+const db = new DatabaseConnector({ dbFile: ':memory:' });
 
 describe('TestSuiteRunRepository', () => {
   let repo: TestSuiteRunRepository;

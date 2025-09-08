@@ -1,5 +1,5 @@
 import { DatabaseConnector, runMigrations } from '@prompt-kitchen/shared';
-import type { User } from '@prompt-kitchen/shared/src/dtos';
+import type { User } from '@prompt-kitchen/shared';
 import { UserRepository } from '../repositories/UserRepository';
 
 describe('UserRepository', () => {
@@ -13,7 +13,7 @@ describe('UserRepository', () => {
   };
 
   beforeAll(async () => {
-    db = new DatabaseConnector({ filename: ':memory:' });
+    db = new DatabaseConnector({ dbFile: ':memory:' });
     await runMigrations(db);
     repo = new UserRepository(db);
   });

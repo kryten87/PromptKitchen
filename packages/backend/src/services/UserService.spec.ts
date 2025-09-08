@@ -1,4 +1,4 @@
-import type { User } from '@prompt-kitchen/shared/src/dtos';
+import type { User } from '@prompt-kitchen/shared';
 import jwt from 'jsonwebtoken';
 import { UserRepository } from '../repositories/UserRepository';
 import { UserService } from '../services/UserService';

@@ -2,7 +2,7 @@
 set -e
 
 # Start node in the background
-node packages/backend/dist/server.js &
+node packages/backend/dist/index.js &
 NODE_PID=$!
 
 # Start nginx in the foreground

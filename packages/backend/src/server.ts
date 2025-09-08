@@ -124,12 +124,11 @@ server.get('/', async () => {
 });
 
 export async function start() {
-  await runMigrations(dbConnector); // Run DB migrations after connection
   try {
     await runMigrations(dbConnector); // Run DB migrations after connection
     await server.listen({ port, host: '0.0.0.0' });
     server.log.info(`Server started on port ${port}`);
-} catch (err) {
+  } catch (err) {
     server.log.error(err);
     process.exit(1);
   }

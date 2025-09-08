@@ -32,7 +32,7 @@ async function globalSetup(_config: FullConfig) {
 
     const dbPath = sqliteTempPath();
     console.log(`Creating temporary database at: ${dbPath}`);
-    const db = new DatabaseConnector({ filename: dbPath });
+    const db = new DatabaseConnector({ dbFile: dbPath });
     await db.destroy();
     fs.writeFileSync(DB_PATH_FILE, dbPath);
 

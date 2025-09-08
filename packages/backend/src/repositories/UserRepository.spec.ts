@@ -13,7 +13,7 @@ describe('UserRepository', () => {
   };
 
   beforeAll(async () => {
-    db = new DatabaseConnector({ filename: ':memory:' });
+    db = new DatabaseConnector({ dbFile: ':memory:' });
     await runMigrations(db);
     repo = new UserRepository(db);
   });

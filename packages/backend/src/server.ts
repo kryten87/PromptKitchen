@@ -32,9 +32,11 @@ const server = Fastify({
   logger: true,
 });
 
+const dbFile = process.env.DB_FILE;
+const postgresConnectionString = process.env.POSTGRES_CONNECTION_STRING;
+
 // Dependency injection setup
-const dbFile = process.env.DB_FILE || './dev.sqlite3';
-const dbConnector = new DatabaseConnector({ filename: dbFile });
+const dbConnector = new DatabaseConnector({ dbFile, postgresConnectionString });
 const userRepository = new UserRepository(dbConnector);
 const projectRepository = new ProjectRepository(dbConnector);
 const userService = new UserService({

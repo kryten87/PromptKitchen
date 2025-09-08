@@ -23,7 +23,7 @@ async function navigateToTestCasesPanel(page: any, promptId: string, testSuiteId
 
 test.beforeEach(async ({ page }) => {
   const dbPath = fs.readFileSync(DB_PATH_FILE, 'utf-8');
-  const db = new DatabaseConnector({ filename: dbPath });
+  const db = new DatabaseConnector({ dbFile: dbPath });
 
   const userId = 'user-123';
   // Ensure user exists for foreign key constraint
@@ -104,7 +104,7 @@ test.beforeEach(async ({ page }) => {
 
 test.afterEach(async () => {
   const dbPath = fs.readFileSync(DB_PATH_FILE, 'utf-8');
-  const db = new DatabaseConnector({ filename: dbPath });
+  const db = new DatabaseConnector({ dbFile: dbPath });
   if (project) {
     try {
       await db.knex('test_cases').where('test_suite_id', testSuiteId).del();
@@ -440,7 +440,7 @@ test('Test 11.1: Create Advanced Test Case and Verify Assertions are Saved', asy
 test('Test 12: Delete Test Case (Cancel)', async ({ page }) => {
   // Setup: Create a test case first
   const dbPath = fs.readFileSync(DB_PATH_FILE, 'utf-8');
-  const db = new DatabaseConnector({ filename: dbPath });
+  const db = new DatabaseConnector({ dbFile: dbPath });
   
   const testCaseId = crypto.randomUUID();
   await db.knex('test_cases').insert({
@@ -483,7 +483,7 @@ test('Test 12: Delete Test Case (Cancel)', async ({ page }) => {
 test('Test 13: Delete Test Case (Confirm)', async ({ page }) => {
   // Setup: Create a test case first
   const dbPath = fs.readFileSync(DB_PATH_FILE, 'utf-8');
-  const db = new DatabaseConnector({ filename: dbPath });
+  const db = new DatabaseConnector({ dbFile: dbPath });
   
   const testCaseId = crypto.randomUUID();
   await db.knex('test_cases').insert({
@@ -526,7 +526,7 @@ test('Test 13: Delete Test Case (Confirm)', async ({ page }) => {
 test('Test 14: Display Advanced Test Case Details', async ({ page }) => {
   // Setup: Create an advanced test case with assertions
   const dbPath = fs.readFileSync(DB_PATH_FILE, 'utf-8');
-  const db = new DatabaseConnector({ filename: dbPath });
+  const db = new DatabaseConnector({ dbFile: dbPath });
   
   const testCaseId = crypto.randomUUID();
   const assertions = [
@@ -582,7 +582,7 @@ test('Test 14: Display Advanced Test Case Details', async ({ page }) => {
 test('Test 15: Create Advanced Test Case with toMatch and Regex Flags', async ({ page }) => {
   // Setup: Create an advanced test case with toMatch and regex flags directly in database
   const dbPath = fs.readFileSync(DB_PATH_FILE, 'utf-8');
-  const db = new DatabaseConnector({ filename: dbPath });
+  const db = new DatabaseConnector({ dbFile: dbPath });
   
   const testCaseId = crypto.randomUUID();
   const assertions = [
@@ -629,7 +629,7 @@ test('Test 15: Create Advanced Test Case with toMatch and Regex Flags', async ({
 test('Test 16: Test Case with toMatch Pattern Without Flags', async ({ page }) => {
   // Setup: Create an advanced test case with toMatch without flags directly in database
   const dbPath = fs.readFileSync(DB_PATH_FILE, 'utf-8');
-  const db = new DatabaseConnector({ filename: dbPath });
+  const db = new DatabaseConnector({ dbFile: dbPath });
   
   const testCaseId = crypto.randomUUID();
   const assertions = [

@@ -8,7 +8,7 @@ describe('PromptRepository', () => {
   let projectId: string;
 
   beforeAll(async () => {
-    db = new DatabaseConnector({ filename: ':memory:' });
+    db = new DatabaseConnector({ dbFile: ':memory:' });
     await runMigrations(db);
     promptRepository = new PromptRepository(db);
     projectId = 'proj1';

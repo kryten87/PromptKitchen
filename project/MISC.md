@@ -1,6 +1,3 @@
-# Findings 9/3/2025
-- when adding a new test case with advanced assertions, the first edit does not save. Second and later edits work **FIXED**
-- toMatch with a regex string does not work with i flag - flag is not saved **FIXED**
 
 
 
@@ -73,3 +70,6 @@ sort out front end/back end ports/proxies
 # UX Problems
 - Create Test Case: "Create" button disabled if no variable entered
 
+# Findings 9/3/2025
+- when adding a new test case with advanced assertions, the first edit does not save. Second and later edits work **FIXED**
+- toMatch with a regex string does not work with i flag - flag is not saved **FIXED**

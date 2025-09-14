@@ -144,27 +144,59 @@ export function PromptForm({ prompt, projectId, onPromptCreated, onPromptUpdated
           />
         </div>
 
-        <div>
-          <label htmlFor={`${testIdPrefix}-model`} className="block text-sm font-medium text-gray-700 mb-1">
-            Model
-          </label>
-          <select
-            id={`${testIdPrefix}-model`}
-            data-testid={`${testIdPrefix}-model-select`}
-            value={modelId ?? ''}
-            onChange={e => setModelId(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            disabled={loading || modelsLoading || models.length === 0}
-            required
-          >
-            <option value="" disabled>Select a model</option>
-            {models.map(model => (
-              <option key={model.id} value={model.id}>{model.name}</option>
-            ))}
-          </select>
-          {modelsLoading && <div className="text-xs text-gray-400 mt-1">Loading models...</div>}
-          {modelsError && <div className="text-xs text-red-500 mt-1">{modelsError}</div>}
-        </div>
+         <div>
+           <label htmlFor={`${testIdPrefix}-model`} className="block text-sm font-medium text-gray-700 mb-1">
+             Model
+           </label>
+            <div className="flex items-center gap-2">
+              <select
+                id={`${testIdPrefix}-model`}
+                data-testid={`${testIdPrefix}-model-select`}
+                value={modelId ?? ''}
+                onChange={e => setModelId(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                disabled={loading || modelsLoading || models.length === 0}
+                required
+              >
+                <option value="" disabled>Select a model</option>
+                {models.map(model => (
+                  <option key={model.id} value={model.id}>{model.name}</option>
+                ))}
+               </select>
+               <button
+                 type="button"
+                 aria-label="Refresh models"
+                 data-testid="model-refresh-button"
+                 className="p-2 rounded-md border border-gray-300 bg-white hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                 onClick={async () => {
+                   setModelsLoading(true);
+                   setModelsError(null);
+                   try {
+                     await apiClient.refreshModels();
+                     const newModels = await apiClient.getModels();
+                     setModels(newModels);
+                     if (!newModels.find(m => m.id === modelId)) {
+                       setModelId(newModels.length > 0 ? newModels[0].id : null);
+                     }
+                   } catch {
+                     setModelsError('Failed to refresh models');
+                   } finally {
+                     setModelsLoading(false);
+                   }
+                 }}
+                 disabled={modelsLoading || loading}
+               >
+                 {/* Simple refresh icon (SVG) */}
+                 <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                   <path d="M4 4v4h4" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                   <path d="M20 10c0 5.523-4.477 10-10 10S0 15.523 0 10 4.477 0 10 0c2.386 0 4.57.835 6.293 2.221" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                 </svg>
+               </button>
+
+            </div>
+           {modelsLoading && <div className="text-xs text-gray-400 mt-1">Loading models...</div>}
+           {modelsError && <div className="text-xs text-red-500 mt-1">{modelsError}</div>}
+         </div>
 
 
         <div>

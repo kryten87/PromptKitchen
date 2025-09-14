@@ -11,6 +11,33 @@ const mockModels = [
 ];
 
 describe('PromptForm', () => {
+  it('renders a refresh button next to the model select', async () => {
+    const getModels = jest.fn().mockResolvedValue(mockModels);
+    const refreshModels = jest.fn().mockResolvedValue();
+    (useApiClient as jest.Mock).mockReturnValue({ getModels, refreshModels });
+
+    const { findByTestId } = render(<PromptForm />);
+    const button = await findByTestId('model-refresh-button');
+    expect(button).toBeInTheDocument();
+  });
+
+  it('calls refreshModels and then getModels when refresh button is clicked', async () => {
+    const getModels = jest.fn().mockResolvedValue(mockModels);
+    const refreshModels = jest.fn().mockResolvedValue();
+    (useApiClient as jest.Mock).mockReturnValue({ getModels, refreshModels });
+
+    const { findByTestId } = render(<PromptForm />);
+    const button = await findByTestId('model-refresh-button');
+    // Wait for initial getModels
+    await waitFor(() => expect(getModels).toHaveBeenCalledTimes(1));
+    getModels.mockClear();
+    // Click refresh
+    button.click();
+    await waitFor(() => {
+      expect(refreshModels).toHaveBeenCalled();
+      expect(getModels).toHaveBeenCalled();
+    });
+  });
   it('fetches models on mount', async () => {
     const getModels = jest.fn().mockResolvedValue(mockModels);
     (useApiClient as jest.Mock).mockReturnValue({ getModels });

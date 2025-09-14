@@ -110,6 +110,9 @@ describe('ProjectPage', () => {
   });
 
   it('shows create prompt modal when create new prompt is clicked', async () => {
+    mockApiClient.getModels = jest.fn().mockResolvedValue([
+      { id: 'm1', name: 'gpt-3.5', isActive: true, createdAt: new Date(), updatedAt: new Date() },
+    ]);
     mockApiClient.request = jest.fn()
       .mockImplementation((path: string) => {
         if (path === '/projects/1') return Promise.resolve(mockProject);
@@ -156,11 +159,14 @@ describe('ProjectPage', () => {
       name: 'New Prompt',
       prompt: 'New prompt text',
       version: 1,
-      modelId: null,
+      modelId: 'm1',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
 
+    mockApiClient.getModels = jest.fn().mockResolvedValue([
+      { id: 'm1', name: 'gpt-3.5', isActive: true, createdAt: new Date(), updatedAt: new Date() },
+    ]);
     mockApiClient.request = jest.fn()
       .mockImplementation((path: string, options?: { method?: string; body?: string; headers?: Record<string, string> }) => {
         if (path === '/projects/1') return Promise.resolve(mockProject);
@@ -192,7 +198,7 @@ describe('ProjectPage', () => {
           projectId: '1',
           name: 'New Prompt',
           prompt: 'New prompt text',
-          modelId: null,
+          modelId: 'm1',
         }),
         headers: { 'Content-Type': 'application/json' },
       });

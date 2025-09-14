@@ -21,6 +21,7 @@
 # Tweaks
 - after creating project, jump directly to project/:id page
 - after creating prompt, jump directly to view prompt page
+- thorough review of unit tests
 
 # New Features
 - close button for prompt view

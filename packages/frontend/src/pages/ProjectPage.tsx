@@ -162,7 +162,24 @@ export function ProjectPage() {
                   <p className="text-gray-600 text-sm mb-2 break-words whitespace-pre-wrap line-clamp-2">
                     {prompt.prompt}
                   </p>
-                  <div className="text-xs text-gray-400">Prompt ID: {prompt.id}</div>
+                  <div className="flex items-center gap-2 text-xs text-gray-400">
+                     Prompt ID: {prompt.id}
+                    {prompt.modelName && (
+                      <>
+                        <span className="mx-1">•</span>
+                        <span data-testid={`prompt-model-name-${prompt.id}`}>{prompt.modelName}</span>
+                        {prompt.isModelActive === false && (
+                          <span
+                            className="ml-1 text-yellow-500 cursor-help"
+                            title="Model is no longer available"
+                            data-testid={`prompt-model-inactive-${prompt.id}`}
+                          >
+                             ⚠️
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </div>
                 </div>
                 <div className="flex space-x-2 flex-shrink-0">
                   <button

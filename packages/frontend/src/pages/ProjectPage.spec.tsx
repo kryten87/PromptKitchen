@@ -30,7 +30,9 @@ describe('ProjectPage', () => {
       name: 'Prompt 1',
       prompt: 'Write a poem about AI.',
       version: 1,
-      modelId: null,
+      modelId: 'm1',
+      modelName: 'gpt-3.5',
+      isModelActive: true,
       createdAt: new Date('2023-01-01').toISOString(),
       updatedAt: new Date('2023-01-02').toISOString(),
     },
@@ -40,7 +42,9 @@ describe('ProjectPage', () => {
       name: 'Prompt 2',
       prompt: 'Summarize this text.',
       version: 1,
-      modelId: null,
+      modelId: 'm2',
+      modelName: 'gpt-4',
+      isModelActive: false,
       createdAt: new Date('2023-01-01').toISOString(),
       updatedAt: new Date('2023-01-02').toISOString(),
     },
@@ -58,7 +62,7 @@ describe('ProjectPage', () => {
     );
   };
 
-  it('renders project details and prompts', async () => {
+  it('renders project details and prompts, including model name and inactive warning', async () => {
     mockApiClient.request = jest.fn()
       .mockImplementation((path: string) => {
         if (path === '/projects/1') return Promise.resolve(mockProject);
@@ -75,6 +79,15 @@ describe('ProjectPage', () => {
     expect(screen.getByText('Prompt 2')).toBeInTheDocument();
     expect(screen.getByText('Write a poem about AI.')).toBeInTheDocument();
     expect(screen.getByText('Summarize this text.')).toBeInTheDocument();
+
+    // Model names
+    expect(screen.getByTestId('prompt-model-name-p1')).toHaveTextContent('gpt-3.5');
+    expect(screen.getByTestId('prompt-model-name-p2')).toHaveTextContent('gpt-4');
+    // Inactive warning icon for p2
+    expect(screen.getByTestId('prompt-model-inactive-p2')).toBeInTheDocument();
+    expect(screen.getByTestId('prompt-model-inactive-p2').getAttribute('title')).toBe('Model is no longer available');
+    // No warning icon for p1
+    expect(screen.queryByTestId('prompt-model-inactive-p1')).not.toBeInTheDocument();
   });
 
   it('shows create new prompt button', async () => {

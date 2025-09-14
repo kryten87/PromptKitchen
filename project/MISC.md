@@ -1,8 +1,5 @@
-
-
-
-
 # Code Issues/Questions
+- make sure migrations are running correctly in both prod & non-prod environments
 - skipped tests
 - refactor functions into small, pure helpers
 - logging system -- frontend & backend

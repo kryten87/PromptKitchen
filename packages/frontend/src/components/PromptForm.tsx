@@ -13,27 +13,33 @@ interface PromptFormProps {
 
 export function PromptForm({ prompt, projectId, onPromptCreated, onPromptUpdated, onViewHistory }: PromptFormProps) {
   const [models, setModels] = useState<Model[]>([]);
-const [modelsLoading, setModelsLoading] = useState(false);
-const [modelsError, setModelsError] = useState<string | null>(null);
+  const [modelsLoading, setModelsLoading] = useState(false);
+  const [modelsError, setModelsError] = useState<string | null>(null);
+  const [modelId, setModelId] = useState<string | null>(prompt?.modelId ?? null);
 
   const apiClient = useApiClient();
 
-  useEffect(() => {
-    let isMounted = true;
-    setModelsLoading(true);
-    setModelsError(null);
-    apiClient.getModels()
-      .then((models) => {
-        if (isMounted) setModels(models);
-      })
-      .catch(() => {
-        if (isMounted) setModelsError('Failed to load models');
-      })
-      .finally(() => {
-        if (isMounted) setModelsLoading(false);
-      });
-    return () => { isMounted = false; };
-  }, [apiClient]);
+   useEffect(() => {
+     let isMounted = true;
+     setModelsLoading(true);
+     setModelsError(null);
+     apiClient.getModels()
+       .then((models) => {
+         if (isMounted) {
+           setModels(models);
+           // If no modelId is set, default to first model
+           setModelId(prev => prev ?? (models.length > 0 ? models[0].id : null));
+         }
+       })
+       .catch(() => {
+         if (isMounted) setModelsError('Failed to load models');
+       })
+       .finally(() => {
+         if (isMounted) setModelsLoading(false);
+       });
+     return () => { isMounted = false; };
+   }, [apiClient]);
+
 
   const isEditMode = prompt !== undefined;
   const [name, setName] = useState(prompt?.name || '');
@@ -57,42 +63,46 @@ const [modelsError, setModelsError] = useState<string | null>(null);
     setError(null);
     setSuccessMessage(null);
 
-    try {
-      if (isEditMode && prompt) {
-        const updated = await apiClient.request<Prompt>(`/prompts/${prompt.id}`, {
-          method: 'PUT',
-          body: JSON.stringify({
-            name: name.trim(),
-            prompt: promptText.trim(),
-          }),
-          headers: { 'Content-Type': 'application/json' },
-        });
+     try {
+       if (isEditMode && prompt) {
+         const updated = await apiClient.request<Prompt>(`/prompts/${prompt.id}`, {
+           method: 'PUT',
+           body: JSON.stringify({
+             name: name.trim(),
+             prompt: promptText.trim(),
+             modelId: modelId ?? null,
+           }),
+           headers: { 'Content-Type': 'application/json' },
+         });
+ 
+         setSuccessMessage('Prompt saved successfully!');
+         onPromptUpdated?.(updated);
+ 
+         // Clear success message after 3 seconds
+         setTimeout(() => setSuccessMessage(null), 3000);
+       } else {
+         await onPromptCreated?.({
+           projectId: projectId!,
+           name: name.trim(),
+           prompt: promptText.trim(),
+           modelId: modelId ?? null,
+         });
+         // Reset form
+         setName('');
+         setPromptText('');
+         setModelId(models.length > 0 ? models[0].id : null);
+       }
+     } catch {
+       setError(isEditMode ? 'Failed to save prompt' : 'Failed to create prompt');
+     } finally {
+       setLoading(false);
+     }
+   };
 
-        setSuccessMessage('Prompt saved successfully!');
-        onPromptUpdated?.(updated);
 
-        // Clear success message after 3 seconds
-        setTimeout(() => setSuccessMessage(null), 3000);
-      } else {
-        await onPromptCreated?.({
-          projectId: projectId!,
-          name: name.trim(),
-          prompt: promptText.trim(),
-          modelId: null,
-        });
-        // Reset form
-        setName('');
-        setPromptText('');
-      }
-    } catch {
-      setError(isEditMode ? 'Failed to save prompt' : 'Failed to create prompt');
-    } finally {
-      setLoading(false);
-    }
-  };
+   const hasChanges = isEditMode ? (name.trim() !== prompt?.name || promptText.trim() !== prompt?.prompt || modelId !== prompt?.modelId) : true;
+   const canSave = hasChanges && name.trim() && promptText.trim() && modelId;
 
-  const hasChanges = isEditMode ? (name.trim() !== prompt?.name || promptText.trim() !== prompt?.prompt) : true;
-  const canSave = hasChanges && name.trim() && promptText.trim();
 
   return (
     <div className={isEditMode ? '' : 'p-6 bg-white rounded-lg border border-gray-200 shadow-sm'}>
@@ -117,7 +127,7 @@ const [modelsError, setModelsError] = useState<string | null>(null);
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
+         <div>
           <label htmlFor={`${testIdPrefix}-name`} className="block text-sm font-medium text-gray-700 mb-1">
             Prompt Name
           </label>
@@ -133,6 +143,29 @@ const [modelsError, setModelsError] = useState<string | null>(null);
             required={!isEditMode}
           />
         </div>
+
+        <div>
+          <label htmlFor={`${testIdPrefix}-model`} className="block text-sm font-medium text-gray-700 mb-1">
+            Model
+          </label>
+          <select
+            id={`${testIdPrefix}-model`}
+            data-testid={`${testIdPrefix}-model-select`}
+            value={modelId ?? ''}
+            onChange={e => setModelId(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            disabled={loading || modelsLoading || models.length === 0}
+            required
+          >
+            <option value="" disabled>Select a model</option>
+            {models.map(model => (
+              <option key={model.id} value={model.id}>{model.name}</option>
+            ))}
+          </select>
+          {modelsLoading && <div className="text-xs text-gray-400 mt-1">Loading models...</div>}
+          {modelsError && <div className="text-xs text-red-500 mt-1">{modelsError}</div>}
+        </div>
+
 
         <div>
           <label htmlFor={`${testIdPrefix}-text`} className="block text-sm font-medium text-gray-700 mb-1">

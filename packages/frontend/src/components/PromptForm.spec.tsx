@@ -21,4 +21,17 @@ describe('PromptForm', () => {
       expect(getModels).toHaveBeenCalled();
     });
   });
+
+  it('renders model dropdown with options', async () => {
+    const getModels = jest.fn().mockResolvedValue(mockModels);
+    (useApiClient as jest.Mock).mockReturnValue({ getModels });
+
+    const { findByTestId } = render(<PromptForm />);
+    const select = await findByTestId('create-prompt-model-select');
+    expect(select).toBeInTheDocument();
+    // Should have an option for each model
+    expect(select.children.length).toBe(mockModels.length + 1); // +1 for the disabled placeholder
+    expect(select.children[1].textContent).toBe('gpt-3.5');
+    expect(select.children[2].textContent).toBe('gpt-4');
+  });
 });

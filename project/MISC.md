@@ -35,6 +35,7 @@
 - when running a test suite are we hitting the AI multiple times or just once?
 - JSON editing where appropriate
 - auth middleware should check user in database; caching might be necessary
+- "Run with" option to select model at run time
 
 
 # DONE --------------------------

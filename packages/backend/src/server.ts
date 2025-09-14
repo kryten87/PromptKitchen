@@ -15,6 +15,10 @@ import { UserRepository } from './repositories/UserRepository';
 import { ProjectService } from './services/ProjectService';
 import { PromptService } from './services/PromptService';
 import { UserService } from './services/UserService';
+import { ModelRepository } from './repositories/ModelRepository';
+import { LLMService } from './services/LLMService';
+import { ModelService } from './services/ModelService';
+import { registerModelRoutes } from './controllers/ModelController';
 
 // Patch FastifyInstance type to include googleOAuth2
 import type { OAuth2Namespace } from '@fastify/oauth2';
@@ -63,6 +67,16 @@ registerAuthController(server, { userService });
 registerTestSuiteRoutes(server, dbConnector);
 registerProjectRoutes(server, projectService, userService);
 registerPromptRoutes(server, promptService);
+
+// Model selection dependencies
+const modelRepository = new ModelRepository(dbConnector);
+const llmService = new LLMService({
+  apiKey: process.env.OPENAI_API_KEY || '',
+  apiBaseUrl: process.env.OPENAI_API_BASE_URL,
+  model: process.env.OPENAI_DEFAULT_MODEL,
+});
+const modelService = new ModelService(modelRepository, llmService);
+registerModelRoutes(server, modelService, modelRepository);
 
 // Register Google OAuth2
 server.register(fastifyOauth2, {

@@ -1,6 +1,7 @@
 import type { Prompt } from '@prompt-kitchen/shared/src/dtos';
 import type { Model } from '@prompt-kitchen/shared/src/dto/Model';
 import { useState, useEffect } from 'react';
+import { LiaSyncSolid } from 'react-icons/lia';
 import { useApiClient } from '../hooks/useApiClient';
 
 interface PromptFormProps {
@@ -186,11 +187,8 @@ export function PromptForm({ prompt, projectId, onPromptCreated, onPromptUpdated
                  }}
                  disabled={modelsLoading || loading}
                >
-                 {/* Simple refresh icon (SVG) */}
-                 <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                   <path d="M4 4v4h4" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                   <path d="M20 10c0 5.523-4.477 10-10 10S0 15.523 0 10 4.477 0 10 0c2.386 0 4.57.835 6.293 2.221" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                 </svg>
+                  {/* Refresh icon from react-icons/lia */}
+                  <LiaSyncSolid size={18} color="#2563eb" />
                </button>
 
             </div>

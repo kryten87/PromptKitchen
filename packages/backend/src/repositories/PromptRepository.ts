@@ -24,7 +24,8 @@ export class PromptRepository {
       .leftJoin('models', 'prompts.model_id', 'models.id')
       .select(
         'prompts.*',
-        'models.name as modelName'
+        'models.name as modelName',
+        'models.is_active as isModelActive'
       )
       .where('prompts.id', id)
       .first();
@@ -39,6 +40,7 @@ export class PromptRepository {
       version: row.version,
       modelId: row.model_id ?? null,
       modelName: row.modelName ?? undefined,
+      isModelActive: typeof row.isModelActive === 'boolean' ? row.isModelActive : Boolean(row.isModelActive),
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at),
     };
@@ -49,7 +51,8 @@ export class PromptRepository {
       .leftJoin('models', 'prompts.model_id', 'models.id')
       .select(
         'prompts.*',
-        'models.name as modelName'
+        'models.name as modelName',
+        'models.is_active as isModelActive'
       )
       .where('prompts.project_id', projectId);
     return rows.map((row) => ({

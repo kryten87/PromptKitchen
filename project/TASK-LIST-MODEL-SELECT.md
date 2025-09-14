@@ -1,5 +1,7 @@
 # Task List: Prompt Model Selection
 
+**ID Convention:** All primary keys (`id`) in all tables must be of type `string` (not integer), and all foreign keys must reference string IDs. This is a project-wide convention and must be followed for all new tables and relationships.
+
 This document breaks down the work required to implement the "Prompt Model Selection" feature, as defined in `project/PRD-MODEL-SELECT.md`. The tasks are ordered to be completed sequentially.
 
 ---

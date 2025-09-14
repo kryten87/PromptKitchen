@@ -62,15 +62,13 @@ This document breaks down the work required to implement the "Prompt Model Selec
   - `upsert(models: string[]): Promise<void>`: A key method that will:
     - Deactivate all existing models (`is_active = false`).
     - For each model name in the input array, either create it or update it to be `is_active = true`.
-- **Action:** Implement the `ModelRepository` class with the specified methods.
+- **Action:** Implement the `ModelRepository` class with the specified methods. Create `packages/backend/src/repositories/ModelRepository.spec.ts` and add unit tests for all methods.
 
 ### Task 1.6: Update `PromptRepository`
 
 - **Objective:** Update the `PromptRepository` to handle the new `model_id` field.
 - **File to Modify:** `packages/backend/src/repositories/PromptRepository.ts`.
-- **Actions:**
-  - Update the `create` and `update` methods to accept and store `modelId`.
-  - Update `findById`, `findAllByProjectId`, etc., to join with the `models` table to include `modelName` in the returned `Prompt` objects. The query should look something like `db('prompts').leftJoin('models', 'prompts.model_id', 'models.id').select('prompts.*', 'models.name as modelName')`.
+- **Action:** Update the `PromptRepository` class. Ensure `packages/backend/src/repositories/PromptRepository.spec.ts` is updated to test the changes.
 
 ---
 
@@ -85,7 +83,7 @@ This document breaks down the work required to implement the "Prompt Model Selec
   - `refreshModels(): Promise<void>`:
     - Calls a new method on `LLMService` (see next task) to get model names from the OpenAI API.
     - Calls `modelRepository.upsert()` with the fetched model names.
-- **Action:** Implement the `ModelService`.
+- **Action:** Implement the `ModelService`. Create `packages/backend/src/services/ModelService.spec.ts` and add unit tests, mocking dependencies as needed.
 
 ### Task 2.2: Update `LLMService` to Fetch Models
 
@@ -102,7 +100,7 @@ This document breaks down the work required to implement the "Prompt Model Selec
 - **Class `ModelController`:**
   - `GET /api/models`: Returns a list of all active models from `ModelRepository`.
   - `POST /api/models/refresh`: Triggers `ModelService.refreshModels()`.
-- **Action:** Implement the controller, register its routes in `packages/backend/src/server.ts`, and inject its dependencies.
+- **Action:** Implement the controller and register its routes. Create `packages/backend/src/controllers/ModelController.spec.ts` and add integration tests for the new endpoints.
 
 ### Task 2.4: Implement Automatic Model Refresh
 
@@ -138,9 +136,10 @@ This document breaks down the work required to implement the "Prompt Model Selec
 - **Objective:** Add frontend API client methods for interacting with the new model endpoints.
 - **File to Modify:** `packages/frontend/src/ApiClient.ts`.
 - **Actions:**
+  - Update the `createPrompt` and `updatePrompt` methods to include `modelId` in the request payload.
   - Add `getModels(): Promise<Model[]>` to fetch from `GET /api/models`.
   - Add `refreshModels(): Promise<void>` to post to `POST /api/models/refresh`.
-  - Update the `createPrompt` and `updatePrompt` methods to include `modelId` in the request payload.
+  - Update unit tests in `packages/frontend/src/ApiClient.spec.ts` to mock and test the new and updated methods.
 
 ### Task 3.2: Create `PromptForm` Model Selection UI
 
@@ -151,6 +150,7 @@ This document breaks down the work required to implement the "Prompt Model Selec
   - Add a `<select>` element to the form, populated with the fetched models. The `value` of each option should be the model's `id`.
   - Add a refresh icon button next to the select element. On click, it should call `apiClient.refreshModels()` and then refetch the model list to update the dropdown.
   - Ensure the selected `modelId` is included when the form is submitted.
+  - Update unit tests in `packages/frontend/src/components/PromptForm.spec.tsx` to verify the new dropdown, refresh button, and form submission behavior.
 
 ### Task 3.3: Display Model in Prompt List
 
@@ -160,6 +160,7 @@ This document breaks down the work required to implement the "Prompt Model Selec
   - In the prompt list, display the `prompt.modelName`.
   - The `Prompt` type in the frontend (`packages/frontend/src/types.ts`) may need to be updated to include `modelName` and `isModelActive` (or similar). The backend API response for listing prompts should include this data.
   - If the model associated with a prompt is inactive, display a warning icon with a tooltip saying "Model is no longer available".
+  - Update unit tests for the component that renders the prompt list to verify that the model name and warning icon are displayed correctly.
 
 ### Task 3.4: Display Model in Test Run View
 
@@ -168,6 +169,7 @@ This document breaks down the work required to implement the "Prompt Model Selec
 - **Action:**
   - The API response for a test suite run should include the `modelName` used for each result.
   - Display this `modelName` in the UI for each test case result.
+  - Update unit tests for the test run view to verify that the model name is displayed.
 
 ---
 

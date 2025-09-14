@@ -1,8 +1,5 @@
-
-
-
-
 # Code Issues/Questions
+- make sure migrations are running correctly in both prod & non-prod environments
 - skipped tests
 - refactor functions into small, pure helpers
 - logging system -- frontend & backend
@@ -24,6 +21,9 @@
 # Tweaks
 - after creating project, jump directly to project/:id page
 - after creating prompt, jump directly to view prompt page
+- thorough review of unit tests
+- can we run e2e tests against a :memory: database?
+- code coverage
 
 # New Features
 - close button for prompt view

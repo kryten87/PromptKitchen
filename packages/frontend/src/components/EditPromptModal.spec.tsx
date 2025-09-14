@@ -7,6 +7,7 @@ const mockPrompt = {
   prompt: 'Hello {{name}}',
   projectId: 'project-1',
   version: 1,
+  modelId: null,
   createdAt: new Date('2023-01-01T00:00:00.000Z'),
   updatedAt: new Date('2023-01-01T00:00:00.000Z')
 };

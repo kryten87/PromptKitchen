@@ -38,6 +38,7 @@ export class PromptRepository {
       name: row.name,
       prompt: row.prompt,
       version: row.version,
+      modelId: null, // Placeholder until model_id is in DB
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at),
     };
@@ -51,6 +52,7 @@ export class PromptRepository {
       name: row.name,
       prompt: row.prompt,
       version: row.version,
+      modelId: null, // Placeholder until model_id is in DB
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at),
     }));

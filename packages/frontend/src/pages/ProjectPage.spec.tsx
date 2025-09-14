@@ -30,6 +30,7 @@ describe('ProjectPage', () => {
       name: 'Prompt 1',
       prompt: 'Write a poem about AI.',
       version: 1,
+      modelId: null,
       createdAt: new Date('2023-01-01').toISOString(),
       updatedAt: new Date('2023-01-02').toISOString(),
     },
@@ -39,6 +40,7 @@ describe('ProjectPage', () => {
       name: 'Prompt 2',
       prompt: 'Summarize this text.',
       version: 1,
+      modelId: null,
       createdAt: new Date('2023-01-01').toISOString(),
       updatedAt: new Date('2023-01-02').toISOString(),
     },
@@ -154,6 +156,7 @@ describe('ProjectPage', () => {
       name: 'New Prompt',
       prompt: 'New prompt text',
       version: 1,
+      modelId: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -189,6 +192,7 @@ describe('ProjectPage', () => {
           projectId: '1',
           name: 'New Prompt',
           prompt: 'New prompt text',
+          modelId: null,
         }),
         headers: { 'Content-Type': 'application/json' },
       });
@@ -354,6 +358,7 @@ describe('ProjectPage', () => {
       ...mockPrompts[0],
       prompt: 'Original poem prompt.',
       version: 3, // New version after restore
+      modelId: null,
     };
 
     mockApiClient.request = jest.fn()

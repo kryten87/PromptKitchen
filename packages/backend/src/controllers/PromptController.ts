@@ -21,7 +21,7 @@ export async function registerPromptRoutes(fastify: FastifyInstance, promptServi
       const schema = definePromptSchema().omit(['id', 'version', 'createdAt', 'updatedAt']);
       const data = await schema.validate(request.body, { abortEarly: false, stripUnknown: true });
       const { projectId } = request.params;
-      const prompt = await promptService.createPrompt({ ...data, projectId });
+      const prompt = await promptService.createPrompt({ ...data, projectId, modelId: null });
       return reply.status(201).send(prompt);
     } catch (err) {
       if (err instanceof yup.ValidationError) {

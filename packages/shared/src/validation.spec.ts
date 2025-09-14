@@ -8,6 +8,7 @@ describe('Validation Tests', () => {
       id: '1',
       projectId: '1',
       name: 'Test Prompt',
+      modelId: null,
       prompt: 'Hello {{name}}!',
       version: 1,
       createdAt: new Date(),

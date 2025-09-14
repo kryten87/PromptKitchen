@@ -24,6 +24,7 @@
 - thorough review of unit tests
 - can we run e2e tests against a :memory: database?
 - code coverage
+- look for ways to reduce code duplication (eg. using APIClient on front end in some places, making raw requests in others) - can the LLM analyze this?
 
 # New Features
 - close button for prompt view

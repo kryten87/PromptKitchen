@@ -62,6 +62,17 @@ describe('ExecutionService', () => {
     expect(runId).toBeDefined();
   });
 
+  it('should pass modelName to LLMService when provided', async () => {
+    const modelName = 'gpt-4-test';
+    await service.runTestSuite('run1', 'suite1', 'Hello {{name}}', modelName);
+
+    expect(mockLLMService.completePrompt).toHaveBeenCalledWith(
+      expect.objectContaining({
+        model: modelName,
+      })
+    );
+  });
+
   it('should run test suite and store results', async () => {
     await service.runTestSuite('run1', 'suite1', 'Hello {{name}}', undefined);
     expect((mockDb as Record<string, jest.Mock>).update).toHaveBeenCalledWith({ status: 'RUNNING' });

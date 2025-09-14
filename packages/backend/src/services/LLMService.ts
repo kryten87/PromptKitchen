@@ -32,6 +32,36 @@ export class LLMService {
     this.defaultModel = options.model || 'gpt-3.5-turbo';
   }
 
+  /**
+   * Fetches the list of available model IDs from the OpenAI API.
+   * @returns Promise<string[]> Array of model IDs
+   */
+  async listModels(): Promise<string[]> {
+    const url = `${this.apiBaseUrl}/models`;
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${this.apiKey}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!res.ok) {
+      const error = await res.text();
+      throw new Error(`OpenAI API error (listModels): ${res.status} ${error}`);
+    }
+    const data = await res.json() as { data: Array<{ id: string }> };
+    if (!data || !Array.isArray(data.data)) {
+      throw new Error('Unexpected response from OpenAI API (listModels)');
+    }
+    // Only return model IDs (strings)
+    return data.data.map((model) => model.id);
+  }
+
+  /**
+   * Executes a prompt using the specified model (or default).
+   * @param request LLMRequest
+   * @returns LLMResponse
+   */
   async completePrompt(request: LLMRequest): Promise<LLMResponse> {
     const model = request.model || this.defaultModel;
     const url = `${this.apiBaseUrl}/chat/completions`;
@@ -70,3 +100,4 @@ export class LLMService {
     return { output, raw: data };
   }
 }
+

@@ -38,7 +38,7 @@ This document breaks down the work required to implement the "Prompt Model Selec
   3. `packages/shared/src/dtos.ts`
 - **Actions:**
   1. Create `Model.ts` and define the `Model` interface matching the DB schema.
-  2. In `Prompt.ts`, add `modelId: number | null;` and `modelName?: string;` to the `Prompt` interface.
+  2. In `Prompt.ts`, add `modelId: string | null;` and `modelName?: string;` to the `Prompt` interface.
   3. Export the new `Model` type from `packages/shared/src/dtos.ts`.
 
 ### Task 1.4: Define Shared Validation Schemas
@@ -47,7 +47,7 @@ This document breaks down the work required to implement the "Prompt Model Selec
 - **File to Modify:** `packages/shared/src/validation.ts`.
 - **Actions:**
   1.  Create a `defineModelSchema()` function that returns a `yup` schema for the `Model` DTO, following the existing pattern in the file.
-  2.  Update the schema returned by `definePromptSchema()` to include `modelId: yup.number().integer().positive().optional().nullable()`. This schema will be used by the backend for payload validation and the frontend for client-side form validation.
+  2.  Update the schema returned by `definePromptSchema()` to include `modelId: yup.string().optional().nullable()`. This schema will be used by the backend for payload validation and the frontend for client-side form validation.
 
 ### Task 1.5: Create `ModelRepository`
 
@@ -58,7 +58,7 @@ This document breaks down the work required to implement the "Prompt Model Selec
   - `findAll(): Promise<Model[]>`: Returns all models.
   - `findByName(name: string): Promise<Model | undefined>`: Finds a model by name.
   - `create(name: string): Promise<Model>`: Creates a new model.
-  - `update(id: number, updates: Partial<Model>): Promise<void>`: Updates a model.
+  - `update(id: string, updates: Partial<Model>): Promise<void>`: Updates a model.
   - `upsert(models: string[]): Promise<void>`: A key method that will:
     - Deactivate all existing models (`is_active = false`).
     - For each model name in the input array, either create it or update it to be `is_active = true`.
@@ -116,7 +116,7 @@ This document breaks down the work required to implement the "Prompt Model Selec
 - **File to Modify:** `packages/backend/src/controllers/PromptController.ts`.
 - **Actions:**
   - Update the validation for `POST /api/prompts` and `PUT /api/prompts/:id` to use the updated schemas (`CreatePromptSchema`, `UpdatePromptSchema`).
-  - The request body for these endpoints will now include an optional `modelId: number`.
+  - The request body for these endpoints will now include an optional `modelId: string`.
   - Pass this `modelId` to the `promptRepository.create` and `promptRepository.update` methods.
 
 ### Task 2.6: Update `ExecutionService`

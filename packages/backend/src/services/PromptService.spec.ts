@@ -25,18 +25,18 @@ describe('PromptService (simple mocks)', () => {
 
   it('should create a prompt and add to history', async () => {
     const prompt: Prompt = {
-      id: 'id1', projectId: 'proj1', name: 'Prompt', prompt: 'Prompt text', version: 1, createdAt: new Date(), updatedAt: new Date()
+      id: 'id1', projectId: 'proj1', name: 'Prompt', prompt: 'Prompt text', version: 1, modelId: null, createdAt: new Date(), updatedAt: new Date()
     };
     promptRepository.create.mockResolvedValue(prompt);
     promptHistoryRepository.create.mockResolvedValue({} as PromptHistory);
-    const result = await promptService.createPrompt({ projectId: 'proj1', name: 'Prompt', prompt: 'Prompt text' });
+    const result = await promptService.createPrompt({ projectId: 'proj1', name: 'Prompt', prompt: 'Prompt text', modelId: null });
     expect(result).toBe(prompt);
-    expect(promptRepository.create).toHaveBeenCalledWith({ projectId: 'proj1', name: 'Prompt', prompt: 'Prompt text', version: 1 });
+    expect(promptRepository.create).toHaveBeenCalledWith({ projectId: 'proj1', name: 'Prompt', prompt: 'Prompt text', modelId: null, version: 1 });
     expect(promptHistoryRepository.create).toHaveBeenCalledWith({ promptId: 'id1', prompt: 'Prompt text', version: 1 });
   });
 
   it('should update a prompt and create a new history entry if prompt text changes', async () => {
-    const prompt: Prompt = { id: 'id2', projectId: 'proj1', name: 'Prompt', prompt: 'Old', version: 1, createdAt: new Date(), updatedAt: new Date() };
+    const prompt: Prompt = { id: 'id2', projectId: 'proj1', name: 'Prompt', prompt: 'Old', version: 1, modelId: null, createdAt: new Date(), updatedAt: new Date() };
     const updatedPrompt: Prompt = { ...prompt, prompt: 'New', version: 2 };
     promptRepository.getById.mockResolvedValue(prompt);
     promptRepository.update.mockResolvedValue(updatedPrompt);
@@ -48,7 +48,7 @@ describe('PromptService (simple mocks)', () => {
   });
 
   it('should not create a new history entry if prompt text does not change', async () => {
-    const prompt: Prompt = { id: 'id3', projectId: 'proj1', name: 'Prompt', prompt: 'Same', version: 1, createdAt: new Date(), updatedAt: new Date() };
+    const prompt: Prompt = { id: 'id3', projectId: 'proj1', name: 'Prompt', prompt: 'Same', version: 1, modelId: null, createdAt: new Date(), updatedAt: new Date() };
     const updatedPrompt: Prompt = { ...prompt, name: 'Prompt2' };
     promptRepository.getById.mockResolvedValue(prompt);
     promptRepository.update.mockResolvedValue(updatedPrompt);
@@ -59,7 +59,7 @@ describe('PromptService (simple mocks)', () => {
   });
 
   it('should restore a prompt from history', async () => {
-    const prompt: Prompt = { id: 'id4', projectId: 'proj1', name: 'Prompt', prompt: 'Third', version: 3, createdAt: new Date(), updatedAt: new Date() };
+    const prompt: Prompt = { id: 'id4', projectId: 'proj1', name: 'Prompt', prompt: 'Third', version: 3, modelId: null, createdAt: new Date(), updatedAt: new Date() };
     const history: PromptHistory[] = [
       { id: 'h1', promptId: 'id4', prompt: 'First', version: 1, createdAt: new Date() },
       { id: 'h2', promptId: 'id4', prompt: 'Second', version: 2, createdAt: new Date() },
@@ -78,8 +78,8 @@ describe('PromptService (simple mocks)', () => {
 
   it('should get all prompts for a project', async () => {
     const prompts: Prompt[] = [
-      { id: 'id5', projectId: 'proj1', name: 'Prompt1', prompt: 'A', version: 1, createdAt: new Date(), updatedAt: new Date() },
-      { id: 'id6', projectId: 'proj1', name: 'Prompt2', prompt: 'B', version: 1, createdAt: new Date(), updatedAt: new Date() },
+      { id: 'id5', projectId: 'proj1', name: 'Prompt1', prompt: 'A', version: 1, modelId: null, createdAt: new Date(), updatedAt: new Date() },
+      { id: 'id6', projectId: 'proj1', name: 'Prompt2', prompt: 'B', version: 1, modelId: null, createdAt: new Date(), updatedAt: new Date() },
     ];
     promptRepository.getAllByProjectId.mockResolvedValue(prompts);
     const result = await promptService.getPromptsForProject('proj1');

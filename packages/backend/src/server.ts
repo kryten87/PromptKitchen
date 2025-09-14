@@ -15,6 +15,10 @@ import { UserRepository } from './repositories/UserRepository';
 import { ProjectService } from './services/ProjectService';
 import { PromptService } from './services/PromptService';
 import { UserService } from './services/UserService';
+import { ModelRepository } from './repositories/ModelRepository';
+import { LLMService } from './services/LLMService';
+import { ModelService } from './services/ModelService';
+import { registerModelRoutes } from './controllers/ModelController';
 
 // Patch FastifyInstance type to include googleOAuth2
 import type { OAuth2Namespace } from '@fastify/oauth2';
@@ -63,6 +67,16 @@ registerAuthController(server, { userService });
 registerTestSuiteRoutes(server, dbConnector);
 registerProjectRoutes(server, projectService, userService);
 registerPromptRoutes(server, promptService);
+
+// Model selection dependencies
+const modelRepository = new ModelRepository(dbConnector);
+const llmService = new LLMService({
+  apiKey: process.env.OPENAI_API_KEY || '',
+  apiBaseUrl: process.env.OPENAI_API_BASE_URL,
+  model: process.env.OPENAI_DEFAULT_MODEL,
+});
+const modelService = new ModelService(modelRepository, llmService);
+registerModelRoutes(server, modelService, modelRepository);
 
 // Register Google OAuth2
 server.register(fastifyOauth2, {
@@ -139,6 +153,25 @@ export async function start() {
     await runMigrations(dbConnector); // Run DB migrations after connection
     await server.listen({ port, host: '0.0.0.0' });
     server.log.info(`Server started on port ${port}`);
+
+    try {
+      await modelService.refreshModels();
+      server.log.info('Model list refreshed on startup');
+    } catch (err) {
+      server.log.error({ err }, 'Failed to refresh models on startup');
+    }
+
+    const refreshIntervalHours = parseInt(process.env.MODEL_REFRESH_INTERVAL_HOURS || '168', 10);
+    const refreshIntervalMs = refreshIntervalHours * 60 * 60 * 1000;
+    setInterval(async () => {
+      try {
+        await modelService.refreshModels();
+        server.log.info('Model list refreshed by periodic task');
+      } catch (err) {
+        server.log.error({ err }, 'Failed to refresh models in periodic task');
+      }
+    }, refreshIntervalMs);
+    server.log.info(`Model refresh interval set to ${refreshIntervalHours} hours`);
   } catch (err) {
     server.log.error(err);
     process.exit(1);

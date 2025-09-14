@@ -1,11 +1,5 @@
-# Findings 9/3/2025
-- when adding a new test case with advanced assertions, the first edit does not save. Second and later edits work **FIXED**
-- toMatch with a regex string does not work with i flag - flag is not saved **FIXED**
-
-
-
-
 # Code Issues/Questions
+- make sure migrations are running correctly in both prod & non-prod environments
 - skipped tests
 - refactor functions into small, pure helpers
 - logging system -- frontend & backend
@@ -27,6 +21,10 @@
 # Tweaks
 - after creating project, jump directly to project/:id page
 - after creating prompt, jump directly to view prompt page
+- thorough review of unit tests
+- can we run e2e tests against a :memory: database?
+- code coverage
+- look for ways to reduce code duplication (eg. using APIClient on front end in some places, making raw requests in others) - can the LLM analyze this?
 
 # New Features
 - close button for prompt view
@@ -37,6 +35,7 @@
 - when running a test suite are we hitting the AI multiple times or just once?
 - JSON editing where appropriate
 - auth middleware should check user in database; caching might be necessary
+- "Run with" option to select model at run time
 
 
 # DONE --------------------------
@@ -73,3 +72,6 @@ sort out front end/back end ports/proxies
 # UX Problems
 - Create Test Case: "Create" button disabled if no variable entered
 
+# Findings 9/3/2025
+- when adding a new test case with advanced assertions, the first edit does not save. Second and later edits work **FIXED**
+- toMatch with a regex string does not work with i flag - flag is not saved **FIXED**

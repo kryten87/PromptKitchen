@@ -58,12 +58,23 @@ describe('ExecutionService', () => {
   });
 
   it('should start a test suite run and return run id', async () => {
-    const runId = await service.startTestSuiteRun('suite1', 'Hello {{name}}', 'hist1');
+    const runId = await service.startTestSuiteRun('suite1', 'Hello {{name}}', 'hist1', undefined);
     expect(runId).toBeDefined();
   });
 
+  it('should pass modelName to LLMService when provided', async () => {
+    const modelName = 'gpt-4-test';
+    await service.runTestSuite('run1', 'suite1', 'Hello {{name}}', modelName);
+
+    expect(mockLLMService.completePrompt).toHaveBeenCalledWith(
+      expect.objectContaining({
+        model: modelName,
+      })
+    );
+  });
+
   it('should run test suite and store results', async () => {
-    await service.runTestSuite('run1', 'suite1', 'Hello {{name}}');
+    await service.runTestSuite('run1', 'suite1', 'Hello {{name}}', undefined);
     expect((mockDb as Record<string, jest.Mock>).update).toHaveBeenCalledWith({ status: 'RUNNING' });
     expect((mockDb as Record<string, jest.Mock>).insert).toHaveBeenCalled();
     expect((mockDb as Record<string, jest.Mock>).update).toHaveBeenCalledWith({ status: 'COMPLETED', pass_percentage: expect.any(Number) });
@@ -143,7 +154,7 @@ describe('ExecutionService', () => {
       arg: unknown
     ) => Promise<unknown>;
 
-    await service.runTestSuite('run-assert-1', 'ignored prompt', 'hist-1');
+    await service.runTestSuite('run-assert-1', 'ignored prompt', 'hist-1', undefined);
 
     expect(mockInsert).toHaveBeenCalled();
     expect(mockInsert.mock.calls.length).toBeGreaterThan(0);
@@ -216,7 +227,7 @@ describe('ExecutionService', () => {
       arg: unknown
     ) => Promise<unknown>;
 
-    await svc.runTestSuite('run-big-1', 'ignored', 'hist-1');
+    await svc.runTestSuite('run-big-1', 'ignored', 'hist-1', undefined);
 
     expect(mockInsert).toHaveBeenCalled();
     expect(mockInsert.mock.calls.length).toBeGreaterThan(0);

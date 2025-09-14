@@ -22,6 +22,7 @@ describe('PromptHistoryModal', () => {
     name: 'Test Prompt',
     prompt: 'Current prompt text',
     version: 3,
+    modelId: null,
     createdAt: new Date('2023-01-01'),
     updatedAt: new Date('2023-01-03'),
   };

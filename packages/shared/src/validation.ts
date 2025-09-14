@@ -42,6 +42,18 @@ export function defineProjectSchema() {
   });
 }
 
+// Model validation schema
+defineModelSchema();
+export function defineModelSchema() {
+  return yup.object({
+    id: yup.string().required(),
+    name: yup.string().required(),
+    isActive: yup.boolean().required(),
+    createdAt: yup.date().required(),
+    updatedAt: yup.date().required(),
+  });
+}
+
 // Prompt validation schema
 definePromptSchema();
 export function definePromptSchema() {
@@ -51,6 +63,7 @@ export function definePromptSchema() {
     name: yup.string().required(),
     prompt: yup.string().required(),
     version: yup.number().required(),
+    modelId: yup.string().optional().nullable(),
     createdAt: yup.date().required(),
     updatedAt: yup.date().required(),
   });

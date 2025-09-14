@@ -1,6 +1,7 @@
 // Simple API client for backend communication
 // Handles auth token injection and error handling
 
+import type { Model, Prompt } from '../../shared/src/dtos';
 import type { SessionContextValue } from './contexts/SessionContextValue';
 
 export class ApiClient {
@@ -43,5 +44,35 @@ export class ApiClient {
     }
 
     return res.json();
+  }
+
+  async createPrompt(
+    projectId: string,
+    promptData: Partial<Prompt>,
+  ): Promise<Prompt> {
+    return this.request<Prompt>(`/prompts`, {
+      method: 'POST',
+      body: JSON.stringify({ ...promptData, projectId }),
+    });
+  }
+
+  async updatePrompt(
+    promptId: string,
+    promptData: Partial<Prompt>,
+  ): Promise<Prompt> {
+    return this.request<Prompt>(`/prompts/${promptId}`, {
+      method: 'PUT',
+      body: JSON.stringify(promptData),
+    });
+  }
+
+  async getModels(): Promise<Model[]> {
+    return this.request<Model[]>('/models');
+  }
+
+  async refreshModels(): Promise<void> {
+    return this.request<void>('/models/refresh', {
+      method: 'POST',
+    });
   }
 }

@@ -23,6 +23,7 @@
 - after creating prompt, jump directly to view prompt page
 - thorough review of unit tests
 - can we run e2e tests against a :memory: database?
+- code coverage
 
 # New Features
 - close button for prompt view

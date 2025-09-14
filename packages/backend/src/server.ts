@@ -153,6 +153,25 @@ export async function start() {
     await runMigrations(dbConnector); // Run DB migrations after connection
     await server.listen({ port, host: '0.0.0.0' });
     server.log.info(`Server started on port ${port}`);
+
+    try {
+      await modelService.refreshModels();
+      server.log.info('Model list refreshed on startup');
+    } catch (err) {
+      server.log.error({ err }, 'Failed to refresh models on startup');
+    }
+
+    const refreshIntervalHours = parseInt(process.env.MODEL_REFRESH_INTERVAL_HOURS || '168', 10);
+    const refreshIntervalMs = refreshIntervalHours * 60 * 60 * 1000;
+    setInterval(async () => {
+      try {
+        await modelService.refreshModels();
+        server.log.info('Model list refreshed by periodic task');
+      } catch (err) {
+        server.log.error({ err }, 'Failed to refresh models in periodic task');
+      }
+    }, refreshIntervalMs);
+    server.log.info(`Model refresh interval set to ${refreshIntervalHours} hours`);
   } catch (err) {
     server.log.error(err);
     process.exit(1);

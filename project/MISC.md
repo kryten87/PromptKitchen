@@ -22,6 +22,7 @@
 - after creating project, jump directly to project/:id page
 - after creating prompt, jump directly to view prompt page
 - thorough review of unit tests
+- can we run e2e tests against a :memory: database?
 
 # New Features
 - close button for prompt view

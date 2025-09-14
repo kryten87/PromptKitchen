@@ -2,15 +2,7 @@ import { DatabaseConnector } from '@prompt-kitchen/shared';
 import { Prompt, PromptHistory } from '@prompt-kitchen/shared';
 import { Knex } from 'knex';
 
-interface PromptRow {
-  id: string;
-  project_id: string;
-  name: string;
-  prompt: string;
-  version: number;
-  created_at: string | Date;
-  updated_at: string | Date;
-}
+
 
 interface PromptHistoryRow {
   id: string;
@@ -28,7 +20,14 @@ export class PromptRepository {
   }
 
   async getById(id: string): Promise<Prompt | null> {
-    const row = await this.knex<PromptRow>('prompts').where({ id }).first();
+    const row = await this.knex('prompts')
+      .leftJoin('models', 'prompts.model_id', 'models.id')
+      .select(
+        'prompts.*',
+        'models.name as modelName'
+      )
+      .where('prompts.id', id)
+      .first();
     if (!row) {
       return null;
     }
@@ -38,21 +37,29 @@ export class PromptRepository {
       name: row.name,
       prompt: row.prompt,
       version: row.version,
-      modelId: null, // Placeholder until model_id is in DB
+      modelId: row.model_id ?? null,
+      modelName: row.modelName ?? undefined,
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at),
     };
   }
 
   async getAllByProjectId(projectId: string): Promise<Prompt[]> {
-    const rows = await this.knex<PromptRow>('prompts').where({ project_id: projectId });
-    return rows.map((row: PromptRow) => ({
+    const rows = await this.knex('prompts')
+      .leftJoin('models', 'prompts.model_id', 'models.id')
+      .select(
+        'prompts.*',
+        'models.name as modelName'
+      )
+      .where('prompts.project_id', projectId);
+    return rows.map((row) => ({
       id: row.id,
       projectId: row.project_id,
       name: row.name,
       prompt: row.prompt,
       version: row.version,
-      modelId: null, // Placeholder until model_id is in DB
+      modelId: row.model_id ?? null,
+      modelName: row.modelName ?? undefined,
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at),
     }));
@@ -67,6 +74,7 @@ export class PromptRepository {
       name: prompt.name,
       prompt: prompt.prompt,
       version: 1,
+      model_id: prompt.modelId ?? null,
       created_at: now,
       updated_at: now,
     });
@@ -79,7 +87,12 @@ export class PromptRepository {
 
   async update(id: string, updates: Partial<Omit<Prompt, 'id' | 'projectId' | 'createdAt'>>): Promise<Prompt | null> {
     const now = new Date();
-    await this.knex('prompts').where({ id }).update({ ...updates, updated_at: now });
+    const dbUpdates: Record<string, unknown> = { ...updates, updated_at: now };
+    if ('modelId' in updates) {
+      dbUpdates.model_id = updates.modelId;
+      delete dbUpdates.modelId;
+    }
+    await this.knex('prompts').where({ id }).update(dbUpdates);
     return this.getById(id);
   }
 

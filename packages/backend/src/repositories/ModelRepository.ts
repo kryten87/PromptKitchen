@@ -21,7 +21,7 @@ export class ModelRepository {
     return {
       id: row.id,
       name: row.name,
-      isActive: row.is_active,
+      isActive: Boolean(row.is_active),
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at),
     };

@@ -29,6 +29,7 @@ describe('PromptRepository', () => {
   function promptInput(overrides: Partial<Omit<Prompt, 'id' | 'createdAt' | 'updatedAt'>> = {}) {
     return {
       projectId,
+      modelId: null,
       name: 'Prompt',
       prompt: 'Prompt text',
       version: 1,

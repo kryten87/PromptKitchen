@@ -22,6 +22,7 @@ describe('PromptEditor', () => {
     name: 'Test Prompt',
     prompt: 'Hello {{name}}!',
     version: 1,
+    modelId: null,
     createdAt: new Date('2023-01-01'),
     updatedAt: new Date('2023-01-02'),
   };

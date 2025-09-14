@@ -4,6 +4,8 @@ export interface Prompt {
   name: string;
   prompt: string;
   version: number;
+  modelId: string | null;
+  modelName?: string;
   createdAt: Date;
   updatedAt: Date;
 }

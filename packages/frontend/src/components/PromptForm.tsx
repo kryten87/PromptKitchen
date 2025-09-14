@@ -55,6 +55,7 @@ export function PromptForm({ prompt, projectId, onPromptCreated, onPromptUpdated
           projectId: projectId!,
           name: name.trim(),
           prompt: promptText.trim(),
+          modelId: null,
         });
         // Reset form
         setName('');

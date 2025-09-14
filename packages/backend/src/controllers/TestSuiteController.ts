@@ -7,6 +7,7 @@ import { FastifyInstance, FastifyRequest } from 'fastify';
 import { ExecutionService } from '../services/ExecutionService';
 import { LLMService } from '../services/LLMService';
 import { TestSuiteService } from '../services/TestSuiteService';
+import { PromptRepository } from '../repositories/PromptRepository';
 
 interface PromptIdParams { promptId: string; }
 interface TestSuiteIdParams { id: string; }
@@ -89,18 +90,18 @@ export async function registerTestSuiteRoutes(fastify: FastifyInstance, db: Data
 
   fastify.post('/api/test-suites/:id/run', async (request: FastifyRequest<{ Params: TestSuiteIdParams }>, reply) => {
     const { id } = request.params;
-    // For now, fetch prompt text from test suite's prompt (simplified)
+    // For now, fetch prompt text and model from test suite's prompt
     const suite = await service.getTestSuiteById(id);
     if (!suite) {
       return reply.status(404).send({ error: 'Test suite not found' });
     }
-    // Fetch prompt text (assume promptId exists)
-    const promptRow = await db.knex('prompts').where({ id: suite.promptId }).first();
-    if (!promptRow) {
+    // Use PromptRepository to fetch prompt with modelName
+    const promptRepo = new PromptRepository(db);
+    const prompt = await promptRepo.getById(suite.promptId);
+    if (!prompt) {
       return reply.status(404).send({ error: 'Prompt not found' });
     }
-    // Use correct column name for prompt text
-    const promptText = promptRow.prompt;
+    const promptText = prompt.prompt;
     if (!promptText) {
       return reply.status(500).send({ error: 'Prompt text is missing in the database' });
     }
@@ -109,7 +110,7 @@ export async function registerTestSuiteRoutes(fastify: FastifyInstance, db: Data
     if (!promptHistoryRow) {
       return reply.status(404).send({ error: 'Prompt history not found' });
     }
-    const runId = await executionService.startTestSuiteRun(id, promptText, promptHistoryRow.id);
+    const runId = await executionService.startTestSuiteRun(id, promptText, promptHistoryRow.id, prompt.modelName);
     reply.send({ runId });
   });
 

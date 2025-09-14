@@ -28,7 +28,7 @@ export class ExecutionService {
     this.config = opts.config;
   }
 
-  async startTestSuiteRun(testSuiteId: string, promptText: string, promptHistoryId: string): Promise<string> {
+  async startTestSuiteRun(testSuiteId: string, promptText: string, promptHistoryId: string, modelName?: string): Promise<string> {
     const runId = await this.testSuiteRunRepo.createTestSuiteRun({
       testSuiteId,
       promptHistoryId,
@@ -36,11 +36,11 @@ export class ExecutionService {
       status: 'PENDING',
       passPercentage: 0,
     });
-    this.runTestSuite(runId, testSuiteId, promptText);
+    this.runTestSuite(runId, testSuiteId, promptText, modelName);
     return runId;
   }
 
-  async runTestSuite(runId: string, testSuiteId: string, promptText: string): Promise<void> {
+  async runTestSuite(runId: string, testSuiteId: string, promptText: string, modelName?: string): Promise<void> {
     await this.testSuiteRunRepo.updateTestSuiteRunStatus(runId, 'RUNNING');
     const cases = await this.testCaseRepo.getAllByTestSuiteId(testSuiteId);
     let toRun = cases.filter(tc => tc.runMode === 'DEFAULT' || tc.runMode === 'ONLY');
@@ -56,7 +56,7 @@ export class ExecutionService {
       for (const [key, value] of Object.entries(testCase.inputs)) {
         prompt = prompt.replace(new RegExp(`{{${key}}}`, 'g'), String(value));
       }
-      const llmResult = await this.llmService.completePrompt({ prompt });
+      const llmResult = await this.llmService.completePrompt({ prompt, model: modelName });
       // Evaluate assertions if present
       let pass = false;
       let details: AssertionResult[] | undefined = undefined;

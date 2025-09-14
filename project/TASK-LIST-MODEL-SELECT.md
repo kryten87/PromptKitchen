@@ -41,11 +41,11 @@ This document breaks down the work required to implement the "Prompt Model Selec
 
 ### Task 1.4: Define Shared Validation Schemas
 
-- **Objective:** Create and update shared Zod validation schemas in `packages/shared` to ensure consistent validation rules for both the frontend and backend.
+- **Objective:** Create and update shared `yup` validation schemas in `packages/shared` to ensure consistent validation rules for both the frontend and backend.
 - **File to Modify:** `packages/shared/src/validation.ts`.
 - **Actions:**
-  1.  Create a `ModelSchema` that validates the `Model` DTO.
-  2.  Update `CreatePromptSchema` and `UpdatePromptSchema` to include `modelId: z.number().int().positive().optional().nullable()`. This schema will be used by the backend controller for payload validation and should be used by the frontend for client-side form validation.
+  1.  Create a `defineModelSchema()` function that returns a `yup` schema for the `Model` DTO, following the existing pattern in the file.
+  2.  Update the schema returned by `definePromptSchema()` to include `modelId: yup.number().integer().positive().optional().nullable()`. This schema will be used by the backend for payload validation and the frontend for client-side form validation.
 
 ### Task 1.5: Create `ModelRepository`
 

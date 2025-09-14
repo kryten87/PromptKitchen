@@ -1,5 +1,6 @@
 import type { Prompt } from '@prompt-kitchen/shared/src/dtos';
-import { useState } from 'react';
+import type { Model } from '@prompt-kitchen/shared/src/dto/Model';
+import { useState, useEffect } from 'react';
 import { useApiClient } from '../hooks/useApiClient';
 
 interface PromptFormProps {
@@ -11,13 +12,35 @@ interface PromptFormProps {
 }
 
 export function PromptForm({ prompt, projectId, onPromptCreated, onPromptUpdated, onViewHistory }: PromptFormProps) {
+  const [models, setModels] = useState<Model[]>([]);
+const [modelsLoading, setModelsLoading] = useState(false);
+const [modelsError, setModelsError] = useState<string | null>(null);
+
+  const apiClient = useApiClient();
+
+  useEffect(() => {
+    let isMounted = true;
+    setModelsLoading(true);
+    setModelsError(null);
+    apiClient.getModels()
+      .then((models) => {
+        if (isMounted) setModels(models);
+      })
+      .catch(() => {
+        if (isMounted) setModelsError('Failed to load models');
+      })
+      .finally(() => {
+        if (isMounted) setModelsLoading(false);
+      });
+    return () => { isMounted = false; };
+  }, [apiClient]);
+
   const isEditMode = prompt !== undefined;
   const [name, setName] = useState(prompt?.name || '');
   const [promptText, setPromptText] = useState(prompt?.prompt || '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const apiClient = useApiClient();
 
   const testIdPrefix = isEditMode ? 'edit-prompt' : 'create-prompt';
 

@@ -1,32 +1,43 @@
-# Code Issues/Questions
+# To Do for Release 0.1
+
+## Code Issues/Questions
 - make sure migrations are running correctly in both prod & non-prod environments
 - skipped tests
 - refactor functions into small, pure helpers
-- logging system -- frontend & backend
-  - set `X-Request-ID` header on front end & log it on the back end?
-- frontend/src/mocks -- what is this?
 - ensure that access control is working -- person A can only see projects for person A
-- add lint, lint:fix to e2e
 
-# Bugs
+## Bugs
+*verify that these are still a thing*
 - added a project, prompt, test suite, and two test cases. Then added a second project -- first project gone
 - when visiting app, on 401 response from server, log out and redirect to login page
 
-# UX Problems
+## UX Problems
 - when I have a prompt open and I click "view" for another prompt, all other panels should close (currently showing incorrect info because it keeps the old data)
 - create test case: add expected output with no variables --> enable create button
 - after "Create New Prompt", view test suites for the new project
 - after "Create New Test Suite", view test cases for the new test suite
 
-# Tweaks
+## Tweaks
 - after creating project, jump directly to project/:id page
 - after creating prompt, jump directly to view prompt page
+
+---
+
+# Future
+
+## Code Issues/Questions
+- logging system -- frontend & backend
+  - set `X-Request-ID` header on front end & log it on the back end?
+- frontend/src/mocks -- what is this?
+- add lint, lint:fix to e2e
+
+## Tweaks
 - thorough review of unit tests
 - can we run e2e tests against a :memory: database?
 - code coverage
 - look for ways to reduce code duplication (eg. using APIClient on front end in some places, making raw requests in others) - can the LLM analyze this?
 
-# New Features
+## New Features
 - close button for prompt view
 - view last tests results when looking at a test suite
 - need a way to match results similar to jest matchers
@@ -37,10 +48,11 @@
 - auth middleware should check user in database; caching might be necessary
 - "Run with" option to select model at run time
 
+---
 
-# DONE --------------------------
+# DONE
 
-# Issues I'm seeing with the prompts
+## Issues I'm seeing with the prompts
 - failing to check things off
 - failing to use `npm run check` to test
 - too much stopping & asking me if I'd like to continue
@@ -49,7 +61,7 @@ use LLM to refine fix-problem and use-task-ledger prompts
 
 sort out front end/back end ports/proxies
 
-# Code Issues/Questions
+## Code Issues/Questions
 - check for
   - inline imports
   - require statements
@@ -62,16 +74,16 @@ sort out front end/back end ports/proxies
 - shared eslint config -- warnings
 - playwright e2e tests
 
-# Design & Functionality
+## Design & Functionality
 - improve theme
 
-# New Features
+## New Features
 - functional log out button
 - test results during tests -- show expected and actual values
 
-# UX Problems
+## UX Problems
 - Create Test Case: "Create" button disabled if no variable entered
 
-# Findings 9/3/2025
+## Findings 9/3/2025
 - when adding a new test case with advanced assertions, the first edit does not save. Second and later edits work **FIXED**
 - toMatch with a regex string does not work with i flag - flag is not saved **FIXED**

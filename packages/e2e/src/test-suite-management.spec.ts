@@ -64,6 +64,7 @@ test.beforeEach(async ({ page }) => {
     name: 'Test Prompt',
     prompt: 'This is a test prompt.',
     projectId: project.id,
+    modelId: null,
   };
 
   await db.knex('prompts').insert({
@@ -390,4 +391,59 @@ test('Test Suite Results Modal Shows Test Case Assertions', async ({ page }) => 
   // We should see "Test Case Assertions:" label and the formatted assertion
   await expect(resultsModal.getByText('Test Case Assertions:')).toBeVisible();
   await expect(resultsModal.getByText('$.value toEqual "hello, world"')).toBeVisible();
+});
+
+test('Switches to new test suite when creating new test suite with open test cases', async ({ page }) => {
+  await page.getByTestId(`view-prompt-button-${promptObj.id}`).click();
+  await page.waitForSelector('[data-testid="create-test-suite-button"]');
+  
+  // Create first test suite and add a test case
+  await createTestSuite(page, 'First Test Suite');
+  
+  const firstTestSuiteListItem = page.locator(`[data-testid^="test-suite-list-item-"]`);
+  const firstTestSuiteId = (await firstTestSuiteListItem.getAttribute('data-testid'))!.replace('test-suite-list-item-', '');
+
+  // Open test cases panel for first test suite
+  await page.getByTestId(`test-cases-test-suite-button-${firstTestSuiteId}`).click();
+  
+  const testCasesPanel = page.getByTestId('test-cases-panel');
+  await expect(testCasesPanel).toBeVisible();
+  
+  // Add a test case to the first test suite
+  await testCasesPanel.getByTestId('add-test-case-button').click();
+  const createTestCaseModal = page.getByTestId('create-test-case-modal');
+  await expect(createTestCaseModal).toBeVisible();
+  
+  // Add input variables
+  await page.getByTestId('add-input-button').click();
+  await page.getByTestId('input-variable-input').first().fill('name');
+  await page.getByTestId('input-value-input').first().fill('Test');
+  
+  // Fill out expected output and save the test case
+  await page.getByTestId('expected-output-input').fill('Hello Test!');
+  await page.getByTestId('create-test-case-submit-button').click();
+  
+  // Verify test case was created and modal closed
+  await expect(createTestCaseModal).not.toBeVisible();
+  const testCaseItem = page.locator(`[data-testid^="test-case-item-"]`);
+  await expect(testCaseItem).toBeVisible();
+  
+  // Now create a second test suite while test cases panel is open
+  await createTestSuite(page, 'Second Test Suite');
+  
+  // Verify that we switched to the second test suite and the test cases panel shows no test cases
+  const testSuiteListItems = page.locator(`[data-testid^="test-suite-list-item-"]`);
+  await expect(testSuiteListItems).toHaveCount(2);
+  
+  // The test cases panel should still be visible but should show no test cases (for the new test suite)
+  await expect(testCasesPanel).toBeVisible();
+  await expect(page.getByTestId('no-test-cases-message')).toBeVisible();
+  
+  // Verify the test cases panel header shows the new test suite name
+  await expect(testCasesPanel.getByText('Second Test Suite')).toBeVisible();
+  
+  // Verify we can still see the first test suite's test case by switching back
+  await page.getByTestId(`test-cases-test-suite-button-${firstTestSuiteId}`).click();
+  await expect(testCaseItem).toBeVisible();
+  await expect(testCasesPanel.getByText('First Test Suite')).toBeVisible();
 });

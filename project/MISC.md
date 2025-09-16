@@ -13,8 +13,8 @@
 **DONE** - when visiting app, on 401 response from server, log out and redirect to login page
 
 ## UX Problems
-- when I have a prompt open and I click "create" for another prompt, all other panels should close (currently showing incorrect info because it keeps the old data) and it should switch to the new prompt
-- create test case: add expected output with no variables --> enable create button
+**DONE** - when I have a prompt open and I click "create" for another prompt, all other panels should close (currently showing incorrect info because it keeps the old data) and it should switch to the new prompt
+**DONE** - create test case: add expected output with no variables --> enable create button
 - after "Create New Test Suite", view test cases for the new test suite
 
 ## Tweaks

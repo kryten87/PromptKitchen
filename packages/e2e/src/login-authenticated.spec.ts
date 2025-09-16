@@ -22,8 +22,9 @@ test('login page - authenticated user should redirect to /', async ({ page }) =>
       email: 'test@example.com',
       name: 'Test User',
     };
-    localStorage.setItem('userSession', JSON.stringify(userSession));
-    localStorage.setItem('sessionToken', token);
+     localStorage.setItem('userSession', JSON.stringify(userSession));
+     localStorage.setItem('sessionToken', token);
+     localStorage.setItem('E2E_TEST_MODE', 'true');
   }, token);
 
   // Navigate to the login page

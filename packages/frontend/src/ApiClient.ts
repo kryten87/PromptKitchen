@@ -28,6 +28,23 @@ export class ApiClient {
       ...options,
       headers,
     });
+    if (res.status === 401) {
+      // Do not redirect during E2E tests
+      if (localStorage.getItem('E2E_TEST_MODE') === 'true') {
+        throw new Error(`API error: ${res.status}`);
+      }
+
+      if (this.session?.setUser) {
+        this.session.setUser(null);
+      } else {
+        localStorage.removeItem('userSession');
+        localStorage.removeItem('sessionToken');
+      }
+      window.location.href = '/login';
+      // Prevent further processing by throwing an error
+      throw new Error('Session expired, redirecting to login.');
+    }
+
     if (!res.ok) {
       throw new Error(`API error: ${res.status}`);
     }

@@ -9,7 +9,7 @@
 ## Bugs
 *verify that these are still a thing*
 - added a project, prompt, test suite, and two test cases. Then added a second project -- first project gone
-- when visiting app, on 401 response from server, log out and redirect to login page
+**DONE** - when visiting app, on 401 response from server, log out and redirect to login page
 
 ## UX Problems
 - when I have a prompt open and I click "view" for another prompt, all other panels should close (currently showing incorrect info because it keeps the old data)

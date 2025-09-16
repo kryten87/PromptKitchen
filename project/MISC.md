@@ -3,6 +3,7 @@
 ## Code Issues/Questions
 - make sure migrations are running correctly in both prod & non-prod environments
 - skipped tests
+- test warnings
 - refactor functions into small, pure helpers
 - ensure that access control is working -- person A can only see projects for person A
 
@@ -14,7 +15,6 @@
 ## UX Problems
 - when I have a prompt open and I click "create" for another prompt, all other panels should close (currently showing incorrect info because it keeps the old data) and it should switch to the new prompt
 - create test case: add expected output with no variables --> enable create button
-- after "Create New Prompt", view test suites for the new project
 - after "Create New Test Suite", view test cases for the new test suite
 
 ## Tweaks

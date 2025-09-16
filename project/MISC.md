@@ -18,8 +18,8 @@
 - after "Create New Test Suite", view test cases for the new test suite
 
 ## Tweaks
-- after creating project, jump directly to project/:id page
-- after creating prompt, jump directly to view prompt page
+**DONE** - after creating project, jump directly to project/:id page
+**DONE** - after creating prompt, jump directly to view prompt page
 
 ---
 

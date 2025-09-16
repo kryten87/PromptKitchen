@@ -1,9 +1,9 @@
 # To Do for Release 0.1
 
 ## Code Issues/Questions
-- make sure migrations are running correctly in both prod & non-prod environments
 - skipped tests
 - test warnings
+- make sure migrations are running correctly in both prod & non-prod environments
 - refactor functions into small, pure helpers
 - ensure that access control is working -- person A can only see projects for person A
 
@@ -47,6 +47,7 @@
 - JSON editing where appropriate
 - auth middleware should check user in database; caching might be necessary
 - "Run with" option to select model at run time
+- default view for an item in a list -- short with view/edit/etc. buttons. click view, it expands to show more while others remain small
 
 ---
 

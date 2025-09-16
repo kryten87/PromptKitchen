@@ -261,3 +261,42 @@ test('Edit a Prompt (and save)', async ({ page }) => {
   const newPromptListItem = page.locator(`[data-testid^="prompt-list-item-"]`);
   await expect(newPromptListItem.getByText(newName)).toBeVisible();
 });
+
+test('Creating new prompt closes selected prompt view', async ({ page }) => {
+  // First, create a prompt
+  const firstPromptName = 'First Prompt';
+  const firstPromptText = 'First prompt text';
+  await createPrompt(page, firstPromptName, firstPromptText);
+
+  // Get the prompt ID to interact with it
+  const promptListItem = page.locator(`[data-testid^="prompt-list-item-"]`);
+  const promptId = (await promptListItem.getAttribute('data-testid'))!.replace('prompt-list-item-', '');
+
+  // Click "View" to show the selected prompt section
+  await page.getByTestId(`view-prompt-button-${promptId}`).click();
+
+  // Verify that the selected prompt section is visible
+  await expect(page.getByTestId('selected-prompt-header')).toBeVisible();
+  await expect(page.getByText(`Selected Prompt: ${firstPromptName}`)).toBeVisible();
+
+  // Now create a second prompt
+  const secondPromptName = 'Second Prompt';
+  const secondPromptText = 'Second prompt text';
+  await createPrompt(page, secondPromptName, secondPromptText);
+
+  // Verify that the selected prompt section is no longer visible
+  await expect(page.getByTestId('selected-prompt-header')).not.toBeVisible();
+  await expect(page.getByText(`Selected Prompt: ${firstPromptName}`)).not.toBeVisible();
+
+  // Verify that both prompts are still in the list using more specific selectors
+  await expect(page.getByTestId(`prompt-name-${promptId}`)).toBeVisible();
+  
+  // Get the second prompt ID
+  const allPromptItems = page.locator(`[data-testid^="prompt-list-item-"]`);
+  const count = await allPromptItems.count();
+  expect(count).toBe(2);
+  
+  // Check that we have both prompts by counting the list items
+  await expect(allPromptItems.nth(0)).toBeVisible();
+  await expect(allPromptItems.nth(1)).toBeVisible();
+});

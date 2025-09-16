@@ -95,6 +95,7 @@ export function ProjectPage() {
       });
       await loadProjectAndPrompts();
       setShowCreatePromptModal(false);
+      setSelectedPrompt(null);
     } catch {
       setErrorAlert('Failed to create prompt');
     }

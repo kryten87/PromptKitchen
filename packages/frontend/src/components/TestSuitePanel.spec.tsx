@@ -580,4 +580,65 @@ describe('TestSuitePanel', () => {
     expect(remainingRunButtons).toHaveLength(1);
     expect(remainingRunButtons[0]).not.toBeDisabled();
   });
+
+  it('switches to new test suite and closes previous test cases when creating new test suite', async () => {
+    const newTestSuite = {
+      id: 'suite-new',
+      promptId: 'prompt-1',
+      name: 'New Test Suite',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    mockApiClient.request
+      .mockResolvedValueOnce(mockTestSuites) // Initial load
+      .mockResolvedValueOnce(mockTestCases) // Load test cases for first suite
+      .mockResolvedValueOnce(newTestSuite) // Create new test suite
+      .mockResolvedValueOnce([]); // Load empty test cases for new suite
+
+    render(<TestSuitePanel promptId="prompt-1" />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Suite 1')).toBeInTheDocument();
+    });
+
+    // First, open test cases for Test Suite 1
+    fireEvent.click(screen.getAllByText('Test Cases')[0]);
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Cases for "Test Suite 1"')).toBeInTheDocument();
+      expect(screen.getByText('Test Case case-1')).toBeInTheDocument();
+    });
+
+    // Now create a new test suite
+    fireEvent.click(screen.getByText('Create Test Suite'));
+
+    // Fill in the form
+    const nameInput = screen.getByLabelText('Test Suite Name');
+    fireEvent.change(nameInput, { target: { value: 'New Test Suite' } });
+
+    // Submit the form
+    fireEvent.click(screen.getByRole('button', { name: 'Create' }));
+
+    await waitFor(() => {
+      expect(mockApiClient.request).toHaveBeenCalledWith('/prompts/prompt-1/test-suites', {
+        method: 'POST',
+        body: JSON.stringify({ name: 'New Test Suite' }),
+      });
+    });
+
+    // Check that the new test suite appears in the list
+    expect(screen.getByText('New Test Suite')).toBeInTheDocument();
+
+    // Check that we've switched to the new test suite's test cases view
+    await waitFor(() => {
+      expect(screen.getByText('Test Cases for "New Test Suite"')).toBeInTheDocument();
+    });
+
+    // Check that old test cases are no longer visible
+    expect(screen.queryByText('Test Case case-1')).not.toBeInTheDocument();
+    
+    // Check that the new test suite shows no test cases (empty state)
+    expect(screen.getByText('No test cases found for this test suite.')).toBeInTheDocument();
+  });
 });

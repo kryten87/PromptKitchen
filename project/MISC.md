@@ -1,25 +1,25 @@
 # To Do for Release 0.1
 
 ## Code Issues/Questions
-- make sure migrations are running correctly in both prod & non-prod environments
 - skipped tests
+- test warnings
+- make sure migrations are running correctly in both prod & non-prod environments
 - refactor functions into small, pure helpers
 - ensure that access control is working -- person A can only see projects for person A
 
 ## Bugs
 *verify that these are still a thing*
-- added a project, prompt, test suite, and two test cases. Then added a second project -- first project gone
-- when visiting app, on 401 response from server, log out and redirect to login page
+**DONE** - added a project, prompt, test suite, and two test cases. Then added a second project -- first project gone
+**DONE** - when visiting app, on 401 response from server, log out and redirect to login page
 
 ## UX Problems
-- when I have a prompt open and I click "view" for another prompt, all other panels should close (currently showing incorrect info because it keeps the old data)
-- create test case: add expected output with no variables --> enable create button
-- after "Create New Prompt", view test suites for the new project
-- after "Create New Test Suite", view test cases for the new test suite
+**DONE** - when I have a prompt open and I click "create" for another prompt, all other panels should close (currently showing incorrect info because it keeps the old data) and it should switch to the new prompt
+**DONE** - create test case: add expected output with no variables --> enable create button
+**DONE** - after "Create New Test Suite", view test cases for the new test suite
 
 ## Tweaks
-- after creating project, jump directly to project/:id page
-- after creating prompt, jump directly to view prompt page
+**DONE** - after creating project, jump directly to project/:id page
+**DONE** - after creating prompt, jump directly to view prompt page
 
 ---
 
@@ -47,6 +47,7 @@
 - JSON editing where appropriate
 - auth middleware should check user in database; caching might be necessary
 - "Run with" option to select model at run time
+- default view for an item in a list -- short with view/edit/etc. buttons. click view, it expands to show more while others remain small
 
 ---
 

@@ -25,10 +25,16 @@ test.describe('Authenticated Home Page Tests', () => {
       };
       localStorage.setItem('userSession', JSON.stringify(userSession));
       localStorage.setItem('sessionToken', token);
+      localStorage.setItem('E2E_TEST_MODE', 'true');
     }, token);
 
     // Navigate to the home page
     await page.goto('http://localhost:5173/');
+    
+    // Set E2E test mode flag
+    await page.evaluate(() => {
+      localStorage.setItem('E2E_TEST_MODE', 'true');
+    });
   });
 
   test('should have "Prompt Kitchen" title in the upper left corner', async ({ page }) => {

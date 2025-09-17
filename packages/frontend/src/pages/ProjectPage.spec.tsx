@@ -165,6 +165,93 @@ describe('ProjectPage', () => {
     expect(screen.getByText('Save')).toBeInTheDocument();
   });
 
+  it('closes selected prompt and test suites when new prompt is created', async () => {
+    const newPrompt = {
+      id: 'p3',
+      projectId: '1',
+      name: 'New Prompt',
+      prompt: 'New prompt text',
+      version: 1,
+      modelId: 'm1',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    mockApiClient.getModels = jest.fn().mockResolvedValue([
+      { id: 'm1', name: 'gpt-3.5', isActive: true, createdAt: new Date(), updatedAt: new Date() },
+    ]);
+    mockApiClient.request = jest.fn()
+      .mockImplementation((path: string, options?: { method?: string; body?: string; headers?: Record<string, string> }) => {
+        if (path === '/projects/1') return Promise.resolve(mockProject);
+        if (path === '/projects/1/prompts' && !options) return Promise.resolve(mockPrompts);
+        if (path === '/projects/1/prompts' && options?.method === 'POST') return Promise.resolve(newPrompt);
+        return Promise.reject(new Error('Unknown path'));
+      });
+
+    renderProjectPage();
+
+    // First, select a prompt to view its test suites
+    const viewButton = await screen.findByTestId('view-prompt-button-p1');
+    fireEvent.click(viewButton);
+
+    // Verify that the selected prompt is shown
+    expect(screen.getByTestId('selected-prompt-header')).toBeInTheDocument();
+    expect(screen.getByText('Selected Prompt: Prompt 1')).toBeInTheDocument();
+
+    // Now create a new prompt
+    const createButton = screen.getByRole('button', { name: 'Create New Prompt' });
+    fireEvent.click(createButton);
+
+    // Fill out the form and create the prompt
+    const nameInput = screen.getByLabelText('Prompt Name');
+    const textInput = screen.getByLabelText('Prompt Text');
+    const modelSelect = screen.getByLabelText('Model');
+
+    fireEvent.change(nameInput, { target: { value: 'New Prompt' } });
+    fireEvent.change(textInput, { target: { value: 'New prompt text' } });
+    
+    // Wait for models to load (check that the select is no longer loading and has the option)
+    await waitFor(() => {
+      expect(screen.queryByText('Loading models...')).not.toBeInTheDocument();
+      expect(modelSelect).not.toBeDisabled();
+    });
+    
+    // Explicitly select the model
+    fireEvent.change(modelSelect, { target: { value: 'm1' } });
+
+    // Wait for the submit button to be enabled
+    const createPromptButton = await waitFor(() => {
+      const button = screen.getByText('Create Prompt');
+      expect(button).not.toBeDisabled();
+      return button;
+    });
+    
+    fireEvent.click(createPromptButton);
+
+    // Wait for the prompt to be created
+    await waitFor(() => {
+      expect(mockApiClient.request).toHaveBeenCalledWith('/projects/1/prompts', {
+        method: 'POST',
+        body: JSON.stringify({
+          projectId: '1',
+          name: 'New Prompt',
+          prompt: 'New prompt text',
+          modelId: 'm1',
+        }),
+        headers: { 'Content-Type': 'application/json' },
+      });
+    });
+
+    // Wait for the modal to close
+    await waitFor(() => {
+      expect(screen.queryByTestId('create-prompt-modal')).not.toBeInTheDocument();
+    });
+
+    // Verify that the selected prompt and its test suites are no longer shown
+    expect(screen.queryByTestId('selected-prompt-header')).not.toBeInTheDocument();
+    expect(screen.queryByText('Selected Prompt: Prompt 1')).not.toBeInTheDocument();
+  });
+
   it('creates a new prompt successfully', async () => {
     const newPrompt = {
       id: 'p3',

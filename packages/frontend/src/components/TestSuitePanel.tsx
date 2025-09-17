@@ -95,6 +95,8 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
 
   const handleCreateTestSuite = (testSuite: TestSuite) => {
     setTestSuites(prev => [...prev, testSuite]);
+    setSelectedTestSuiteForCases(testSuite);
+    setTestCases([]);
   };
 
   const handleEditTestSuite = (testSuite: TestSuite) => {

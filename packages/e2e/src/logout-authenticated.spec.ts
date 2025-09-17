@@ -22,8 +22,9 @@ test('authenticated user on / clicking "Log Out" clears local storage and redire
       email: 'test@example.com',
       name: 'Test User',
     };
-    localStorage.setItem('userSession', JSON.stringify(userSession));
-    localStorage.setItem('sessionToken', token);
+     localStorage.setItem('userSession', JSON.stringify(userSession));
+     localStorage.setItem('sessionToken', token);
+     localStorage.setItem('E2E_TEST_MODE', 'true');
   }, token);
 
   // Navigate to the home page

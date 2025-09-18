@@ -2,6 +2,7 @@ import { definePromptSchema } from '@prompt-kitchen/shared';
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import * as yup from 'yup';
 import { PromptService } from '../services/PromptService';
+import { handleError } from '../utils/handleError';
 
 interface ProjectIdParams { projectId: string; }
 interface PromptIdParams { id: string; }
@@ -25,7 +26,7 @@ export async function registerPromptRoutes(fastify: FastifyInstance, promptServi
       return reply.status(201).send(prompt);
     } catch (err) {
       if (err instanceof yup.ValidationError) {
-        return reply.status(400).send({ error: 'Validation failed', details: err.errors });
+        return handleError(reply, 400, 'Validation failed', { details: err.errors });
       }
       throw err;
     }
@@ -44,7 +45,7 @@ export async function registerPromptRoutes(fastify: FastifyInstance, promptServi
       return reply.send(updated);
     } catch (err) {
       if (err instanceof yup.ValidationError) {
-        return reply.status(400).send({ error: 'Validation failed', details: err.errors });
+        return handleError(reply, 400, 'Validation failed', { details: err.errors });
       }
       throw err;
     }
@@ -73,7 +74,7 @@ export async function registerPromptRoutes(fastify: FastifyInstance, promptServi
     }
     const restored = await promptService.restorePromptFromHistory(id, version);
     if (!restored) {
-      return reply.status(404).send({ error: 'Not found' });
+      return handleError(reply, 404, 'Not found');
     }
     return reply.send(restored);
   });

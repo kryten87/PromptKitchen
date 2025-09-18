@@ -1,6 +1,7 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { ModelService } from '../services/ModelService';
 import { ModelRepository } from '../repositories/ModelRepository';
+import { ModelService } from '../services/ModelService';
+import { handleError } from '../utils/handleError';
 
 export function registerModelRoutes(
   fastify: FastifyInstance,
@@ -15,7 +16,7 @@ export function registerModelRoutes(
       const activeModels = models.filter((m) => m.isActive);
       return reply.send(activeModels);
     } catch {
-      return reply.status(500).send({ error: 'Failed to fetch models' });
+      return handleError(reply, 500, 'Failed to fetch models');
     }
   });
 
@@ -25,7 +26,7 @@ export function registerModelRoutes(
       await modelService.refreshModels();
       return reply.send({ success: true });
     } catch {
-      return reply.status(500).send({ error: 'Failed to refresh models' });
+      return handleError(reply, 500, 'Failed to refresh models');
     }
   });
 }

@@ -1,13 +1,13 @@
 import { loadPKConfig } from '../config';
 
+import type { Assertion, JsonValue, TestCaseRunMode } from '@prompt-kitchen/shared';
 import { DatabaseConnector } from '@prompt-kitchen/shared';
-import type { JsonValue, TestCaseRunMode } from '@prompt-kitchen/shared';
-import type { Assertion } from '@prompt-kitchen/shared';
 import { FastifyInstance, FastifyRequest } from 'fastify';
+import { PromptRepository } from '../repositories/PromptRepository';
 import { ExecutionService } from '../services/ExecutionService';
 import { LLMService } from '../services/LLMService';
 import { TestSuiteService } from '../services/TestSuiteService';
-import { PromptRepository } from '../repositories/PromptRepository';
+import { handleError } from '../utils/handleError';
 
 interface PromptIdParams { promptId: string; }
 interface TestSuiteIdParams { id: string; }
@@ -118,7 +118,7 @@ export async function registerTestSuiteRoutes(fastify: FastifyInstance, db: Data
     const { runId } = request.params;
     const run = await executionService.getTestSuiteRun(runId);
     if (!run) {
-      return reply.status(404).send({ error: 'Run not found' });
+      return handleError(reply, 404, 'Run not found');
     }
     reply.send(run);
   });

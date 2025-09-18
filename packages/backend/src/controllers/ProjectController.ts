@@ -45,7 +45,7 @@ export async function registerProjectRoutes(fastify: FastifyInstance, projectSer
         if (err instanceof yup.ValidationError) {
           return handleError(reply, 400, 'Validation failed', { details: err.errors });
         }
-        throw err;
+        return handleError(reply, 500, err as Error);
       }
     },
   );
@@ -82,7 +82,7 @@ export async function registerProjectRoutes(fastify: FastifyInstance, projectSer
         if (err instanceof yup.ValidationError) {
           return reply.status(400).send({ error: 'Validation failed', details: err.errors });
         }
-        throw err;
+        return handleError(reply, 500, err as Error);
       }
     },
   );

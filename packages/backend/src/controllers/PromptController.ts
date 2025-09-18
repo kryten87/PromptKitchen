@@ -28,7 +28,7 @@ export async function registerPromptRoutes(fastify: FastifyInstance, promptServi
       if (err instanceof yup.ValidationError) {
         return handleError(reply, 400, 'Validation failed', { details: err.errors });
       }
-      throw err;
+      return handleError(reply, 500, err as Error);
     }
   });
 
@@ -47,7 +47,7 @@ export async function registerPromptRoutes(fastify: FastifyInstance, promptServi
       if (err instanceof yup.ValidationError) {
         return handleError(reply, 400, 'Validation failed', { details: err.errors });
       }
-      throw err;
+      return handleError(reply, 500, err as Error);
     }
   });
 

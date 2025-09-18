@@ -4,6 +4,7 @@ export default defineConfig({
   testDir: './src',
   retries: 0,
   workers: undefined, // Use Playwright default
+  timeout: 10000, // 10 seconds
   projects: [
     {
       name: 'chromium',

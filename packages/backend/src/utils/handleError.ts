@@ -8,3 +8,7 @@ export const handleError = (reply: FastifyReply, statusCode: number, error: stri
   }
   return reply.status(statusCode).send(payload);
 };
+
+export const handle404 = (reply: FastifyReply, resource: string = '') => {
+  return handleError(reply, 404, `${resource} not found`.trim());
+};

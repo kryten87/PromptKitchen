@@ -1,9 +1,9 @@
 import { Project } from '@prompt-kitchen/shared';
 import Fastify from 'fastify';
 import jwt from 'jsonwebtoken';
-import { registerProjectRoutes } from './ProjectController';
 import { ProjectService } from '../services/ProjectService';
 import { UserService } from '../services/UserService';
+import { registerProjectRoutes } from './ProjectController';
 
 describe('ProjectController', () => {
   const mockProject: Project = {
@@ -45,7 +45,7 @@ describe('ProjectController', () => {
     it('returns projects for authenticated user', async () => {
       const server = Fastify();
       const token = jwt.sign({ id: 'user-1', email: 'test@example.com', name: 'Test User' }, jwtSecret);
-      
+
       mockUserService.verifyJwt.mockReturnValue({ id: 'user-1', email: 'test@example.com', name: 'Test User' });
       mockProjectService.getProjectsForUser.mockResolvedValue([mockProject]);
 
@@ -97,7 +97,7 @@ describe('ProjectController', () => {
       const server = Fastify();
       const token = jwt.sign({ id: 'user-1', email: 'test@example.com', name: 'Test User' }, jwtSecret);
       const projectData = { name: 'New Project', description: 'New Description' };
-      
+
       mockUserService.verifyJwt.mockReturnValue({ id: 'user-1', email: 'test@example.com', name: 'Test User' });
       mockProjectService.createProject.mockResolvedValue(mockProject);
 
@@ -134,7 +134,7 @@ describe('ProjectController', () => {
     it('returns 400 for validation errors', async () => {
       const server = Fastify();
       const token = jwt.sign({ id: 'user-1', email: 'test@example.com', name: 'Test User' }, jwtSecret);
-      
+
       mockUserService.verifyJwt.mockReturnValue({ id: 'user-1', email: 'test@example.com', name: 'Test User' });
 
       await registerProjectRoutes(server, mockProjectService, mockUserService);
@@ -157,7 +157,7 @@ describe('ProjectController', () => {
     it('returns project by id', async () => {
       const server = Fastify();
       const token = jwt.sign({ id: 'user-1', email: 'test@example.com', name: 'Test User' }, jwtSecret);
-      
+
       mockUserService.verifyJwt.mockReturnValue({ id: 'user-1', email: 'test@example.com', name: 'Test User' });
       mockProjectService.getProjectById.mockResolvedValue(mockProject);
 
@@ -177,7 +177,7 @@ describe('ProjectController', () => {
     it('returns 404 when project not found', async () => {
       const server = Fastify();
       const token = jwt.sign({ id: 'user-1', email: 'test@example.com', name: 'Test User' }, jwtSecret);
-      
+
       mockUserService.verifyJwt.mockReturnValue({ id: 'user-1', email: 'test@example.com', name: 'Test User' });
       mockProjectService.getProjectById.mockResolvedValue(null);
 
@@ -190,7 +190,7 @@ describe('ProjectController', () => {
       });
 
       expect(response.statusCode).toBe(404);
-      expect(JSON.parse(response.body)).toEqual({ error: 'Not found' });
+      expect(JSON.parse(response.body)).toEqual({ error: 'Project not found' });
     });
 
     it('returns 401 for unauthenticated request', async () => {
@@ -213,7 +213,7 @@ describe('ProjectController', () => {
       const updates = { name: 'Updated Project', description: 'Updated Description' };
       const updatedProject = { ...mockProject, ...updates };
       const expectedUpdatedProject = { ...expectedSerializedProject, ...updates };
-      
+
       mockUserService.verifyJwt.mockReturnValue({ id: 'user-1', email: 'test@example.com', name: 'Test User' });
       mockProjectService.updateProject.mockResolvedValue(updatedProject);
 
@@ -234,7 +234,7 @@ describe('ProjectController', () => {
     it('returns 404 when project not found', async () => {
       const server = Fastify();
       const token = jwt.sign({ id: 'user-1', email: 'test@example.com', name: 'Test User' }, jwtSecret);
-      
+
       mockUserService.verifyJwt.mockReturnValue({ id: 'user-1', email: 'test@example.com', name: 'Test User' });
       mockProjectService.updateProject.mockResolvedValue(null);
 
@@ -248,13 +248,13 @@ describe('ProjectController', () => {
       });
 
       expect(response.statusCode).toBe(404);
-      expect(JSON.parse(response.body)).toEqual({ error: 'Not found' });
+      expect(JSON.parse(response.body)).toEqual({ error: 'Project not found' });
     });
 
     it('returns 400 for validation errors', async () => {
       const server = Fastify();
       const token = jwt.sign({ id: 'user-1', email: 'test@example.com', name: 'Test User' }, jwtSecret);
-      
+
       mockUserService.verifyJwt.mockReturnValue({ id: 'user-1', email: 'test@example.com', name: 'Test User' });
 
       await registerProjectRoutes(server, mockProjectService, mockUserService);
@@ -290,7 +290,7 @@ describe('ProjectController', () => {
     it('deletes project by id', async () => {
       const server = Fastify();
       const token = jwt.sign({ id: 'user-1', email: 'test@example.com', name: 'Test User' }, jwtSecret);
-      
+
       mockUserService.verifyJwt.mockReturnValue({ id: 'user-1', email: 'test@example.com', name: 'Test User' });
       mockProjectService.deleteProject.mockResolvedValue();
 

@@ -2,7 +2,7 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { createAuthMiddleware } from '../authMiddleware';
 import type { JwtPayload, UserService } from '../services/UserService';
-import { handleError } from '../utils/handleError';
+import { handle404 } from '../utils/handleError';
 
 export interface AuthControllerDeps {
   userService: UserService;
@@ -22,7 +22,7 @@ export function registerAuthController(server: FastifyInstance, deps: AuthContro
       const payload = (request as unknown as { user: JwtPayload }).user;
       const user = await deps.userService.getUserById(payload.id);
       if (!user) {
-        return handleError(reply, 404, 'User not found');
+        return handle404(reply, 'User');
       }
       return reply.send({ user });
     }

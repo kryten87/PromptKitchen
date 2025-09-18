@@ -2,7 +2,7 @@ import { definePromptSchema } from '@prompt-kitchen/shared';
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import * as yup from 'yup';
 import { PromptService } from '../services/PromptService';
-import { handleError } from '../utils/handleError';
+import { handle404, handleError } from '../utils/handleError';
 
 interface ProjectIdParams { projectId: string; }
 interface PromptIdParams { id: string; }
@@ -40,7 +40,7 @@ export async function registerPromptRoutes(fastify: FastifyInstance, promptServi
       const updates = await schema.validate(request.body, { abortEarly: false, stripUnknown: true });
       const updated = await promptService.updatePrompt(id, updates);
       if (!updated) {
-        return reply.status(404).send({ error: 'Not found' });
+        return handle404(reply, 'Prompt');
       }
       return reply.send(updated);
     } catch (err) {
@@ -74,7 +74,7 @@ export async function registerPromptRoutes(fastify: FastifyInstance, promptServi
     }
     const restored = await promptService.restorePromptFromHistory(id, version);
     if (!restored) {
-      return handleError(reply, 404, 'Not found');
+      return handle404(reply, 'Prompt or version');
     }
     return reply.send(restored);
   });

@@ -4,7 +4,7 @@ import * as yup from 'yup';
 import { createAuthMiddleware } from '../authMiddleware';
 import { ProjectService } from '../services/ProjectService';
 import type { JwtPayload, UserService } from '../services/UserService';
-import { handleError } from '../utils/handleError';
+import { handle404, handleError } from '../utils/handleError';
 
 interface ProjectIdParams {
   id: string;
@@ -58,7 +58,7 @@ export async function registerProjectRoutes(fastify: FastifyInstance, projectSer
       const { id } = request.params;
       const project = await projectService.getProjectById(id);
       if (!project) {
-        return handleError(reply, 404, 'Not found');
+        return handle404(reply, 'Project');
       }
       return reply.send(project);
     },
@@ -75,7 +75,7 @@ export async function registerProjectRoutes(fastify: FastifyInstance, projectSer
         const updates = await schema.validate(request.body, { abortEarly: false, stripUnknown: true });
         const updated = await projectService.updateProject(id, updates);
         if (!updated) {
-          return handleError(reply, 404, 'Not found');
+          return handle404(reply, 'Project');
         }
         return reply.send(updated);
       } catch (err) {

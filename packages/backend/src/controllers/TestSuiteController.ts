@@ -7,7 +7,7 @@ import { PromptRepository } from '../repositories/PromptRepository';
 import { ExecutionService } from '../services/ExecutionService';
 import { LLMService } from '../services/LLMService';
 import { TestSuiteService } from '../services/TestSuiteService';
-import { handleError } from '../utils/handleError';
+import { handle404 } from '../utils/handleError';
 
 interface PromptIdParams { promptId: string; }
 interface TestSuiteIdParams { id: string; }
@@ -93,13 +93,13 @@ export async function registerTestSuiteRoutes(fastify: FastifyInstance, db: Data
     // For now, fetch prompt text and model from test suite's prompt
     const suite = await service.getTestSuiteById(id);
     if (!suite) {
-      return reply.status(404).send({ error: 'Test suite not found' });
+      return handle404(reply, 'Test suite');
     }
     // Use PromptRepository to fetch prompt with modelName
     const promptRepo = new PromptRepository(db);
     const prompt = await promptRepo.getById(suite.promptId);
     if (!prompt) {
-      return reply.status(404).send({ error: 'Prompt not found' });
+      return handle404(reply, 'Prompt');
     }
     const promptText = prompt.prompt;
     if (!promptText) {
@@ -108,7 +108,7 @@ export async function registerTestSuiteRoutes(fastify: FastifyInstance, db: Data
     // Fetch latest prompt history for this prompt
     const promptHistoryRow = await db.knex('prompt_history').where({ prompt_id: suite.promptId }).orderBy('version', 'desc').first();
     if (!promptHistoryRow) {
-      return reply.status(404).send({ error: 'Prompt history not found' });
+      return handle404(reply, 'Prompt history');
     }
     const runId = await executionService.startTestSuiteRun(id, promptText, promptHistoryRow.id, prompt.modelName);
     reply.send({ runId });
@@ -118,7 +118,7 @@ export async function registerTestSuiteRoutes(fastify: FastifyInstance, db: Data
     const { runId } = request.params;
     const run = await executionService.getTestSuiteRun(runId);
     if (!run) {
-      return handleError(reply, 404, 'Run not found');
+      return handle404(reply, 'Run');
     }
     reply.send(run);
   });

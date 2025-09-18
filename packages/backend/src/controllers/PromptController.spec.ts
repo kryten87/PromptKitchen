@@ -1,7 +1,7 @@
+import { Prompt, PromptHistory } from '@prompt-kitchen/shared';
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { PromptService } from '../services/PromptService';
 import { registerPromptRoutes } from './PromptController';
-import { Prompt, PromptHistory } from '@prompt-kitchen/shared';
 
 // Mock the services
 const mockPromptService = {
@@ -85,9 +85,9 @@ describe('PromptController', () => {
         params: { projectId: '1' },
         body: newPromptData,
       } as FastifyRequest<{ Params: { projectId: string }; Body: typeof newPromptData }>;
-  
+
       await handler()(request, mockReply);
-  
+
       expect(mockPromptService.createPrompt).toHaveBeenCalledWith({
         name: 'New',
         prompt: 'New prompt',
@@ -141,7 +141,7 @@ describe('PromptController', () => {
       await handler()(request, mockReply);
 
       expect(mockReply.status).toHaveBeenCalledWith(404);
-      expect(mockReply.send).toHaveBeenCalledWith({ error: 'Not found' });
+      expect(mockReply.send).toHaveBeenCalledWith({ error: 'Prompt not found' });
     });
   });
 

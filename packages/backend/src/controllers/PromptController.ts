@@ -2,6 +2,7 @@ import { definePromptSchema } from '@prompt-kitchen/shared';
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import * as yup from 'yup';
 import { PromptService } from '../services/PromptService';
+import { handle404, handleError } from '../utils/handleError';
 
 interface ProjectIdParams { projectId: string; }
 interface PromptIdParams { id: string; }
@@ -25,9 +26,9 @@ export async function registerPromptRoutes(fastify: FastifyInstance, promptServi
       return reply.status(201).send(prompt);
     } catch (err) {
       if (err instanceof yup.ValidationError) {
-        return reply.status(400).send({ error: 'Validation failed', details: err.errors });
+        return handleError(reply, 400, 'Validation failed', { details: err.errors });
       }
-      throw err;
+      return handleError(reply, 500, err as Error);
     }
   });
 
@@ -39,14 +40,14 @@ export async function registerPromptRoutes(fastify: FastifyInstance, promptServi
       const updates = await schema.validate(request.body, { abortEarly: false, stripUnknown: true });
       const updated = await promptService.updatePrompt(id, updates);
       if (!updated) {
-        return reply.status(404).send({ error: 'Not found' });
+        return handle404(reply, 'Prompt');
       }
       return reply.send(updated);
     } catch (err) {
       if (err instanceof yup.ValidationError) {
-        return reply.status(400).send({ error: 'Validation failed', details: err.errors });
+        return handleError(reply, 400, 'Validation failed', { details: err.errors });
       }
-      throw err;
+      return handleError(reply, 500, err as Error);
     }
   });
 
@@ -73,7 +74,7 @@ export async function registerPromptRoutes(fastify: FastifyInstance, promptServi
     }
     const restored = await promptService.restorePromptFromHistory(id, version);
     if (!restored) {
-      return reply.status(404).send({ error: 'Not found' });
+      return handle404(reply, 'Prompt or version');
     }
     return reply.send(restored);
   });

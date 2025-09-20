@@ -4,6 +4,7 @@ import * as yup from 'yup';
 import { createAuthMiddleware } from '../authMiddleware';
 import { ProjectService } from '../services/ProjectService';
 import type { JwtPayload, UserService } from '../services/UserService';
+import { handle404, handleError } from '../utils/handleError';
 
 interface ProjectIdParams {
   id: string;
@@ -42,9 +43,9 @@ export async function registerProjectRoutes(fastify: FastifyInstance, projectSer
         return reply.status(201).send(project);
       } catch (err) {
         if (err instanceof yup.ValidationError) {
-          return reply.status(400).send({ error: 'Validation failed', details: err.errors });
+          return handleError(reply, 400, 'Validation failed', { details: err.errors });
         }
-        throw err;
+        return handleError(reply, 500, err as Error);
       }
     },
   );
@@ -57,7 +58,7 @@ export async function registerProjectRoutes(fastify: FastifyInstance, projectSer
       const { id } = request.params;
       const project = await projectService.getProjectById(id);
       if (!project) {
-        return reply.status(404).send({ error: 'Not found' });
+        return handle404(reply, 'Project');
       }
       return reply.send(project);
     },
@@ -74,14 +75,14 @@ export async function registerProjectRoutes(fastify: FastifyInstance, projectSer
         const updates = await schema.validate(request.body, { abortEarly: false, stripUnknown: true });
         const updated = await projectService.updateProject(id, updates);
         if (!updated) {
-          return reply.status(404).send({ error: 'Not found' });
+          return handle404(reply, 'Project');
         }
         return reply.send(updated);
       } catch (err) {
         if (err instanceof yup.ValidationError) {
           return reply.status(400).send({ error: 'Validation failed', details: err.errors });
         }
-        throw err;
+        return handleError(reply, 500, err as Error);
       }
     },
   );

@@ -1,4 +1,4 @@
-# To Do for Release 0.1
+# Future
 
 ## Code Issues/Questions
 - skipped tests
@@ -6,26 +6,6 @@
 - make sure migrations are running correctly in both prod & non-prod environments
 - refactor functions into small, pure helpers
 - ensure that access control is working -- person A can only see projects for person A
-
-## Bugs
-*verify that these are still a thing*
-**DONE** - added a project, prompt, test suite, and two test cases. Then added a second project -- first project gone
-**DONE** - when visiting app, on 401 response from server, log out and redirect to login page
-
-## UX Problems
-**DONE** - when I have a prompt open and I click "create" for another prompt, all other panels should close (currently showing incorrect info because it keeps the old data) and it should switch to the new prompt
-**DONE** - create test case: add expected output with no variables --> enable create button
-**DONE** - after "Create New Test Suite", view test cases for the new test suite
-
-## Tweaks
-**DONE** - after creating project, jump directly to project/:id page
-**DONE** - after creating prompt, jump directly to view prompt page
-
----
-
-# Future
-
-## Code Issues/Questions
 - logging system -- frontend & backend
   - set `X-Request-ID` header on front end & log it on the back end?
 - frontend/src/mocks -- what is this?
@@ -88,3 +68,19 @@ sort out front end/back end ports/proxies
 ## Findings 9/3/2025
 - when adding a new test case with advanced assertions, the first edit does not save. Second and later edits work **FIXED**
 - toMatch with a regex string does not work with i flag - flag is not saved **FIXED**
+
+# To Do for Release 0.1
+
+## Bugs
+*verify that these are still a thing*
+**DONE** - added a project, prompt, test suite, and two test cases. Then added a second project -- first project gone
+**DONE** - when visiting app, on 401 response from server, log out and redirect to login page
+
+## UX Problems
+**DONE** - when I have a prompt open and I click "create" for another prompt, all other panels should close (currently showing incorrect info because it keeps the old data) and it should switch to the new prompt
+**DONE** - create test case: add expected output with no variables --> enable create button
+**DONE** - after "Create New Test Suite", view test cases for the new test suite
+
+## Tweaks
+**DONE** - after creating project, jump directly to project/:id page
+**DONE** - after creating prompt, jump directly to view prompt page

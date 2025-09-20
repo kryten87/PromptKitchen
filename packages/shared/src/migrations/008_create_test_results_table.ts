@@ -1,0 +1,16 @@
+import type { Knex } from 'knex';
+
+export async function up(knex: Knex): Promise<void> {
+  return knex.schema.createTable('test_results', function(table: Knex.TableBuilder) {
+    table.string('id').primary();
+    table.string('test_suite_run_id').notNullable().references('id').inTable('test_suite_runs').onDelete('CASCADE');
+    table.string('test_case_id').notNullable().references('id').inTable('test_cases').onDelete('CASCADE');
+    table.text('actual_output').notNullable();
+    table.string('status').notNullable();
+    table.timestamp('created_at').notNullable().defaultTo(knex.fn.now());
+  });
+}
+
+export async function down(knex: Knex): Promise<void> {
+  return knex.schema.dropTableIfExists('test_results');
+}

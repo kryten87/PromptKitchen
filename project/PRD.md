@@ -103,19 +103,26 @@ Prompt Kitchen is a web-based application designed to streamline the development
 | Routing (Frontend) | React Router |
 | Styling | Tailwind CSS |
 | Database | SQLite3 (initially) |
+| Package Manager | npm |
 | Testing | Jest |
 | Linting | ESLint |
 | HTTP Client | Native `fetch` API |
+| Validation | Yup (shared package, used on both backend and frontend) |
 
 ### 4.2. Architecture & Design
 
 - **Monorepo**: The codebase will be organized into a monorepo with three main packages: `frontend`, `backend`, and `shared`.
 - **Database Abstraction**: All database access will be performed through an abstraction layer to facilitate future migration to other SQL databases like PostgreSQL or MySQL. No ORM will be used.
+- **Database Migrations**: The backend API will be responsible for running database migrations. Migrations will execute automatically upon application startup. If any migration fails, the application must fail to start. The migration system should be idempotent, meaning it will do nothing if no migration scripts need to be run.
 - **Data Transfer Objects (DTOs)**: DTOs will be used for all data exchange with the database to ensure a clear data contract.
 - **Dependency Injection**: Manual dependency injection will be used to promote modularity and testability. No DI frameworks.
-- **Code Style**: Logic will be encapsulated in classes where appropriate. Small, pure functions with descriptive names are preferred.
+- **Static Factory Pattern**: For all new services that require dependency injection, add a static `factory` method to the service class to encapsulate instantiation of dependencies. Do not use separate factory files. Write unit tests for each factory method.
+- **Test Consolidation**: Always place unit tests for static factory methods in the main `*.spec.ts` file for the class, not in a separate file. This keeps related tests together and improves maintainability.
+- **Code Style**: Logic will be encapsulated in classes where appropriate. Small, pure functions with descriptive names are preferred. **Single-line `if` statements are not allowed; always use a code block for `if` statements.**
+- **Unit Testing**: Unit tests will be written concurrently with feature development. As each function or component is created or modified, corresponding unit tests must be created or updated to ensure correctness and prevent regressions.
 - **API Keys**: LLM API keys will be stored securely as environment variables on the server.
 - **Test Files**: All test files must follow the `*.spec.ts` or `*.spec.tsx` naming convention.
+- **Top-level Imports (Hard Requirement)**: All import statements must be static and placed at the top of each file. Inline or dynamic imports (e.g., `import()` inside functions or blocks) are strictly prohibited everywhere in the codebase, except for true dynamic loading scenarios (such as React lazy loading or code splitting). This rule applies to all backend, frontend, and shared code, not just services, repositories, and controllers. Violations are not permitted and must be corrected immediately.
 
 ### 4.3. Data Models
 
@@ -137,10 +144,35 @@ The application's data is structured around five core entities, with relationshi
 | **TestSuiteRun** | `id`, `test_suite_id`, `prompt_history_id`, `run_at`, `status`, `pass_percentage` | Represents a single execution of a full test suite against a specific prompt version. `status` can be `PENDING`, `RUNNING`, `COMPLETED`, or `ERROR`. |
 | **TestResult** | `id`, `test_suite_run_id`, `test_case_id`, `actual_output`, `status` | Records the outcome of a single test case. `actual_output` stores the string or JSON response from the LLM. `status` can be `PASS` or `FAIL`. |
 
-### 4.4. Security
+### 4.4. Input Validation
 
-- User authentication tokens will be stored in browser local storage.
+- All user inputs must be validated both on the backend and frontend using schemas defined with the `yup` library.
+- Validation schemas will live in the `shared` package and will be imported by both backend and frontend code.
+- Validation will be enforced for all API endpoints and UI forms.
+- All backend API endpoints must validate incoming request data (body, params, query) using the shared validation schemas before processing.
+- All frontend API requests must validate user input using the shared validation schemas before sending data to the backend.
+- Validation errors must be handled gracefully and surfaced to the user with clear messages.
+- All new backend and frontend features must demonstrate use of the shared validation schemas in their implementation and tests.
+
+### 4.5. Shared Validation Library
+
+- The shared package will export validation schemas for all DTOs/entities (User, Project, Prompt, etc.) using `yup`.
+- These schemas will be the single source of truth for input validation across the stack.
+- Validation logic will be kept in sync with DTO definitions.
+
+### 4.6. Security
+
+- User authentication tokens will be returned by the backend as a bearer token (JWT) and must be stored in browser local storage by the frontend. Cookies will NOT be used for authentication. All API requests from the frontend to the backend must use the Authorization: Bearer <token> header.
 - All sensitive credentials (like API keys) must be stored on the backend and never exposed to the client.
+
+### 4.7. Database Connector Pattern (Best Practice)
+
+- All database access must use a class-based connector pattern. The connector class should be instantiated with configuration (e.g., SQLite filename) and expose a `knex` instance for queries.
+- All repositories and services must accept a database connector instance via their constructor (manual dependency injection). No global singletons should be used except for the production connector.
+- All unit tests for database code must use an in-memory SQLite database (`filename: ':memory:'`) to ensure isolation and speed.
+- Migrations must be run immediately after establishing a database connection, and before any queries are executed.
+- **All test files must use the application's migration system to set up the database schema, rather than custom-built `create table` statements. This ensures schema consistency and prevents drift between test and production environments.**
+- This pattern must be followed for all future database-related code.
 
 ---
 

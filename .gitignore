@@ -1,1 +1,14 @@
 project/tasks/*.md
+node_modules
+packages/**/dist
+**/*.tsbuildinfo
+**/*.sqlite3
+**/.env*
+!**/.env.example
+
+**/*.png
+
+.vscode
+
+**/test-results/*
+packages/e2e/logs

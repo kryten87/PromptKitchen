@@ -1,0 +1,456 @@
+import type { TestCase, TestSuite } from '@prompt-kitchen/shared/src/dtos';
+import { useCallback, useEffect, useState } from 'react';
+import { useApiClient } from '../hooks/useApiClient';
+import { useTestSuiteRunPolling } from '../hooks/useTestSuiteRunPolling';
+import { ConfirmModal } from './ConfirmModal';
+import { CreateTestCaseModal } from './CreateTestCaseModal';
+import { TestCaseDisplay } from './TestCaseDisplay';
+import { TestSuiteModal } from './TestSuiteModal';
+import { TestResultsView } from './TestResultsView';
+
+interface TestSuitePanelProps {
+  promptId: string;
+}
+
+export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
+  const apiClient = useApiClient();
+  const [testSuites, setTestSuites] = useState<TestSuite[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedTestSuite, setSelectedTestSuite] = useState<TestSuite | null>(null);
+
+  // Test case management state
+  const [selectedTestSuiteForCases, setSelectedTestSuiteForCases] = useState<TestSuite | null>(null);
+  const [testCases, setTestCases] = useState<TestCase[]>([]);
+  const [loadingTestCases, setLoadingTestCases] = useState(false);
+  const [testCasesError, setTestCasesError] = useState<string | null>(null);
+  const [showTestCaseModal, setShowTestCaseModal] = useState(false);
+  const [editingTestCase, setEditingTestCase] = useState<TestCase | null>(null);
+
+  // Test suite execution state
+  const [runningTestSuites, setRunningTestSuites] = useState<Set<string>>(new Set());
+  const [runResults, setRunResults] = useState<Record<string, string>>({}); // testSuiteId -> message
+  const [activeRunId, setActiveRunId] = useState<string | null>(null);
+  const [showResultsModal, setShowResultsModal] = useState(false);
+
+  // State for test cases used in results display
+  const [resultsTestCases, setResultsTestCases] = useState<TestCase[]>([]);
+
+  // Add state for confirmation modals and error alerts
+  const [confirmModal, setConfirmModal] = useState<{
+    open: boolean;
+    message: string;
+    onConfirm: () => Promise<void> | void;
+      } | null>(null);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [errorAlert, setErrorAlert] = useState<string | null>(null);
+
+  const loadTestSuites = useCallback(async () => {
+    setLoading(true);
+    try {
+      const suites = await apiClient.request<TestSuite[]>(`/prompts/${promptId}/test-suites`);
+      setTestSuites(Array.isArray(suites) ? suites : []);
+      setError(null);
+    } catch {
+      setError('Failed to load test suites');
+    } finally {
+      setLoading(false);
+    }
+  }, [promptId, apiClient]);
+
+  const loadTestCases = useCallback(async (testSuiteId: string) => {
+    setLoadingTestCases(true);
+    setTestCasesError(null);
+    try {
+      const cases = await apiClient.request<TestCase[]>(`/test-suites/${testSuiteId}/test-cases`);
+      setTestCases(Array.isArray(cases) ? cases : []);
+    } catch {
+      setTestCasesError('Failed to load test cases');
+    } finally {
+      setLoadingTestCases(false);
+    }
+  }, [apiClient]);
+
+  const loadResultsTestCases = useCallback(async (testSuiteId: string) => {
+    try {
+      const cases = await apiClient.request<TestCase[]>(`/test-suites/${testSuiteId}/test-cases`);
+      setResultsTestCases(Array.isArray(cases) ? cases : []);
+    } catch {
+      // If loading fails, set empty array so results can still be shown without expected output
+      setResultsTestCases([]);
+    }
+  }, [apiClient]);
+
+  useEffect(() => {
+    loadTestSuites();
+  }, [loadTestSuites]);
+
+  useEffect(() => {
+    if (selectedTestSuiteForCases) {
+      loadTestCases(selectedTestSuiteForCases.id);
+    }
+  }, [selectedTestSuiteForCases, loadTestCases]);
+
+  const handleCreateTestSuite = (testSuite: TestSuite) => {
+    setTestSuites(prev => [...prev, testSuite]);
+    setSelectedTestSuiteForCases(testSuite);
+    setTestCases([]);
+  };
+
+  const handleEditTestSuite = (testSuite: TestSuite) => {
+    setSelectedTestSuite(testSuite);
+    setShowEditModal(true);
+  };
+
+  const handleTestSuiteUpdated = (updatedTestSuite: TestSuite) => {
+    setTestSuites(prev => prev.map(suite =>
+      suite.id === updatedTestSuite.id ? updatedTestSuite : suite
+    ));
+  };
+
+  const handleDeleteTestSuite = (testSuiteId: string) => {
+    setConfirmModal({
+      open: true,
+      message: 'Are you sure you want to delete this test suite? This will also delete all test cases within it.',
+      onConfirm: async () => {
+        setConfirmLoading(true);
+        try {
+          await apiClient.request(`/test-suites/${testSuiteId}`, { method: 'DELETE' });
+          await loadTestSuites();
+          if (selectedTestSuiteForCases?.id === testSuiteId) {
+            setSelectedTestSuiteForCases(null);
+            setTestCases([]);
+          }
+          setError(null);
+          setConfirmModal(null);
+        } catch {
+          setErrorAlert('Failed to delete test suite');
+          setConfirmModal(null);
+        } finally {
+          setConfirmLoading(false);
+        }
+      },
+    });
+  };
+
+  const handleViewTestCases = (testSuite: TestSuite) => {
+    setSelectedTestSuiteForCases(testSuite);
+  };
+
+  const handleCreateTestCase = () => {
+    setEditingTestCase(null);
+    setShowTestCaseModal(true);
+  };
+
+  const handleEditTestCase = (testCase: TestCase) => {
+    setEditingTestCase(testCase);
+    setShowTestCaseModal(true);
+  };
+
+  const handleDeleteTestCase = (testCaseId: string) => {
+    setConfirmModal({
+      open: true,
+      message: 'Are you sure you want to delete this test case?',
+      onConfirm: async () => {
+        setConfirmLoading(true);
+        try {
+          await apiClient.request(`/test-cases/${testCaseId}`, { method: 'DELETE' });
+          setTestCases(prev => prev.filter(tc => tc.id !== testCaseId));
+          setConfirmModal(null);
+        } catch {
+          setErrorAlert('Failed to delete test case');
+          setConfirmModal(null);
+        } finally {
+          setConfirmLoading(false);
+        }
+      },
+    });
+  };
+
+  const handleTestCaseCreated = (testCase: TestCase) => {
+    setTestCases(prev => [...prev, testCase]);
+    setShowTestCaseModal(false);
+  };
+
+  const handleTestCaseUpdated = (updatedTestCase: TestCase) => {
+    setTestCases(prev => prev.map(tc =>
+      tc.id === updatedTestCase.id ? updatedTestCase : tc
+    ));
+    setShowTestCaseModal(false);
+  };
+
+  const handleRunTestSuite = async (testSuiteId: string) => {
+    setRunningTestSuites(prev => new Set(prev).add(testSuiteId));
+    setRunResults(prev => ({ ...prev, [testSuiteId]: '' }));
+    try {
+      const response = await apiClient.request<{ runId: string }>(`/test-suites/${testSuiteId}/run`, {
+        method: 'POST',
+      });
+      setRunResults(prev => ({
+        ...prev,
+        [testSuiteId]: `Test suite execution started. Run ID: ${response.runId}`
+      }));
+      setActiveRunId(response.runId);
+      setShowResultsModal(true);
+      await loadTestSuites();
+    } catch (error) {
+      setRunResults(prev => ({
+        ...prev,
+        [testSuiteId]: `Failed to start test suite execution: ${error instanceof Error ? error.message : 'Unknown error'}`
+      }));
+    } finally {
+      setRunningTestSuites(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(testSuiteId);
+        return newSet;
+      });
+    }
+  };
+
+  const handleCancelTestCaseModal = () => {
+    setShowTestCaseModal(false);
+    setEditingTestCase(null);
+  };
+
+  // Poll for run results if a run is active
+  const { run: runData, loading: polling, error: pollingError } = useTestSuiteRunPolling(activeRunId, 2000);
+
+  // Load test cases for results when runData becomes available
+  useEffect(() => {
+    if (runData && runData.testSuiteId) {
+      loadResultsTestCases(runData.testSuiteId);
+    }
+  }, [runData, loadResultsTestCases]);
+
+  if (loading) {
+    return <div className="p-4">Loading test suites...</div>;
+  }
+
+  if (error) {
+    return <div className="p-4 text-red-500">{error}</div>;
+  }
+
+  return (
+    <div className="border-t border-gray-200 pt-4">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-semibold" data-testid="test-suites-header">Test Suites</h3>
+        <button
+          data-testid="create-test-suite-button"
+          className="bg-primary text-white py-2 px-4 rounded text-sm"
+          onClick={() => setShowCreateModal(true)}
+        >
+          Create Test Suite
+        </button>
+      </div>
+
+      {testSuites.length === 0 ? (
+        <div className="text-gray-500 text-sm" data-testid="no-test-suites-message">No test suites found for this prompt.</div>
+      ) : (
+        <>
+          <ul className="divide-y divide-gray-200 bg-white rounded shadow mb-6">
+            {testSuites.map((suite) => (
+              <li key={suite.id} className="p-3 hover:bg-gray-50 relative" data-testid={`test-suite-list-item-${suite.id}`}>
+                <div className="absolute top-3 right-3 flex space-x-2">
+                  <button
+                    data-testid={`test-cases-test-suite-button-${suite.id}`}
+                    onClick={() => handleViewTestCases(suite)}
+                    className="px-2 py-1 text-xs bg-btn-subtle text-text-primary rounded hover:bg-btn-subtle-hover"
+                  >
+                    Test Cases
+                  </button>
+                  <button
+                    data-testid={`edit-test-suite-button-${suite.id}`}
+                    onClick={() => handleEditTestSuite(suite)}
+                    className="px-2 py-1 text-xs bg-btn-subtle text-text-primary rounded hover:bg-btn-subtle-hover"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    data-testid={`delete-test-suite-button-${suite.id}`}
+                    onClick={() => handleDeleteTestSuite(suite.id)}
+                    className="px-2 py-1 text-xs bg-warning text-white rounded hover:opacity-90"
+                  >
+                    Delete
+                  </button>
+                  <button
+                    data-testid={`run-test-suite-button-${suite.id}`}
+                    onClick={() => handleRunTestSuite(suite.id)}
+                    className="px-2 py-1 text-xs bg-btn-success text-text-primary rounded hover:opacity-90 disabled:opacity-50"
+                    disabled={runningTestSuites.has(suite.id)}
+                  >
+                    {runningTestSuites.has(suite.id) ? 'Running...' : 'Run'}
+                  </button>
+                </div>
+                <div className="pr-80">
+                  <div className="font-medium text-sm break-words whitespace-pre-wrap">{suite.name}</div>
+                  <div className="text-xs text-gray-400 break-all">Suite ID: {suite.id}</div>
+                  <div className="text-xs text-gray-400">Created: {new Date(suite.createdAt).toLocaleString()}</div>
+                  {runResults[suite.id] && (
+                    <div className={`text-xs mt-1 ${runResults[suite.id].includes('Failed') ? 'text-red-500' : 'text-green-600'}`}>{runResults[suite.id]}</div>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          {/* Test Cases Section */}
+          {selectedTestSuiteForCases && (
+            <div className="bg-gray-50 rounded-lg p-4" data-testid="test-cases-panel">
+              <div className="flex justify-between items-center mb-4">
+                <h4 className="text-md font-semibold" data-testid="test-cases-header">
+                  Test Cases for "{selectedTestSuiteForCases.name}"
+                </h4>
+                <div className="flex gap-2">
+                  <button
+                    data-testid="add-test-case-button"
+                    onClick={handleCreateTestCase}
+                    className="bg-primary text-white py-1 px-3 rounded text-sm"
+                  >
+                    Add Test Case
+                  </button>
+                  <button
+                    data-testid="close-test-cases-panel-button"
+                    onClick={() => setSelectedTestSuiteForCases(null)}
+                    className="bg-btn-subtle text-text-primary py-1 px-3 rounded text-sm hover:bg-btn-subtle-hover"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+
+              {loadingTestCases ? (
+                <div className="text-gray-500 text-sm">Loading test cases...</div>
+              ) : testCasesError ? (
+                <div className="text-red-500 text-sm">{testCasesError}</div>
+              ) : testCases.length === 0 ? (
+                <div className="text-gray-500 text-sm" data-testid="no-test-cases-message">No test cases found for this test suite.</div>
+              ) : (
+                <ul className="divide-y divide-gray-200 bg-white rounded shadow">
+                  {testCases.map((testCase) => (
+                    <li key={testCase.id} className="p-3 hover:bg-gray-50 relative" data-testid={`test-case-item-${testCase.id}`}>
+                      <div className="absolute top-3 right-3 flex space-x-2">
+                        <button
+                          onClick={() => handleEditTestCase(testCase)}
+                          className="px-2 py-1 text-xs bg-btn-subtle text-text-primary rounded hover:bg-btn-subtle-hover"
+                          data-testid="edit-test-case-button"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteTestCase(testCase.id)}
+                          className="px-2 py-1 text-xs bg-warning text-white rounded hover:opacity-90"
+                          data-testid="delete-test-case-button"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                      <TestCaseDisplay testCase={testCase} />
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Results Modal */}
+      {showResultsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl relative">
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              onClick={() => { setShowResultsModal(false); setActiveRunId(null); }}
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <h4 className="text-lg font-semibold mb-2">Test Suite Results</h4>
+            {polling && <div className="text-gray-500 mb-2">Polling for results...</div>}
+            {pollingError && <div className="text-red-500 mb-2">{pollingError}</div>}
+            {runData && Array.isArray(runData.results) ? (
+              <div>
+                <div className="mb-2 text-sm">Status: <span className="font-mono">{runData.status}</span> | Pass %: {runData.passPercentage?.toFixed(1) ?? 0}</div>
+                <TestResultsView
+                  results={runData.results.map(r => {
+                    // Find the corresponding test case to get expected output
+                    const testCase = resultsTestCases.find(tc => tc.id === r.testCaseId);
+                    const expectedOutput = testCase
+                      ? (typeof testCase.expectedOutput === 'string'
+                        ? testCase.expectedOutput
+                        : JSON.stringify(testCase.expectedOutput))
+                      : 'Expected output not available';
+
+                    return {
+                      id: r.id,
+                      testCaseName: r.testCaseId, // No name, so use ID
+                      status: r.status.toLowerCase() === 'pass' ? 'pass' : 'fail',
+                      expectedOutput,
+                      actualOutput: typeof r.output === 'string' ? r.output : JSON.stringify(r.output),
+                      testCaseAssertions: testCase?.assertions
+                    };
+                  })}
+                />
+                {runData.status !== 'COMPLETED' && (
+                  <div className="mt-2 text-xs text-gray-500">Still running... results will update automatically.</div>
+                )}
+              </div>
+            ) : runData && (
+              <div className="text-red-500 text-sm">Failed to load test suite results.</div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ConfirmModal for delete confirmations */}
+      {confirmModal && (
+        <ConfirmModal
+          open={confirmModal.open}
+          message={confirmModal.message}
+          onConfirm={async () => {
+            if (confirmModal.onConfirm) {
+              await confirmModal.onConfirm();
+            }
+          }}
+          onCancel={() => !confirmLoading && setConfirmModal(null)}
+          loading={confirmLoading}
+        />
+      )}
+
+      {/* ConfirmModal for error alerts */}
+      {errorAlert && (
+        <ConfirmModal
+          open={true}
+          message={errorAlert}
+          onConfirm={() => setErrorAlert(null)}
+          onCancel={() => setErrorAlert(null)}
+        />
+      )}
+
+      <TestSuiteModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        promptId={promptId}
+        onTestSuiteCreated={handleCreateTestSuite}
+      />
+
+      <TestSuiteModal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        testSuite={selectedTestSuite}
+        onTestSuiteUpdated={handleTestSuiteUpdated}
+      />
+
+      <CreateTestCaseModal
+        open={showTestCaseModal}
+        testSuiteId={selectedTestSuiteForCases?.id || ''}
+        testCase={editingTestCase}
+        onTestCaseCreated={handleTestCaseCreated}
+        onTestCaseUpdated={handleTestCaseUpdated}
+        onCancel={handleCancelTestCaseModal}
+      />
+    </div>
+  );
+}

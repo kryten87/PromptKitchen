@@ -1,0 +1,49 @@
+{
+  "name": "prompt-kitchen",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "check": "npm run build && npm run lint:fix && npm run test && echo 'All checks passed!'",
+    "check:task": "npm run build && npm run lint:fix && npm run test && npm run validate:tasklist",
+    "dev": "./scripts/run-dev.bash",
+    "dev:backend": "npm run dev --workspace=packages/backend",
+    "dev:frontend": "npm run dev --workspace=packages/frontend",
+    "docker:build": "docker build -t prompt-kitchen:latest -f scripts/docker/Dockerfile .",
+    "docker:run": "docker run --rm --env-file ./.env.docker -p '5173:80' prompt-kitchen:latest",
+    "e2e": "npm run --workspace=packages/e2e test",
+    "e2e:all": "npm run --workspace=packages/e2e test:all",
+    "lint": "npm run lint --workspaces",
+    "lint:fix": "npm run lint:fix --workspaces",
+    "test": "npm run test --workspaces",
+    "validate:tasklist": "git diff --exit-code ./project/TASK-LIST.md && echo 'TASK-LIST.md has not been updated.'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "GPL-3.0-or-later",
+  "workspaces": [
+    "packages/shared",
+    "packages/backend",
+    "packages/frontend",
+    "packages/e2e"
+  ],
+  "devDependencies": {
+    "@eslint/js": "^9.8.0",
+    "@testing-library/user-event": "^14.6.1",
+    "eslint": "^9.8.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react-hooks": "^5.2.0-beta-a9b5219-20240725",
+    "eslint-plugin-react-refresh": "^0.4.9",
+    "globals": "^15.8.0",
+    "node-fetch": "^3.3.2",
+    "prettier": "^3.3.3",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.0.0-alpha.43"
+  },
+  "dependencies": {
+    "@fastify/oauth2": "^8.1.2",
+    "tsx": "^4.20.3"
+  }
+}

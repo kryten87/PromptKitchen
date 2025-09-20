@@ -8,7 +8,7 @@
 # The name of the Docker image.
 # IMPORTANT: Change this to your Docker Hub username or registry prefix.
 # For example: 'yourusername/prompt-kitchen'
-IMAGE_NAME="kryten87/prompt-kitchen"
+IMAGE_NAME="ghcr.io/kryten87/prompt-kitchen"
 
 # The path to the Dockerfile.
 DOCKERFILE="scripts/docker/Dockerfile"

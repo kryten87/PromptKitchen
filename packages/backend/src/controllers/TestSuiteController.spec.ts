@@ -77,6 +77,7 @@ describe('TestSuiteController', () => {
         expectedOutput: { result: 'success', status: 'completed' },
         assertions,
         runMode: 'DEFAULT' as const,
+        shouldTrimWhitespace: false,
       };
 
       const createdTestCase = await service.createTestCase(testCaseData);
@@ -99,6 +100,7 @@ describe('TestSuiteController', () => {
         inputs: { foo: 'bar' },
         expectedOutput: 'simple output',
         runMode: 'DEFAULT' as const,
+        shouldTrimWhitespace: false,
       };
 
       const createdTestCase = await service.createTestCase(testCaseData);
@@ -117,6 +119,7 @@ describe('TestSuiteController', () => {
         inputs: { initial: 'value' },
         expectedOutput: 'initial output',
         runMode: 'DEFAULT' as const,
+        shouldTrimWhitespace: false,
       };
 
       const createdTestCase = await service.createTestCase(initialData);

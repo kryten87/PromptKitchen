@@ -387,6 +387,12 @@ test('Test Suite Results Modal Shows Test Case Assertions', async ({ page }) => 
   await expect(resultsModal).toBeVisible({ timeout: 10000 });
   await expect(resultsModal.getByText('Test Suite Results')).toBeVisible();
 
+  // Wait for the test execution to complete
+  await expect(resultsModal.getByText('Status: COMPLETED')).toBeVisible({ timeout: 30000 });
+  
+  // Click on the test result to expand it
+  await page.locator('[data-testid^="test-result-header-"]').first().click();
+  
   // Check that the Assertions column shows the test case assertions
   // We should see "Test Case Assertions:" label and the formatted assertion
   await expect(resultsModal.getByText('Test Case Assertions:')).toBeVisible();

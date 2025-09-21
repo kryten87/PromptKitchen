@@ -27,6 +27,7 @@ const mockTestCase: TestCase = {
   expectedOutput: 'Hello Alice, you are 25 years old',
   assertions: [],
   runMode: 'DEFAULT',
+  shouldTrimWhitespace: false,
   createdAt: new Date('2023-01-01'),
   updatedAt: new Date('2023-01-01'),
 };
@@ -38,6 +39,7 @@ const mockJsonTestCase: TestCase = {
   expectedOutput: { message: 'User found', userId: 123 },
   assertions: [],
   runMode: 'ONLY',
+  shouldTrimWhitespace: false,
   createdAt: new Date('2023-01-01'),
   updatedAt: new Date('2023-01-01'),
 };
@@ -261,6 +263,7 @@ describe('TestCaseEditor', () => {
       expectedOutput: 'Expected result',
       assertions: [],
       runMode: 'DEFAULT',
+      shouldTrimWhitespace: false,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -301,6 +304,7 @@ describe('TestCaseEditor', () => {
           expectedOutput: 'Expected result',
           assertions: [],
           runMode: 'DEFAULT',
+          shouldTrimWhitespace: false,
         }),
       });
     });
@@ -346,6 +350,7 @@ describe('TestCaseEditor', () => {
           expectedOutput: 'Hello Charlie',
           assertions: [],
           runMode: 'DEFAULT',
+          shouldTrimWhitespace: false,
         }),
       });
     });
@@ -361,6 +366,7 @@ describe('TestCaseEditor', () => {
       expectedOutput: { status: 'success' },
       assertions: [],
       runMode: 'DEFAULT',
+      shouldTrimWhitespace: false,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -404,6 +410,7 @@ describe('TestCaseEditor', () => {
           expectedOutput: { status: 'success' },
           assertions: [],
           runMode: 'DEFAULT',
+          shouldTrimWhitespace: false,
         }),
       });
     });
@@ -490,6 +497,7 @@ describe('TestCaseEditor', () => {
       expectedOutput: 'Expected result',
       assertions: [],
       runMode: 'DEFAULT',
+      shouldTrimWhitespace: false,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -545,6 +553,7 @@ describe('TestCaseEditor', () => {
           expectedOutput: 'Expected result',
           assertions: [],
           runMode: 'DEFAULT',
+          shouldTrimWhitespace: false,
         }),
       });
     });

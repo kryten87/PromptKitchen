@@ -22,6 +22,7 @@ export function TestCaseEditor({
   const [expectedOutput, setExpectedOutput] = useState('');
   const [assertions, setAssertions] = useState<Assertion[]>([]);
   const [isJsonOutput, setIsJsonOutput] = useState(false);
+  const [shouldTrimWhitespace, setShouldTrimWhitespace] = useState(false);
   const [runMode, setRunMode] = useState<TestCaseRunMode>('DEFAULT');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -52,6 +53,7 @@ export function TestCaseEditor({
         }))
       );
       setIsJsonOutput(typeof testCase.expectedOutput === 'object');
+      setShouldTrimWhitespace(testCase.shouldTrimWhitespace);
 
       // Set run mode
       setRunMode(testCase.runMode);
@@ -153,6 +155,7 @@ export function TestCaseEditor({
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             assertions: assertions.map(({ id, ...rest }) => rest),
             runMode,
+            shouldTrimWhitespace,
           }),
         });
         onTestCaseUpdated?.(updated);
@@ -166,6 +169,7 @@ export function TestCaseEditor({
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             assertions: assertions.map(({ id, ...rest }) => rest),
             runMode,
+            shouldTrimWhitespace,
           }),
         });
         onTestCaseCreated?.(created);
@@ -314,16 +318,28 @@ export function TestCaseEditor({
                 <label className="block text-sm font-medium text-gray-700">
                   Expected Output
                 </label>
-                <label className="inline-flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={isJsonOutput}
-                    onChange={(e) => setIsJsonOutput(e.target.checked)}
-                    className="form-checkbox"
-                    disabled={loading}
-                  />
-                  <span className="ml-2 text-sm">JSON Output</span>
-                </label>
+                <div className="flex gap-4">
+                  <label className="inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={isJsonOutput}
+                      onChange={(e) => setIsJsonOutput(e.target.checked)}
+                      className="form-checkbox"
+                      disabled={loading}
+                    />
+                    <span className="ml-2 text-sm">JSON Output</span>
+                  </label>
+                  <label className="inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={shouldTrimWhitespace}
+                      onChange={(e) => setShouldTrimWhitespace(e.target.checked)}
+                      className="form-checkbox"
+                      disabled={loading}
+                    />
+                    <span className="ml-2 text-sm">Trim Whitespace</span>
+                  </label>
+                </div>
               </div>
 
               <textarea

@@ -60,6 +60,7 @@ describe('TestCaseRepository', () => {
       expectedOutput: { result: 'success', status: 'completed' },
       assertions,
       runMode: 'DEFAULT',
+      shouldTrimWhitespace: false,
     });
 
     expect(created).toHaveProperty('id');
@@ -76,6 +77,7 @@ describe('TestCaseRepository', () => {
       inputs: { foo: 'bar' },
       expectedOutput: 'baz',
       runMode: 'DEFAULT',
+      shouldTrimWhitespace: false,
     });
     expect(created).toHaveProperty('id');
     expect(created.testSuiteId).toBe(testSuiteId);

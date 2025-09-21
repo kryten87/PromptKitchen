@@ -1,4 +1,4 @@
-import { render, waitFor, fireEvent } from '@testing-library/react';
+import { render, waitFor, fireEvent, act } from '@testing-library/react';
 import { PromptForm } from './PromptForm';
 import { useApiClient } from '../hooks/useApiClient';
 
@@ -31,7 +31,9 @@ describe('PromptForm', () => {
     await waitFor(() => expect(getModels).toHaveBeenCalledTimes(1));
     getModels.mockClear();
     // Click refresh
-    button.click();
+    await act(async () => {
+      button.click();
+    });
     await waitFor(() => {
       expect(refreshModels).toHaveBeenCalled();
       expect(getModels).toHaveBeenCalled();

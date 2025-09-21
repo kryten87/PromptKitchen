@@ -61,6 +61,7 @@ describe('TestCaseRepository', () => {
       inputs: { foo: 'bar' },
       expectedOutput: 'baz',
       runMode: 'DEFAULT',
+      shouldTrimWhitespace: false,
     });
     expect(created).toHaveProperty('id');
     expect(created.testSuiteId).toBe('suite1');

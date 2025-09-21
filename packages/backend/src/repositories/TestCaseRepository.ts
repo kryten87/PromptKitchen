@@ -11,6 +11,7 @@ interface TestCaseRow {
   assertions?: string;
   run_mode: string;
   output_type?: string;
+  should_trim_whitespace: boolean;
   created_at: string | Date;
   updated_at: string | Date;
 }
@@ -41,6 +42,7 @@ export class TestCaseRepository {
       expectedOutput,
       assertions: row.assertions ? JSON.parse(row.assertions) : undefined,
       runMode: row.run_mode as TestCaseRunMode,
+      shouldTrimWhitespace: row.should_trim_whitespace,
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at),
     };
@@ -62,6 +64,7 @@ export class TestCaseRepository {
         expectedOutput,
         assertions: row.assertions ? JSON.parse(row.assertions) : undefined,
         runMode: row.run_mode as TestCaseRunMode,
+        shouldTrimWhitespace: row.should_trim_whitespace,
         createdAt: new Date(row.created_at),
         updatedAt: new Date(row.updated_at),
       };
@@ -79,6 +82,7 @@ export class TestCaseRepository {
       assertions: testCase.assertions ? JSON.stringify(testCase.assertions) : undefined,
       run_mode: testCase.runMode,
       output_type: typeof testCase.expectedOutput === 'string' ? 'string' : 'json',
+      should_trim_whitespace: testCase.shouldTrimWhitespace,
       created_at: now,
       updated_at: now,
     });
@@ -107,6 +111,9 @@ export class TestCaseRepository {
     }
     if (updatesTyped.runMode) {
       dbUpdates.run_mode = updatesTyped.runMode;
+    }
+    if (updatesTyped.shouldTrimWhitespace !== undefined) {
+      dbUpdates.should_trim_whitespace = updatesTyped.shouldTrimWhitespace;
     }
     await this.knex('test_cases').where({ id }).update(dbUpdates);
     return this.getById(id);

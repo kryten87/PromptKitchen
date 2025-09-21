@@ -16,6 +16,7 @@ function makeTestCase(partial: Partial<TestCase>): TestCase {
     inputs: partial.inputs || { name: 'Alice' },
     expectedOutput: partial.expectedOutput || 'Echo: Hello Alice',
     runMode: partial.runMode || 'DEFAULT',
+    shouldTrimWhitespace: partial.shouldTrimWhitespace || false,
     createdAt: partial.createdAt || new Date(),
     updatedAt: partial.updatedAt || new Date(),
   };

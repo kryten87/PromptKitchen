@@ -73,10 +73,13 @@ export class ExecutionService {
         details = cappedDetails;
       } else {
         if (typeof testCase.expectedOutput === 'string') {
-          pass = EvaluationService.exactStringMatch(testCase.expectedOutput, llmResult.output);
+          const expected = testCase.shouldTrimWhitespace ? testCase.expectedOutput.trim() : testCase.expectedOutput;
+          const actual = testCase.shouldTrimWhitespace ? llmResult.output.trim() : llmResult.output;
+          pass = EvaluationService.exactStringMatch(expected, actual);
         } else {
           try {
-            const actualJson = JSON.parse(llmResult.output);
+            const rawOutput = testCase.shouldTrimWhitespace ? llmResult.output.trim() : llmResult.output;
+            const actualJson = JSON.parse(rawOutput);
             pass = EvaluationService.deepJsonEqual(testCase.expectedOutput, actualJson);
           } catch {
             pass = false;

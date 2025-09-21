@@ -70,3 +70,19 @@ export function definePromptSchema() {
 }
 
 // Add more schemas for PromptHistory, TestSuite, TestCase, etc. as needed
+
+// TestCase validation schema
+defineTestCaseSchema();
+export function defineTestCaseSchema() {
+  return yup.object({
+    id: yup.string().required(),
+    testSuiteId: yup.string().required(),
+    inputs: yup.object().required(),
+    expectedOutput: yup.mixed().required(),
+    assertions: yup.array().optional(),
+    runMode: yup.string().oneOf(['DEFAULT', 'SKIP', 'ONLY']).required(),
+    shouldTrimWhitespace: yup.boolean().required(),
+    createdAt: yup.date().required(),
+    updatedAt: yup.date().required(),
+  });
+}

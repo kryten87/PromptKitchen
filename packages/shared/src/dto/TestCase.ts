@@ -10,6 +10,7 @@ export interface TestCase {
   expectedOutput: string | Record<string, JsonValue>;
   assertions?: Assertion[];
   runMode: TestCaseRunMode;
+  shouldTrimWhitespace: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

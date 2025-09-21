@@ -19,6 +19,7 @@ interface CreateTestCaseBody {
   expectedOutput: string | Record<string, JsonValue>;
   assertions?: Assertion[];
   runMode: TestCaseRunMode;
+  shouldTrimWhitespace: boolean;
 }
 
 export async function registerTestSuiteRoutes(fastify: FastifyInstance, db: DatabaseConnector) {
@@ -60,8 +61,8 @@ export async function registerTestSuiteRoutes(fastify: FastifyInstance, db: Data
 
   fastify.post('/api/test-suites/:testSuiteId/test-cases', async (request: FastifyRequest<{ Params: TestSuiteIdTestCasesParams; Body: CreateTestCaseBody }>, reply) => {
     const { testSuiteId } = request.params;
-    const { inputs, expectedOutput, assertions, runMode } = request.body;
-    const testCase = await service.createTestCase({ testSuiteId, inputs, expectedOutput, assertions, runMode });
+    const { inputs, expectedOutput, assertions, runMode, shouldTrimWhitespace } = request.body;
+    const testCase = await service.createTestCase({ testSuiteId, inputs, expectedOutput, assertions, runMode, shouldTrimWhitespace });
     reply.code(201).send(testCase);
   });
 

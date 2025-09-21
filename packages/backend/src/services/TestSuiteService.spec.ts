@@ -23,6 +23,7 @@ describe('TestSuiteService', () => {
     inputs: { foo: 'bar' },
     expectedOutput: 'baz',
     runMode: 'DEFAULT',
+    shouldTrimWhitespace: false,
     createdAt: new Date(),
     updatedAt: new Date(),
   };
@@ -122,7 +123,8 @@ describe('TestSuiteService', () => {
       inputs: { foo: 'bar' }, 
       expectedOutput: 'baz', 
       assertions,
-      runMode: 'DEFAULT' as const 
+      runMode: 'DEFAULT' as const,
+      shouldTrimWhitespace: false
     };
     const result = await service.createTestCase(data);
     expect(result).toBe(testCaseWithAssertions);
@@ -131,7 +133,7 @@ describe('TestSuiteService', () => {
 
   it('createTestCase creates a case', async () => {
     testCaseRepo.create.mockResolvedValue(testCase);
-    const data = { testSuiteId: 'suite-1', inputs: { foo: 'bar' }, expectedOutput: 'baz', runMode: 'DEFAULT' as const };
+    const data = { testSuiteId: 'suite-1', inputs: { foo: 'bar' }, expectedOutput: 'baz', runMode: 'DEFAULT' as const, shouldTrimWhitespace: false };
     const result = await service.createTestCase(data);
     expect(result).toBe(testCase);
     expect(testCaseRepo.create).toHaveBeenCalledWith(data);

@@ -395,7 +395,8 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
                       status: r.status.toLowerCase() === 'pass' ? 'pass' : 'fail',
                       expectedOutput,
                       actualOutput: typeof r.output === 'string' ? r.output : JSON.stringify(r.output),
-                      testCaseAssertions: testCase?.assertions
+                      testCaseAssertions: testCase?.assertions,
+                      shouldTrimWhitespace: testCase?.shouldTrimWhitespace ?? false
                     };
                   })}
                 />

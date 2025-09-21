@@ -1,9 +1,9 @@
 # Feedback from use 9/20/2025
-- trim/cleanup leading & trailing whitespace? maybe add an option for this?
+**DONE** - trim/cleanup leading & trailing whitespace? maybe add an option for this?
   - in the Create/View Test Case, add a checkbox option - trim whitespace from results.
-- test output can get too large for page and obscure everything -- solution: tabs? nested in a list (only open one at a time)?
-- need a diff for expected vs actual output
 - for test output dialog -- add "click outside" to close functionality
+- test output can get too large for page and obscure everything -- solution: tabs? nested in a list (only open one result at a time)?
+- need a diff for expected vs actual output
 - need to be able to view prompt in one window (or one pane) while editing test cases
 
 # Future

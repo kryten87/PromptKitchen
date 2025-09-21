@@ -641,4 +641,63 @@ describe('TestSuitePanel', () => {
     // Check that the new test suite shows no test cases (empty state)
     expect(screen.getByText('No test cases found for this test suite.')).toBeInTheDocument();
   });
+
+  it('closes results modal when clicking outside', async () => {
+    mockApiClient.request
+      .mockResolvedValueOnce(mockTestSuites)
+      .mockResolvedValueOnce({ runId: 'run-123' })
+      .mockResolvedValueOnce(mockTestSuites);
+
+    render(<TestSuitePanel promptId="prompt-1" />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Suite 1')).toBeInTheDocument();
+    });
+
+    // Click run button to open results modal
+    fireEvent.click(screen.getAllByText('Run')[0]);
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Suite Results')).toBeInTheDocument();
+    });
+
+    // Get the modal backdrop (the outer div with the background)
+    const modalBackdrop = screen.getByText('Test Suite Results').closest('.fixed');
+    expect(modalBackdrop).toBeInTheDocument();
+
+    // Click on the backdrop (outside the modal content) to close
+    fireEvent.click(modalBackdrop!);
+
+    // Modal should be closed
+    await waitFor(() => {
+      expect(screen.queryByText('Test Suite Results')).not.toBeInTheDocument();
+    });
+  });
+
+  it('does not close results modal when clicking inside modal content', async () => {
+    mockApiClient.request
+      .mockResolvedValueOnce(mockTestSuites)
+      .mockResolvedValueOnce({ runId: 'run-123' })
+      .mockResolvedValueOnce(mockTestSuites);
+
+    render(<TestSuitePanel promptId="prompt-1" />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Suite 1')).toBeInTheDocument();
+    });
+
+    // Click run button to open results modal
+    fireEvent.click(screen.getAllByText('Run')[0]);
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Suite Results')).toBeInTheDocument();
+    });
+
+    // Click inside the modal content
+    const modalContent = screen.getByText('Test Suite Results');
+    fireEvent.click(modalContent);
+
+    // Modal should still be open
+    expect(screen.getByText('Test Suite Results')).toBeInTheDocument();
+  });
 });

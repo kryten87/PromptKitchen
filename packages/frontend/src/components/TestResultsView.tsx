@@ -1,5 +1,6 @@
 import type { AssertionResult, Assertion } from '@prompt-kitchen/shared/src/types';
 import React from 'react';
+import { DiffDisplay } from './DiffDisplay';
 
 export interface TestResult {
   id: string;
@@ -83,23 +84,12 @@ export const TestResultsView: React.FC<TestResultsViewProps> = ({ results }) => 
           {/* Expanded content showing expected vs actual values */}
           {expandedResultId === result.id && (
             <div className="border-t border-gray-200 p-4 bg-gray-50" data-testid={`test-result-details-${result.id}`}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Expected Output */}
-                <div>
-                  <div className="text-sm font-medium text-gray-700 mb-2">Expected Output:</div>
-                  <div className="bg-white border border-gray-200 rounded p-3 font-mono text-xs whitespace-pre-wrap max-h-40 overflow-y-auto">
-                    {result.expectedOutput}
-                  </div>
-                </div>
-
-                {/* Actual Output */}
-                <div>
-                  <div className="text-sm font-medium text-gray-700 mb-2">Actual Output:</div>
-                  <div className="bg-white border border-gray-200 rounded p-3 font-mono text-xs whitespace-pre-wrap max-h-40 overflow-y-auto">
-                    {result.actualOutput}
-                  </div>
-                </div>
-              </div>
+              {/* Show diff comparison */}
+              <DiffDisplay 
+                expectedText={result.expectedOutput}
+                actualText={result.actualOutput}
+                label="Output Comparison"
+              />
 
               {/* Additional details for complex assertions */}
               {Array.isArray(result.testCaseAssertions) && result.testCaseAssertions.length > 0 && (

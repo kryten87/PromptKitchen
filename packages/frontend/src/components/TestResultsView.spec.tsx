@@ -57,10 +57,9 @@ describe('TestResultsView', () => {
       fireEvent.click(header);
     });
     
-    // Now details should be visible
+    // Now details should be visible - check for diff display
     expect(screen.getByTestId('test-result-details-1')).toBeInTheDocument();
-    expect(screen.getByText('Expected Output:')).toBeInTheDocument();
-    expect(screen.getByText('Actual Output:')).toBeInTheDocument();
+    expect(screen.getByText('Output Comparison:')).toBeInTheDocument();
     expect(screen.getByText('expected1')).toBeInTheDocument();
     expect(screen.getByText('output1')).toBeInTheDocument();
   });
@@ -471,7 +470,7 @@ describe('TestResultsView', () => {
     render(<TestResultsView results={results} />);
     
     // Initially collapsed
-    expect(screen.queryByText('Expected Output:')).not.toBeInTheDocument();
+    expect(screen.queryByText('Output Comparison:')).not.toBeInTheDocument();
     expect(screen.queryByText('Simple expected output')).not.toBeInTheDocument();
     expect(screen.queryByText('Simple actual output')).not.toBeInTheDocument();
     
@@ -481,9 +480,8 @@ describe('TestResultsView', () => {
       fireEvent.click(header);
     });
     
-    // Should show expected and actual output sections
-    expect(screen.getByText('Expected Output:')).toBeInTheDocument();
-    expect(screen.getByText('Actual Output:')).toBeInTheDocument();
+    // Should show diff output sections
+    expect(screen.getByText('Output Comparison:')).toBeInTheDocument();
     expect(screen.getByText('Simple expected output')).toBeInTheDocument();
     expect(screen.getByText('Simple actual output')).toBeInTheDocument();
   });

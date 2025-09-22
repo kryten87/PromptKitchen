@@ -11,6 +11,16 @@ describe('DiffDisplay', () => {
     expect(screen.getByText('✓ Expected and actual outputs are identical')).toBeInTheDocument();
   });
 
+  it('should not render legend when outputs are identical', () => {
+    const expectedText = 'Hello\nWorld';
+    const actualText = 'Hello\nWorld';
+    
+    render(<DiffDisplay expectedText={expectedText} actualText={actualText} />);
+    
+    expect(screen.getByText('✓ Expected and actual outputs are identical')).toBeInTheDocument();
+    expect(screen.queryByTestId('diff-legend')).not.toBeInTheDocument();
+  });
+
   it('should render diff when expected and actual are different', () => {
     const expectedText = 'Hello\nWorld';
     const actualText = 'Hello\nUniverse';
@@ -20,6 +30,11 @@ describe('DiffDisplay', () => {
     // Check that diff lines are present
     const diffLines = screen.getAllByTestId(/^diff-line-/);
     expect(diffLines.length).toBeGreaterThan(0);
+    
+    // Check that legend is present
+    expect(screen.getByTestId('diff-legend')).toBeInTheDocument();
+    expect(screen.getByText('- Expected')).toBeInTheDocument();
+    expect(screen.getByText('+ Actual')).toBeInTheDocument();
   });
 
   it('should render with custom label', () => {
@@ -50,5 +65,8 @@ describe('DiffDisplay', () => {
     
     const diffLines = screen.getAllByTestId(/^diff-line-/);
     expect(diffLines.length).toBeGreaterThan(0);
+    
+    // Legend should be present for multiline diffs too
+    expect(screen.getByTestId('diff-legend')).toBeInTheDocument();
   });
 });

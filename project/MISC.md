@@ -8,6 +8,7 @@
 # Pending UAT
 - need a diff for expected vs actual output
 - need to be able to view prompt in one window (or one pane) while editing test cases
+- larger text area for editing test case output
 
 # Future
 

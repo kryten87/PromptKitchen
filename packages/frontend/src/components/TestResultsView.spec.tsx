@@ -21,11 +21,9 @@ describe('TestResultsView', () => {
     expect(screen.getByText('Pass')).toBeInTheDocument();
     expect(screen.getByText('Fail')).toBeInTheDocument();
     
-    // Expected and actual outputs should not be visible initially
-    expect(screen.queryByText('expected1')).not.toBeInTheDocument();
-    expect(screen.queryByText('output1')).not.toBeInTheDocument();
-    expect(screen.queryByText('expected2')).not.toBeInTheDocument();
-    expect(screen.queryByText('output2')).not.toBeInTheDocument();
+    // Details panels should not be visible initially
+    expect(screen.queryByTestId('test-result-details-1')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('test-result-details-2')).not.toBeInTheDocument();
   });
 
   it('applies correct color for pass/fail status badges', () => {
@@ -48,8 +46,6 @@ describe('TestResultsView', () => {
     
     // Initially collapsed - details not visible
     expect(screen.queryByTestId('test-result-details-1')).not.toBeInTheDocument();
-    expect(screen.queryByText('expected1')).not.toBeInTheDocument();
-    expect(screen.queryByText('output1')).not.toBeInTheDocument();
     
     // Click to expand
     const header = screen.getByTestId('test-result-header-1');
@@ -57,12 +53,13 @@ describe('TestResultsView', () => {
       fireEvent.click(header);
     });
     
-    // Now details should be visible
+    // Now details should be visible - check for diff display
     expect(screen.getByTestId('test-result-details-1')).toBeInTheDocument();
-    expect(screen.getByText('Expected Output:')).toBeInTheDocument();
-    expect(screen.getByText('Actual Output:')).toBeInTheDocument();
-    expect(screen.getByText('expected1')).toBeInTheDocument();
-    expect(screen.getByText('output1')).toBeInTheDocument();
+    expect(screen.getByText('Output Comparison:')).toBeInTheDocument();
+    
+    // Check that the diff display is present with character spans
+    const diffChars = screen.getAllByTestId(/^diff-char-/);
+    expect(diffChars.length).toBeGreaterThan(0);
   });
 
   it('collapses test result on second click', () => {
@@ -471,9 +468,7 @@ describe('TestResultsView', () => {
     render(<TestResultsView results={results} />);
     
     // Initially collapsed
-    expect(screen.queryByText('Expected Output:')).not.toBeInTheDocument();
-    expect(screen.queryByText('Simple expected output')).not.toBeInTheDocument();
-    expect(screen.queryByText('Simple actual output')).not.toBeInTheDocument();
+    expect(screen.queryByText('Output Comparison:')).not.toBeInTheDocument();
     
     // Expand the test result
     const header = screen.getByTestId('test-result-header-1');
@@ -481,10 +476,16 @@ describe('TestResultsView', () => {
       fireEvent.click(header);
     });
     
-    // Should show expected and actual output sections
-    expect(screen.getByText('Expected Output:')).toBeInTheDocument();
-    expect(screen.getByText('Actual Output:')).toBeInTheDocument();
-    expect(screen.getByText('Simple expected output')).toBeInTheDocument();
-    expect(screen.getByText('Simple actual output')).toBeInTheDocument();
+    // Should show diff output sections
+    expect(screen.getByText('Output Comparison:')).toBeInTheDocument();
+    
+    // Check that the character diff is present
+    const diffChars = screen.getAllByTestId(/^diff-char-/);
+    expect(diffChars.length).toBeGreaterThan(0);
+    
+    // The diff should contain parts of both expected and actual text
+    const container = screen.getByTestId('test-result-details-1');
+    expect(container).toHaveTextContent('Simple');
+    expect(container).toHaveTextContent('output');
   });
 });

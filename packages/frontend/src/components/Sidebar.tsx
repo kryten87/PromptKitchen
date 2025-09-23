@@ -63,7 +63,7 @@ function Sidebar() {
           Log out
         </button>
         <div className="mt-2 px-4 text-xs text-gray-400" data-testid="sidebar-version">
-          v{__APP_VERSION__}
+          v{__APP_VERSION__}-{__APP_ENVIRONMENT__}
         </div>
       </div>
     </div>

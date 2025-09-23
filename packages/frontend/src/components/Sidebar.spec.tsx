@@ -13,8 +13,9 @@ jest.mock('react-router-dom', () => {
   };
 });
 
-// Mock the version constant
+// Mock the version constants
 (globalThis as Record<string, unknown>).__APP_VERSION__ = '0.1.2';
+(globalThis as Record<string, unknown>).__APP_ENVIRONMENT__ = 'test';
 
 describe('Sidebar', () => {
   beforeEach(() => {
@@ -37,7 +38,7 @@ describe('Sidebar', () => {
     expect(screen.getByTestId('sidebar-logout-button')).toBeInTheDocument();
   });
 
-  it('displays the version number', () => {
+  it('displays the version number with environment', () => {
     render(
       <SessionProvider>
         <MemoryRouter>
@@ -48,7 +49,7 @@ describe('Sidebar', () => {
 
     const versionElement = screen.getByTestId('sidebar-version');
     expect(versionElement).toBeInTheDocument();
-    expect(versionElement).toHaveTextContent('v0.1.2');
+    expect(versionElement).toHaveTextContent('v0.1.2-test');
   });
 
   it('handles logout correctly', () => {

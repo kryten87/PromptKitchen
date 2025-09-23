@@ -1,4 +1,4 @@
-import { diffLines } from 'diff';
+import { diffChars } from 'diff';
 import React from 'react';
 
 export interface DiffDisplayProps {
@@ -12,7 +12,7 @@ export const DiffDisplay: React.FC<DiffDisplayProps> = ({
   actualText, 
   label 
 }) => {
-  const diff = diffLines(expectedText, actualText);
+  const diff = diffChars(expectedText, actualText);
   
   // If there are no differences, show a simple "identical" message
   if (diff.every(part => !part.added && !part.removed)) {
@@ -33,40 +33,39 @@ export const DiffDisplay: React.FC<DiffDisplayProps> = ({
       {/* Legend */}
       <div className="flex items-center gap-4 mb-3 text-xs" data-testid="diff-legend">
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 bg-red-100 border-l-4 border-red-400 rounded"></div>
-          <span className="text-gray-600">- Expected</span>
+          <div className="w-3 h-3 bg-red-100 rounded"></div>
+          <span className="text-gray-600">Removed text</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 bg-green-100 border-l-4 border-green-400 rounded"></div>
-          <span className="text-gray-600">+ Actual</span>
+          <div className="w-3 h-3 bg-green-100 rounded"></div>
+          <span className="text-gray-600">Added text</span>
         </div>
       </div>
       
       <div className="bg-white border border-gray-200 rounded p-3 font-mono text-xs max-h-96 overflow-y-auto">
-        {diff.map((part, index) => {
-          const lineClasses = [];
-          
-          if (part.added) {
-            lineClasses.push('bg-green-100', 'text-green-800', 'border-l-4', 'border-green-400', 'pl-2');
-          } else if (part.removed) {
-            lineClasses.push('bg-red-100', 'text-red-800', 'border-l-4', 'border-red-400', 'pl-2');
-          } else {
-            lineClasses.push('text-gray-700');
-          }
-          
-          const prefix = part.added ? '+ ' : part.removed ? '- ' : '  ';
-          
-          return (
-            <div
-              key={index}
-              className={lineClasses.join(' ')}
-              data-testid={`diff-line-${index}`}
-            >
-              <span className="select-none text-gray-400 mr-1">{prefix}</span>
-              <span className="whitespace-pre-wrap">{part.value}</span>
-            </div>
-          );
-        })}
+        <div className="whitespace-pre-wrap">
+          {diff.map((part, index) => {
+            let className = '';
+            
+            if (part.added) {
+              className = 'bg-green-100 text-green-800';
+            } else if (part.removed) {
+              className = 'bg-red-100 text-red-800 line-through';
+            } else {
+              className = 'text-gray-700';
+            }
+            
+            return (
+              <span
+                key={index}
+                className={className}
+                data-testid={`diff-char-${index}`}
+              >
+                {part.value}
+              </span>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

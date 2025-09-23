@@ -27,14 +27,14 @@ describe('DiffDisplay', () => {
     
     render(<DiffDisplay expectedText={expectedText} actualText={actualText} />);
     
-    // Check that diff lines are present
-    const diffLines = screen.getAllByTestId(/^diff-line-/);
-    expect(diffLines.length).toBeGreaterThan(0);
+    // Check that diff characters are present
+    const diffChars = screen.getAllByTestId(/^diff-char-/);
+    expect(diffChars.length).toBeGreaterThan(0);
     
     // Check that legend is present
     expect(screen.getByTestId('diff-legend')).toBeInTheDocument();
-    expect(screen.getByText('- Expected')).toBeInTheDocument();
-    expect(screen.getByText('+ Actual')).toBeInTheDocument();
+    expect(screen.getByText('Removed text')).toBeInTheDocument();
+    expect(screen.getByText('Added text')).toBeInTheDocument();
   });
 
   it('should render with custom label', () => {
@@ -53,8 +53,8 @@ describe('DiffDisplay', () => {
     
     render(<DiffDisplay expectedText={expectedText} actualText={actualText} />);
     
-    const diffLines = screen.getAllByTestId(/^diff-line-/);
-    expect(diffLines.length).toBeGreaterThan(0);
+    const diffChars = screen.getAllByTestId(/^diff-char-/);
+    expect(diffChars.length).toBeGreaterThan(0);
   });
 
   it('should handle multiline differences', () => {
@@ -63,10 +63,41 @@ describe('DiffDisplay', () => {
     
     render(<DiffDisplay expectedText={expectedText} actualText={actualText} />);
     
-    const diffLines = screen.getAllByTestId(/^diff-line-/);
-    expect(diffLines.length).toBeGreaterThan(0);
+    const diffChars = screen.getAllByTestId(/^diff-char-/);
+    expect(diffChars.length).toBeGreaterThan(0);
     
     // Legend should be present for multiline diffs too
+    expect(screen.getByTestId('diff-legend')).toBeInTheDocument();
+  });
+
+  it('should show character-level changes with removed text struck through', () => {
+    const expectedText = 'Hello World';
+    const actualText = 'Hello Universe';
+    
+    render(<DiffDisplay expectedText={expectedText} actualText={actualText} />);
+    
+    // Should have both removed and added characters
+    const diffChars = screen.getAllByTestId(/^diff-char-/);
+    expect(diffChars.length).toBeGreaterThan(0);
+    
+    // Check for styling classes
+    const removedChar = diffChars.find(char => char.className.includes('bg-red-100'));
+    const addedChar = diffChars.find(char => char.className.includes('bg-green-100'));
+    
+    expect(removedChar).toBeDefined();
+    expect(addedChar).toBeDefined();
+  });
+
+  it('should highlight single character changes', () => {
+    const expectedText = 'cat';
+    const actualText = 'bat';
+    
+    render(<DiffDisplay expectedText={expectedText} actualText={actualText} />);
+    
+    const diffChars = screen.getAllByTestId(/^diff-char-/);
+    expect(diffChars.length).toBeGreaterThan(0);
+    
+    // Should show 'c' as removed and 'b' as added, with 'at' unchanged
     expect(screen.getByTestId('diff-legend')).toBeInTheDocument();
   });
 });

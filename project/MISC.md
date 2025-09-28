@@ -2,10 +2,6 @@
 - need to be able to view prompt in one window (or one pane) while editing test cases
 - larger text area for editing test case output
 - when running a test suite we hit the LLM for every test case -- we can just run the test once & check the evals against a single result
-- hit database once daily to keep connection alive (Supabase will deactivate after 7 days of no activity)
-
-**DONE** - show prompt version number in the test results dialog
-**DONE** - diffs of JSON values must be pretty-printed before diff is generated
 
 # Future
 
@@ -100,3 +96,6 @@ sort out front end/back end ports/proxies
 **DONE** - need a diff for expected vs actual output
 
 # UAT 9/27/2025 - v1.0.4
+**DONE** - hit database once daily to keep connection alive (Supabase will deactivate after 7 days of no activity)
+**DONE** - show prompt version number in the test results dialog
+**DONE** - diffs of JSON values must be pretty-printed before diff is generated

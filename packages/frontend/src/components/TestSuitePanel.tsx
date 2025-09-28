@@ -2,6 +2,7 @@ import type { TestCase, TestSuite } from '@prompt-kitchen/shared/src/dtos';
 import { useCallback, useEffect, useState } from 'react';
 import { useApiClient } from '../hooks/useApiClient';
 import { useTestSuiteRunPolling } from '../hooks/useTestSuiteRunPolling';
+import { formatOutputForDiff } from '../utils/formatOutput';
 import { ConfirmModal } from './ConfirmModal';
 import { CreateTestCaseModal } from './CreateTestCaseModal';
 import { TestCaseDisplay } from './TestCaseDisplay';
@@ -384,9 +385,7 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
                     // Find the corresponding test case to get expected output
                     const testCase = resultsTestCases.find(tc => tc.id === r.testCaseId);
                     const expectedOutput = testCase
-                      ? (typeof testCase.expectedOutput === 'string'
-                        ? testCase.expectedOutput
-                        : JSON.stringify(testCase.expectedOutput))
+                      ? formatOutputForDiff(testCase.expectedOutput)
                       : 'Expected output not available';
 
                     return {
@@ -394,7 +393,7 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
                       testCaseName: r.testCaseId, // No name, so use ID
                       status: r.status.toLowerCase() === 'pass' ? 'pass' : 'fail',
                       expectedOutput,
-                      actualOutput: typeof r.output === 'string' ? r.output : JSON.stringify(r.output),
+                      actualOutput: formatOutputForDiff(r.output),
                       testCaseAssertions: testCase?.assertions,
                       shouldTrimWhitespace: testCase?.shouldTrimWhitespace ?? false
                     };

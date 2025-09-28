@@ -63,6 +63,10 @@ export class PromptService {
     return this.promptHistoryRepository.getAllByPromptId(promptId);
   }
 
+  async getPromptHistoryById(id: string): Promise<PromptHistory | null> {
+    return this.promptHistoryRepository.getById(id);
+  }
+
   async restorePromptFromHistory(promptId: string, version: number): Promise<Prompt | null> {
     const history = await this.promptHistoryRepository.getAllByPromptId(promptId);
     const entry = history.find(h => h.version === version);

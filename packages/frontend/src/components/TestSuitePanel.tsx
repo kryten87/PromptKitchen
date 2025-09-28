@@ -38,6 +38,7 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
 
   // State for test cases used in results display
   const [resultsTestCases, setResultsTestCases] = useState<TestCase[]>([]);
+  const [promptVersion, setPromptVersion] = useState<number | null>(null);
 
   // Add state for confirmation modals and error alerts
   const [confirmModal, setConfirmModal] = useState<{
@@ -81,6 +82,15 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
     } catch {
       // If loading fails, set empty array so results can still be shown without expected output
       setResultsTestCases([]);
+    }
+  }, [apiClient]);
+
+  const loadPromptVersion = useCallback(async (promptHistoryId: string) => {
+    try {
+      const history = await apiClient.request<{ version: number }>(`/prompt-history/${promptHistoryId}`);
+      setPromptVersion(history.version);
+    } catch {
+      setPromptVersion(null);
     }
   }, [apiClient]);
 
@@ -223,7 +233,10 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
     if (runData && runData.testSuiteId) {
       loadResultsTestCases(runData.testSuiteId);
     }
-  }, [runData, loadResultsTestCases]);
+    if (runData && runData.promptHistoryId) {
+      loadPromptVersion(runData.promptHistoryId);
+    }
+  }, [runData, loadResultsTestCases, loadPromptVersion]);
 
   if (loading) {
     return <div className="p-4">Loading test suites...</div>;
@@ -361,7 +374,11 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
       {showResultsModal && (
         <div 
           className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40"
-          onClick={() => { setShowResultsModal(false); setActiveRunId(null); }}
+          onClick={() => { 
+            setShowResultsModal(false); 
+            setActiveRunId(null);
+            setPromptVersion(null);
+          }}
         >
           <div 
             className="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl relative"
@@ -369,12 +386,21 @@ export function TestSuitePanel({ promptId }: TestSuitePanelProps) {
           >
             <button
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-              onClick={() => { setShowResultsModal(false); setActiveRunId(null); }}
+              onClick={() => { 
+                setShowResultsModal(false); 
+                setActiveRunId(null);
+                setPromptVersion(null);
+              }}
               aria-label="Close"
             >
               ×
             </button>
             <h4 className="text-lg font-semibold mb-2">Test Suite Results</h4>
+            {promptVersion !== null && (
+              <div className="mb-2 text-sm text-gray-600">
+                Prompt Version: <span className="font-mono">{promptVersion}</span>
+              </div>
+            )}
             {polling && <div className="text-gray-500 mb-2">Polling for results...</div>}
             {pollingError && <div className="text-red-500 mb-2">{pollingError}</div>}
             {runData && Array.isArray(runData.results) ? (

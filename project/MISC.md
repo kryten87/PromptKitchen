@@ -1,12 +1,4 @@
-# UAT 9/20/2025
-**DONE** - trim/cleanup leading & trailing whitespace? maybe add an option for this?
-  - in the Create/View Test Case, add a checkbox option - trim whitespace from results.
-**DONE** - for test output dialog -- add "click outside" to close functionality
-**DONE** - test output can get too large for page and obscure everything -- solution: tabs? nested in a list (only open one result at a time)?
-
-
 # Pending UAT
-- need a diff for expected vs actual output
 - need to be able to view prompt in one window (or one pane) while editing test cases
 - larger text area for editing test case output
 
@@ -99,3 +91,10 @@ sort out front end/back end ports/proxies
 ## Tweaks
 **DONE** - after creating project, jump directly to project/:id page
 **DONE** - after creating prompt, jump directly to view prompt page
+
+# UAT 9/20/2025
+**DONE** - trim/cleanup leading & trailing whitespace? maybe add an option for this?
+  - in the Create/View Test Case, add a checkbox option - trim whitespace from results.
+**DONE** - for test output dialog -- add "click outside" to close functionality
+**DONE** - test output can get too large for page and obscure everything -- solution: tabs? nested in a list (only open one result at a time)?
+**DONE** - need a diff for expected vs actual output

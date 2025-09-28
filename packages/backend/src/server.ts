@@ -15,6 +15,7 @@ import { UserRepository } from './repositories/UserRepository';
 import { ProjectService } from './services/ProjectService';
 import { PromptService } from './services/PromptService';
 import { UserService } from './services/UserService';
+import { KeepAliveService } from './services/KeepAliveService';
 import { ModelRepository } from './repositories/ModelRepository';
 import { LLMService } from './services/LLMService';
 import { ModelService } from './services/ModelService';
@@ -172,6 +173,13 @@ export async function start() {
       }
     }, refreshIntervalMs);
     server.log.info(`Model refresh interval set to ${refreshIntervalHours} hours`);
+
+    // Start database keep-alive service if enabled
+    if (PK_CONFIG.KEEP_ALIVE_ENABLED) {
+      const keepAliveService = new KeepAliveService(dbConnector, server.log);
+      keepAliveService.start();
+      server.log.info('Database keep-alive service enabled');
+    }
   } catch (err) {
     server.log.error(err);
     process.exit(1);

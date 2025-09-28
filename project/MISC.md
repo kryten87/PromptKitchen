@@ -1,7 +1,7 @@
 # Pending UAT
 - need to be able to view prompt in one window (or one pane) while editing test cases
 - larger text area for editing test case output
-- when running a test suite are we hitting the AI multiple times or just once?
+- when running a test suite we hit the LLM for every test case -- we can just run the test once & check the evals against a single result
 - hit database once daily to keep connection alive (Supabase will deactivate after 7 days of no activity)
 
 **DONE** - show prompt version number in the test results dialog

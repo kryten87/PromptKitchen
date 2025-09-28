@@ -1,6 +1,7 @@
 # Pending UAT
 - need to be able to view prompt in one window (or one pane) while editing test cases
 - larger text area for editing test case output
+- diffs of JSON values must be pretty-printed before diff is generated
 
 # Future
 

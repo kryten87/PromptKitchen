@@ -34,11 +34,11 @@ export const DiffDisplay: React.FC<DiffDisplayProps> = ({
       <div className="flex items-center gap-4 mb-3 text-xs" data-testid="diff-legend">
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 bg-red-100 rounded"></div>
-          <span className="text-gray-600">Removed text</span>
+          <span className="text-gray-600">Expected</span>
         </div>
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 bg-green-100 rounded"></div>
-          <span className="text-gray-600">Added text</span>
+          <span className="text-gray-600">Actual</span>
         </div>
       </div>
       

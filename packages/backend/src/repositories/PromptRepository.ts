@@ -122,6 +122,21 @@ export class PromptHistoryRepository {
     }));
   }
 
+  async getById(id: string): Promise<PromptHistory | null> {
+    const rows = await this.knex<PromptHistoryRow>('prompt_history').where({ id }).limit(1);
+    if (rows.length === 0) {
+      return null;
+    }
+    const row = rows[0];
+    return {
+      id: row.id,
+      promptId: row.prompt_id,
+      prompt: row.prompt,
+      version: row.version,
+      createdAt: new Date(row.created_at),
+    };
+  }
+
   async create(history: Omit<PromptHistory, 'id' | 'createdAt'>): Promise<PromptHistory> {
     const now = new Date();
     const id = Math.random().toString(36).substring(2, 15);

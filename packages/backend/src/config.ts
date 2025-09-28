@@ -8,6 +8,7 @@ export interface PKConfig {
   PK_REGEX_MAX_SOURCE_LEN: number;
   PK_REGEX_MAX_TEST_STR_LEN: number;
   PK_REGEX_ALLOWED_FLAGS: string;
+  KEEP_ALIVE_ENABLED: boolean;
 }
 
 export function loadPKConfig(): PKConfig {
@@ -17,5 +18,6 @@ export function loadPKConfig(): PKConfig {
     PK_REGEX_MAX_SOURCE_LEN: process.env.PK_REGEX_MAX_SOURCE_LEN ? parseInt(process.env.PK_REGEX_MAX_SOURCE_LEN, 10) : 1024,
     PK_REGEX_MAX_TEST_STR_LEN: process.env.PK_REGEX_MAX_TEST_STR_LEN ? parseInt(process.env.PK_REGEX_MAX_TEST_STR_LEN, 10) : 100000,
     PK_REGEX_ALLOWED_FLAGS: process.env.PK_REGEX_ALLOWED_FLAGS || 'imsu',
+    KEEP_ALIVE_ENABLED: process.env.KEEP_ALIVE_ENABLED === 'true',
   };
 }

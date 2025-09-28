@@ -33,8 +33,8 @@ describe('DiffDisplay', () => {
     
     // Check that legend is present
     expect(screen.getByTestId('diff-legend')).toBeInTheDocument();
-    expect(screen.getByText('Removed text')).toBeInTheDocument();
-    expect(screen.getByText('Added text')).toBeInTheDocument();
+    expect(screen.getByText('Expected')).toBeInTheDocument();
+    expect(screen.getByText('Actual')).toBeInTheDocument();
   });
 
   it('should render with custom label', () => {

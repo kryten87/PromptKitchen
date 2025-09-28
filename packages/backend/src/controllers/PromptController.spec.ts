@@ -10,6 +10,7 @@ const mockPromptService = {
   updatePrompt: jest.fn(),
   deletePrompt: jest.fn(),
   getPromptHistory: jest.fn(),
+  getPromptHistoryById: jest.fn(),
   restorePromptFromHistory: jest.fn(),
 } as unknown as PromptService;
 
@@ -175,6 +176,42 @@ describe('PromptController', () => {
 
       expect(mockPromptService.getPromptHistory).toHaveBeenCalledWith('1');
       expect(mockReply.send).toHaveBeenCalledWith(history);
+    });
+  });
+
+  describe('GET /api/prompt-history/:id', () => {
+    it('should return specific prompt history by id', async () => {
+      const handler = (mockFastify.get as jest.Mock).mock.calls.find(
+        (call) => call[0] === '/api/prompt-history/:id'
+      )[1];
+      const history: PromptHistory = { 
+        id: 'history-123', 
+        promptId: 'prompt-1', 
+        prompt: 'Test prompt', 
+        version: 42, 
+        createdAt: new Date() 
+      };
+      (mockPromptService.getPromptHistoryById as jest.Mock).mockResolvedValue(history);
+      const request = { params: { id: 'history-123' } } as FastifyRequest<{ Params: { id: string } }>;
+
+      await handler(request, mockReply);
+
+      expect(mockPromptService.getPromptHistoryById).toHaveBeenCalledWith('history-123');
+      expect(mockReply.send).toHaveBeenCalledWith(history);
+    });
+
+    it('should return 404 when prompt history not found', async () => {
+      const handler = (mockFastify.get as jest.Mock).mock.calls.find(
+        (call) => call[0] === '/api/prompt-history/:id'
+      )[1];
+      (mockPromptService.getPromptHistoryById as jest.Mock).mockResolvedValue(null);
+      const request = { params: { id: 'non-existent' } } as FastifyRequest<{ Params: { id: string } }>;
+
+      await handler(request, mockReply);
+
+      expect(mockPromptService.getPromptHistoryById).toHaveBeenCalledWith('non-existent');
+      expect(mockReply.status).toHaveBeenCalledWith(404);
+      expect(mockReply.send).toHaveBeenCalledWith({ error: 'Prompt history not found' });
     });
   });
 

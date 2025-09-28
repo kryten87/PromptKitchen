@@ -6,6 +6,7 @@ import { handle404, handleError } from '../utils/handleError';
 
 interface ProjectIdParams { projectId: string; }
 interface PromptIdParams { id: string; }
+interface PromptHistoryIdParams { id: string; }
 interface RestoreBody { version: number; }
 
 export async function registerPromptRoutes(fastify: FastifyInstance, promptService: PromptService) {
@@ -62,6 +63,16 @@ export async function registerPromptRoutes(fastify: FastifyInstance, promptServi
   fastify.get('/api/prompts/:id/history', async (request: FastifyRequest<{ Params: PromptIdParams }>, reply: FastifyReply) => {
     const { id } = request.params;
     const history = await promptService.getPromptHistory(id);
+    return reply.send(history);
+  });
+
+  // GET /api/prompt-history/:id
+  fastify.get('/api/prompt-history/:id', async (request: FastifyRequest<{ Params: PromptHistoryIdParams }>, reply: FastifyReply) => {
+    const { id } = request.params;
+    const history = await promptService.getPromptHistoryById(id);
+    if (!history) {
+      return handle404(reply, 'Prompt history');
+    }
     return reply.send(history);
   });
 

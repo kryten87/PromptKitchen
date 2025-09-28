@@ -1,14 +1,7 @@
-# UAT 9/20/2025
-**DONE** - trim/cleanup leading & trailing whitespace? maybe add an option for this?
-  - in the Create/View Test Case, add a checkbox option - trim whitespace from results.
-**DONE** - for test output dialog -- add "click outside" to close functionality
-**DONE** - test output can get too large for page and obscure everything -- solution: tabs? nested in a list (only open one result at a time)?
-
-
 # Pending UAT
-- need a diff for expected vs actual output
 - need to be able to view prompt in one window (or one pane) while editing test cases
 - larger text area for editing test case output
+- when running a test suite we hit the LLM for every test case -- we can just run the test once & check the evals against a single result
 
 # Future
 
@@ -31,18 +24,13 @@
 
 ## New Features
 - close button for prompt view
-- view last tests results when looking at a test suite
+- view tests result history when looking at a test suite
 - need a way to match results similar to jest matchers
-- test run history
-- model selection
-- when running a test suite are we hitting the AI multiple times or just once?
 - JSON editing where appropriate
 - auth middleware should check user in database; caching might be necessary
 - "Run with" option to select model at run time
 - default view for an item in a list -- short with view/edit/etc. buttons. click view, it expands to show more while others remain small
-- version indicator in the frontend
-- edit prompt in another window so you can edit while seeing test cases
-- diff for expected vs actual
+- query the LLM to identify WHY a test failed (ie. why did you omit this or that?)
 
 ---
 
@@ -99,3 +87,15 @@ sort out front end/back end ports/proxies
 ## Tweaks
 **DONE** - after creating project, jump directly to project/:id page
 **DONE** - after creating prompt, jump directly to view prompt page
+
+# UAT 9/20/2025 - v0.1.3
+**DONE** - trim/cleanup leading & trailing whitespace? maybe add an option for this?
+  - in the Create/View Test Case, add a checkbox option - trim whitespace from results.
+**DONE** - for test output dialog -- add "click outside" to close functionality
+**DONE** - test output can get too large for page and obscure everything -- solution: tabs? nested in a list (only open one result at a time)?
+**DONE** - need a diff for expected vs actual output
+
+# UAT 9/27/2025 - v0.1.4
+**DONE** - hit database once daily to keep connection alive (Supabase will deactivate after 7 days of no activity)
+**DONE** - show prompt version number in the test results dialog
+**DONE** - diffs of JSON values must be pretty-printed before diff is generated

@@ -8,14 +8,19 @@ import { act } from 'react';
 import { ApiClient } from '../ApiClient';
 import { TestSuitePanel } from './TestSuitePanel';
 
+const mockApiClient = {
+  request: jest.fn(),
+} as unknown as jest.Mocked<ApiClient>;
+
 // Mock the useApiClient hook
 jest.mock('../hooks/useApiClient', () => ({
   useApiClient: () => mockApiClient,
 }));
 
-const mockApiClient = {
-  request: jest.fn(),
-} as unknown as jest.Mocked<ApiClient>;
+// Mock the useTestSuiteRunPolling hook
+jest.mock('../hooks/useTestSuiteRunPolling', () => ({
+  useTestSuiteRunPolling: jest.fn(),
+}));
 
 const mockTestSuites: TestSuite[] = [
   {
@@ -58,8 +63,16 @@ const mockTestCases: TestCase[] = [
 ];
 
 describe('TestSuitePanel', () => {
+  const mockUseTestSuiteRunPolling = jest.requireMock('../hooks/useTestSuiteRunPolling').useTestSuiteRunPolling;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    // Default mock for useTestSuiteRunPolling
+    mockUseTestSuiteRunPolling.mockReturnValue({
+      run: null,
+      loading: false,
+      error: null,
+    });
   });
 
   it('renders loading state initially', () => {
@@ -701,5 +714,53 @@ describe('TestSuitePanel', () => {
 
     // Modal should still be open
     expect(screen.getByText('Test Suite Results')).toBeInTheDocument();
+  });
+
+  it('displays prompt version in results modal when available', async () => {
+    // Mock the initial test suites load
+    mockApiClient.request
+      .mockResolvedValueOnce(mockTestSuites) // 1. Load test suites
+      .mockResolvedValueOnce([]) // 2. Load test cases for results (triggered by runData)
+      .mockResolvedValueOnce({ version: 42 }) // 3. Load prompt history (triggered by runData)
+      .mockResolvedValueOnce({ runId: 'run-123' }) // 4. Start test suite run (triggered by button click)
+      .mockResolvedValueOnce(mockTestSuites); // 5. Reload test suites after run
+
+    // Mock the polling hook to return run data with promptHistoryId
+    mockUseTestSuiteRunPolling.mockReturnValue({
+      run: {
+        id: 'run-123',
+        testSuiteId: 'suite-1',
+        promptHistoryId: 'history-123',
+        status: 'COMPLETED',
+        passPercentage: 100,
+        results: [],
+        createdAt: new Date('2025-01-01T00:00:00Z'),
+      },
+      loading: false,
+      error: null,
+    });
+
+    render(<TestSuitePanel promptId="prompt-1" />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Suite 1')).toBeInTheDocument();
+    });
+
+    // Click run button to open results modal
+    fireEvent.click(screen.getAllByText('Run')[0]);
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Suite Results')).toBeInTheDocument();
+    });
+
+    // Check that prompt version is displayed
+    await waitFor(() => {
+      expect(screen.getByText('Prompt Version:')).toBeInTheDocument();
+      expect(screen.getByText('42')).toBeInTheDocument();
+    }, { timeout: 3000 });
+
+    // Verify API calls were made
+    expect(mockApiClient.request).toHaveBeenCalledWith('/test-suites/suite-1/test-cases');
+    expect(mockApiClient.request).toHaveBeenCalledWith('/prompt-history/history-123');
   });
 });

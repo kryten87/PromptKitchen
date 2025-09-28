@@ -88,14 +88,14 @@ sort out front end/back end ports/proxies
 **DONE** - after creating project, jump directly to project/:id page
 **DONE** - after creating prompt, jump directly to view prompt page
 
-# UAT 9/20/2025 - v1.0.3
+# UAT 9/20/2025 - v0.1.3
 **DONE** - trim/cleanup leading & trailing whitespace? maybe add an option for this?
   - in the Create/View Test Case, add a checkbox option - trim whitespace from results.
 **DONE** - for test output dialog -- add "click outside" to close functionality
 **DONE** - test output can get too large for page and obscure everything -- solution: tabs? nested in a list (only open one result at a time)?
 **DONE** - need a diff for expected vs actual output
 
-# UAT 9/27/2025 - v1.0.4
+# UAT 9/27/2025 - v0.1.4
 **DONE** - hit database once daily to keep connection alive (Supabase will deactivate after 7 days of no activity)
 **DONE** - show prompt version number in the test results dialog
 **DONE** - diffs of JSON values must be pretty-printed before diff is generated

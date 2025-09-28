@@ -2,6 +2,8 @@
 - need to be able to view prompt in one window (or one pane) while editing test cases
 - larger text area for editing test case output
 - diffs of JSON values must be pretty-printed before diff is generated
+- show prompt version number in the test results dialog
+- test run history
 
 # Future
 
@@ -26,7 +28,6 @@
 - close button for prompt view
 - view last tests results when looking at a test suite
 - need a way to match results similar to jest matchers
-- test run history
 - model selection
 - when running a test suite are we hitting the AI multiple times or just once?
 - JSON editing where appropriate
